@@ -175,6 +175,16 @@ Gagasan awal "turunkan bagan dari tabel `guru` lewat kolom `atasan_id`" **ditola
 
 Solusinya tabel `struktur_organisasi` tersendiri dengan `guru_id` opsional: simpul yang merujuk pegawai nyata mengambil namanya dari tabel `guru` lewat relasi, simpul kelompok dan Komite berdiri dengan label sendiri. Nama tetap punya satu sumber kebenaran, tapi bentuk bagan bebas berbeda dari daftar kepegawaian.
 
+**ADR-13 — Pemulihan kata sandi lewat super admin, bukan penyedia identitas.**
+Supabase Auth, Firebase Auth, dan Google Sign-In semuanya dipertimbangkan dan ditolak. Supabase menghidupkan kembali ketergantungan yang baru dilepas di ADR-1; Firebase adalah Google Cloud sehingga tidak menghindari hal yang ingin dihindari; Google Sign-In menuntut satu aset lagi (project OAuth) yang harus diserahterimakan atas nama sekolah.
+
+Penggunanya 2–5 orang staf yang bisa dihubungi langsung. Jadi jalur pemulihannya: **super admin mengatur kata sandi baru dari panel Akun Pengguna**, lalu menyampaikannya langsung. Bila super admin sendiri terkunci, jaring pengamannya `php artisan pengguna:sandi` lewat SSH — akses yang memang sudah disyaratkan paket hosting.
+
+Dampak terpenting: **SMTP berhenti menjadi penghambat peluncuran.** Risiko R-4 turun dari "memblokir" menjadi "pelengkap". Google Sign-In tetap bisa ditambahkan kelak sebagai pelengkap, bukan pengganti, dan tanpa tekanan waktu.
+
+**ADR-14 — Panel admin mengikuti struktur panel yayasan, dengan warna SMA.**
+Sidebar gelap tetap selebar 16rem, nav mobile terpisah, dan header sambutan — sama seperti `PP_ahlulirfan`. Warnanya memakai token SMA (`--brand-strong`), bukan menyalin palet pesantren, agar staf yang mengelola dua situs mengenali polanya tanpa tertukar situsnya.
+
 **ADR-11 — Panel admin memakai Inertia + React; situs publik tetap Blade.**
 Diambil atas permintaan pemilik proyek untuk nilai belajar dan portofolio, dengan konsekuensi yang disadari: dua paradigma render permanen dalam satu repo, dan penerus proyek harus paham keduanya. Batasnya dijaga ketat — middleware `inertia` hanya dipasang pada grup rute admin, dan entry Vite dipisah agar pengunjung situs publik tidak ikut mengunduh React (±46KB Alpine untuk publik, ±720KB React+TipTap untuk admin).
 
@@ -294,7 +304,7 @@ Kalau keenam korban dipakai, 3 hari tercapai dengan admin yang hanya mengelola b
 | R-8 | **NUPTK 13 orang bocor ke riwayat git lewat `WEBSITE.docx`** | `.gitignore` memblokir `*.docx` sebelum commit pertama; naskah ditranskrip tanpa NUPTK; diverifikasi lewat grep di Definisi Selesai. Repo belum punya commit apa pun saat aturan ini dipasang — jendela ini tertutup pada commit pertama |
 | R-9 | Tiga halaman P0 baru belum punya naskah sama sekali | Tagih ke sekolah di Hari 0. Bila belum ada saat rilis, halaman disembunyikan dari navigasi lewat `konten_halaman.terbit` — bukan diterbitkan kosong |
 | R-10 | Konflik nama Wakil Kepala Sekolah dan Kepala TU antara bagan dan tabel | Konfirmasi ke sekolah sebelum seeder final. Menerbitkan nama orang yang salah lebih merusak daripada menunda halaman |
-| R-4 | Reset password mati kalau SMTP belum dikonfigurasi | Siapkan email hosting dan isi `MAIL_*` di hari 1, bukan hari 3 |
+| R-4 | ~~Reset password mati kalau SMTP belum dikonfigurasi~~ **Selesai** | Pemulihan kata sandi kini lewat super admin di panel, dengan `php artisan pengguna:sandi` sebagai jaring pengaman SSH (ADR-13). SMTP tinggal pelengkap, bukan syarat rilis |
 | R-5 | Domain didaftarkan atas nama pribadi | Daftarkan atas nama yayasan sejak awal; memindahkan kepemilikan `.sch.id` belakangan jauh lebih repot |
 | R-6 | Foto siswa terbit tanpa izin | Jangan terbitkan foto siswa sampai izin tertulis ada. Ini bukan hal yang bisa diperbaiki setelah terbit |
 | R-7 | Grand design terlambat melewati jadwal rilis | Situs tetap rilis dengan tema provisional; swap dilakukan setelahnya — arsitektur token memang dibuat untuk itu |

@@ -15,18 +15,24 @@ import type {
  * dan tidak ada nilai hex.
  */
 
+/**
+ * Judul di dalam halaman. Bilah sambutan dan navigasi sudah ditangani
+ * kerangka admin, jadi komponen ini sengaja tidak punya latar maupun garis.
+ */
 export function PageHeader({ judul, keterangan, aksi }: { judul: string; keterangan?: string; aksi?: ReactNode }) {
     return (
-        <header className="border-b border-line bg-paper">
-            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-6 sm:px-6">
-                <div>
-                    <h1 className="font-heading text-xl font-semibold text-ink">{judul}</h1>
-                    {keterangan && <p className="mt-1 text-sm text-ink-muted">{keterangan}</p>}
-                </div>
-                {aksi}
+        <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
+            <div>
+                <h1 className="font-heading text-xl font-semibold text-ink">{judul}</h1>
+                {keterangan && <p className="mt-1 text-sm text-ink-muted">{keterangan}</p>}
             </div>
+            {aksi}
         </header>
     );
+}
+
+export function Kartu({ children, className = '' }: { children: ReactNode; className?: string }) {
+    return <div className={`rounded-lg border border-line bg-paper p-6 shadow-card ${className}`}>{children}</div>;
 }
 
 export function Label({ children, ...props }: LabelHTMLAttributes<HTMLLabelElement>) {

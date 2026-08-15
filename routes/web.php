@@ -2,6 +2,13 @@
 
 use App\Http\Controllers\Admin\BeritaController as AdminBeritaController;
 use App\Http\Controllers\Admin\DasborController;
+use App\Http\Controllers\Admin\EkstrakurikulerController;
+use App\Http\Controllers\Admin\GaleriController as AdminGaleriController;
+use App\Http\Controllers\Admin\GuruController as AdminGuruController;
+use App\Http\Controllers\Admin\HalamanController as AdminHalamanController;
+use App\Http\Controllers\Admin\PengaturanSitusController;
+use App\Http\Controllers\Admin\PenggunaController;
+use App\Http\Controllers\Admin\StrukturController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\HalamanController;
@@ -42,14 +49,12 @@ Route::get('/galeri/{album}', [GaleriController::class, 'show'])->name('galeri.s
 Route::get('/kontak', [KontakController::class, 'index'])->name('kontak');
 
 /*
-| Panel admin. Semua di balik middleware `auth`; kontrol lebih rinci memakai
-| izin spatie/laravel-permission per area konten.
-|
-| Rute dasbor sengaja diberi nama `dashboard` karena controller bawaan Breeze
-| mengarahkan ke nama itu setelah login dan setelah konfirmasi kata sandi.
-*/
-/*
 | Panel admin — Inertia + React.
+|
+| Semua di balik middleware `auth`; kontrol lebih rinci memakai izin
+| spatie/laravel-permission per area konten. Rute dasbor sengaja diberi nama
+| `dashboard` karena controller bawaan Breeze mengarahkan ke nama itu setelah
+| login dan setelah konfirmasi kata sandi.
 |
 | Middleware `inertia` SENGAJA hanya dipasang di sini, bukan global. Situs
 | publik harus tetap Blade murni: memasang Inertia di seluruh web akan
@@ -66,6 +71,24 @@ Route::middleware(['auth', 'inertia'])->group(function () {
         Route::resource('berita', AdminBeritaController::class)
             ->except('show')
             ->parameters(['berita' => 'berita']);
+
+        // Baris konten_halaman dibuat seeder dan terikat pada route publik
+        // tertentu, jadi tidak ada create/store/destroy — menghapus baris
+        // `kurikulum` akan mematikan /kurikulum tanpa cara memulihkannya.
+        Route::resource('halaman', AdminHalamanController::class)->only(['index', 'edit', 'update']);
+
+        Route::resource('guru', AdminGuruController::class)->except('show');
+        Route::resource('struktur', StrukturController::class)->except('show');
+        Route::resource('ekstrakurikuler', EkstrakurikulerController::class)->except('show');
+
+        Route::resource('galeri', AdminGaleriController::class)->except('show');
+        Route::post('galeri/{galeri}/foto', [AdminGaleriController::class, 'simpanFoto'])->name('galeri.foto.store');
+        Route::delete('galeri/{galeri}/foto/{media}', [AdminGaleriController::class, 'hapusFoto'])->name('galeri.foto.destroy');
+
+        Route::get('pengaturan', [PengaturanSitusController::class, 'edit'])->name('pengaturan.edit');
+        Route::put('pengaturan', [PengaturanSitusController::class, 'update'])->name('pengaturan.update');
+
+        Route::resource('pengguna', PenggunaController::class)->except('show');
     });
 });
 

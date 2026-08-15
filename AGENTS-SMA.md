@@ -137,6 +137,10 @@ alias pa='/Applications/MAMP/bin/php/php8.4.1/bin/php artisan'
 
    Entry Vite juga sengaja dua: `resources/js/app.js` (publik, Alpine ±46KB) dan `resources/js/admin.tsx` (admin, React + TipTap ±720KB). Pengunjung situs publik tidak boleh ikut mengunduh React. Kalau menambah dependensi berat, pastikan ia masuk entry admin.
 
+   **Kerangka panel admin** mengikuti panel yayasan: sidebar gelap tetap selebar 16rem (`resources/js/Layouts/Layout.tsx`), nav mobile terpisah, header sambutan. Warnanya token SMA (`--brand-strong`), bukan salinan palet pesantren. Daftar menu ada di `resources/js/nav-admin.ts`, masing-masing membawa izinnya sendiri.
+
+   Menyembunyikan menu hanyalah kenyamanan tampilan. **Penegakan sesungguhnya ada di middleware `can:` pada tiap controller** — setiap controller admin mengimplementasikan `HasMiddleware`. Menyembunyikan tombol bukan keamanan.
+
 10. **Setiap gambar lewat helper media.** Varian `thumbnail`/`card`/`hero` dibuat saat upload. Wajib `loading="lazy"`, `width`, dan `height` untuk mencegah layout shift. Kolom `alt` wajib terisi di tabel media. Situs publik tidak pernah meminta file asli.
 
 ## Struktur repo
@@ -292,13 +296,29 @@ Dua peran, dikelola `spatie/laravel-permission`. Definisinya di `app/Enums/Peran
 
 `super-admin` sengaja **tidak** diberi daftar izin eksplisit. Ia melewati seluruh pemeriksaan lewat `Gate::before` di `AppServiceProvider`. Memberinya daftar izin justru menciptakan dua sumber kebenaran yang akan berbeda begitu ada izin baru ditambahkan.
 
-Akun dibuat hanya lewat perintah interaktif — tidak ada kata sandi bawaan di seeder, karena apa pun yang punya kata sandi bawaan akan bocor cepat atau lambat:
+Akun pertama dibuat lewat perintah — tidak ada kata sandi bawaan di seeder, karena apa pun yang punya kata sandi bawaan akan bocor cepat atau lambat. Setelahnya, akun dikelola super admin di `/admin/pengguna`.
 
 ```bash
-php artisan pengguna:buat
+php artisan pengguna:buat                       # akun pertama
+php artisan pengguna:sandi email@sekolah.sch.id # pemulihan darurat
 ```
 
-Menghapus akun sendiri sengaja tidak disediakan: admin sekolah yang salah pencet bisa mengunci dirinya keluar, dan tidak ada tim IT yang siaga memulihkannya.
+Keduanya berjalan interaktif di terminal, dan non-interaktif lewat SSH dengan `--nama/--email/--peran` plus variabel `ADMIN_PASSWORD`. Kata sandi tidak pernah diterima sebagai argumen: argumen tersimpan di riwayat shell dan terlihat di daftar proses oleh pengguna lain di server yang sama.
+
+### Lupa kata sandi
+
+**Tidak ada penyedia identitas luar, dan tidak butuh SMTP** (alasannya di ADR-13 `PRD-SMA.md`).
+
+| Yang terkunci | Jalur pemulihan |
+|---|---|
+| Staf sekolah | Super admin membuka `/admin/pengguna`, mengisi kata sandi baru, lalu menyampaikannya langsung |
+| Super admin | `php artisan pengguna:sandi <email>` lewat SSH |
+
+Tiga penjaga yang tidak boleh dilepas:
+
+- Menghapus akun sendiri ditolak — admin yang salah pencet bisa mengunci dirinya keluar, dan tidak ada tim IT yang siaga.
+- Super admin terakhir tidak bisa diturunkan atau dihapus — hasilnya tidak ada lagi yang bisa mengelola akun.
+- `pengguna:sandi` menghapus `remember_token`. Kalau kata sandi diganti karena diduga bocor, membiarkan sesi lama hidup membuat penggantian itu sia-sia.
 
 ## Konvensi admin
 
