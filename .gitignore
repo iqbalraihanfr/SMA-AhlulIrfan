@@ -1,0 +1,52 @@
+# === DATA PRIBADI — JANGAN HAPUS ATURAN DI BAWAH INI ===
+# Naskah sumber dari sekolah (WEBSITE.docx) memuat NUPTK 13 orang.
+# NUPTK adalah identitas kependudukan dan dilarang masuk repo ini
+# (lihat Aturan Privasi di AGENTS-SMA.md dan ADR-8 di PRD-SMA.md).
+# Naskahnya sudah ditranskrip TANPA NUPTK ke docs/KONTEN-SEKOLAH.md — pakai itu.
+# Sekali file ini ter-commit lalu ter-push, NUPTK praktis tidak bisa ditarik lagi.
+*.docx
+*.doc
+*.xlsx
+*.xls
+/naskah/
+
+# === Laravel ===
+/vendor
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+.env
+.env.backup
+.env.production
+.phpactor.json
+auth.json
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+/.phpunit.cache
+.phpunit.result.cache
+
+*.log
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+/public/fonts-manifest.dev.json
+/.codex
+/.cursor/
+/.nova
+/.zed
+
+# CATATAN: /public/build SENGAJA TIDAK diabaikan (Laravel mengabaikannya secara
+# bawaan — baris itu dihapus dengan sadar). Server produksi tidak menjalankan Node,
+# jadi aset hasil build harus ikut di-commit. Lihat bagian Deploy di AGENTS-SMA.md.
+
+# === macOS ===
+.DS_Store

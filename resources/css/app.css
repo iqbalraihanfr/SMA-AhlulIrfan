@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+@source "../views";
+@source "../../app";
+
+/*
+| SATU-SATUNYA SUMBER KEBENARAN VISUAL.
+|
+| Pola dua lapis, sama seperti situs pesantren:
+|   :root   → palet mentah (nilai hex)
+|   @theme  → peran semantik (yang dirujuk komponen)
+|
+| ATURAN TOKEN: komponen dan halaman HANYA boleh memakai nama semantik.
+| Tidak ada hex, tidak ada kelas palet Tailwind (bg-blue-800), tidak ada
+| nilai arbitrer (bg-[#0d4a5c]) di luar berkas ini.
+|
+| Saat grand design tiba: ganti NILAI di :root saja. Jangan ubah nama token,
+| jangan "sekalian merapikan". Lalu ulangi pengecekan kontras di bawah.
+*/
+
+:root {
+    /* --- palet mentah --- */
+    --teal-800: #0d4a5c;   /* biru-teal dalam: terbaca "sekolah", beda dari hijau pesantren */
+    --teal-900: #08303c;
+    --amber-700: #a8560a;  /* satu-satunya warna hangat, khusus CTA */
+
+    --zinc-50: #fafafa;
+    --zinc-100: #f4f4f5;
+    --zinc-200: #e4e4e7;
+    --zinc-400: #a1a1aa;
+    --zinc-600: #52525b;
+    --ink-800: #111111;
+    --ink-900: #0a0a0a;
+
+    /* --- peran semantik --- */
+    --brand: var(--teal-800);
+    --brand-strong: var(--teal-900);
+    --on-brand: #ffffff;
+
+    --highlight: var(--amber-700);
+    --on-highlight: #ffffff;
+
+    --paper: #ffffff;
+    --paper-raised: var(--zinc-50);
+    --paper-sunken: var(--zinc-100);
+
+    --ink: var(--ink-800);
+    --ink-deep: var(--ink-900);
+    --ink-muted: var(--zinc-600);
+    --ink-faint: var(--zinc-400);
+
+    --line: var(--zinc-200);
+
+    /* Status formulir. Dipakai pesan validasi dan notifikasi admin. */
+    --danger: #b42318;
+    --success: #15803d;
+
+    /*
+    | Kontras terhadap latar putih (terverifikasi, bukan perkiraan):
+    |   brand       9,8:1  ✅ AA
+    |   ink         18,9:1 ✅ AAA
+    |   ink-muted   7,7:1  ✅ AA
+    |   putih di atas highlight  5,3:1 ✅ AA
+    |   ink-faint   2,6:1  ❌ BUKAN untuk teks — hanya pemisah,
+    |                         placeholder, dan keadaan nonaktif.
+    */
+}
+
+@theme {
+    --color-brand: var(--brand);
+    --color-brand-strong: var(--brand-strong);
+    --color-on-brand: var(--on-brand);
+
+    --color-highlight: var(--highlight);
+    --color-on-highlight: var(--on-highlight);
+
+    --color-paper: var(--paper);
+    --color-paper-raised: var(--paper-raised);
+    --color-paper-sunken: var(--paper-sunken);
+
+    --color-ink: var(--ink);
+    --color-ink-deep: var(--ink-deep);
+    --color-ink-muted: var(--ink-muted);
+    --color-ink-faint: var(--ink-faint);
+
+    --color-line: var(--line);
+
+    --color-danger: var(--danger);
+    --color-success: var(--success);
+
+    --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-heading: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
+
+    --radius-sm: 0.375rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1.25rem;
+
+    --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08);
+
+    --ease-reveal: cubic-bezier(0.25, 0.4, 0.25, 1);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+    body {
+        background-color: var(--color-paper);
+        color: var(--color-ink);
+    }
+
+    /* Fokus keyboard wajib terlihat — lihat Bagian 9 PRD. */
+    :focus-visible {
+        outline: 2px solid var(--color-brand);
+        outline-offset: 2px;
+    }
+
+    /* Hormati prefers-reduced-motion tanpa kecuali. */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+}
