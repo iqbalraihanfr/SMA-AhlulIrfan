@@ -9,11 +9,12 @@ use App\Models\Ekstrakurikuler;
 use App\Models\Guru;
 use App\Models\KontenHalaman;
 use App\Models\PengaturanSitus;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class DasborController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke(): Response
     {
         $situs = PengaturanSitus::ambil();
 
@@ -47,7 +48,7 @@ class DasborController extends Controller
             ],
         ];
 
-        return view('admin.dasbor', [
+        return Inertia::render('Dasbor', [
             'jumlah' => [
                 'berita' => Berita::count(),
                 'beritaTerbit' => Berita::terbit()->count(),

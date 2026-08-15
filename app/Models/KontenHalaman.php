@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+/**
+ * @property int $id
+ * @property string $kunci
+ * @property string $judul
+ * @property string|null $isi
+ * @property bool $terbit
+ */
 class KontenHalaman extends Model implements HasMedia
 {
     use HasFactory;

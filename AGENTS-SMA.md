@@ -31,6 +31,14 @@ spatie/laravel-backup 10.3         backup terjadwal ke penyimpanan luar
 barryvdh/laravel-debugbar 4.4      dev — pemantauan query, memori, waktu render
 barryvdh/laravel-ide-helper 3.7    dev — autocomplete model di editor
 laravel/pint                       formatter bawaan
+larastan/larastan 3.10             dev — analisis statis PHPStan level 5
+
+--- khusus panel admin ---
+inertiajs/inertia-laravel 3.3      jembatan Laravel ↔ React
+@inertiajs/react 3.6 + React 19.2  panel admin
+tightenco/ziggy 2.6                rute Laravel dapat dipanggil dari React
+@tiptap/react 3.30                 editor teks kaya
+TypeScript 5                       strict
 ```
 
 **PHP lokal.** Mesin ini punya PHP 8.5.9 dari Homebrew, tapi target produksi 8.4.1. Karena itu `composer.json` mengunci `config.platform.php = 8.4.1` — Composer menolak paket yang menuntut lebih dari itu, sehingga resolusi dependensi mengikuti produksi tanpa perlu memasang runtime kedua. Jalankan artisan lewat PHP MAMP:
@@ -75,7 +83,9 @@ php artisan migrate --seed
 php artisan migrate:fresh --seed  # reset dev
 php artisan pengguna:buat         # membuat akun pengelola (satu-satunya cara)
 php artisan test
-./vendor/bin/pint                 # format — wajib sebelum commit
+./vendor/bin/pint                 # format PHP — wajib sebelum commit
+./vendor/bin/phpstan analyse      # analisis statis — wajib bersih
+./node_modules/.bin/tsc --noEmit  # cek tipe TypeScript panel admin
 npm run build                     # WAJIB lolos sebelum task dianggap selesai
 ```
 
@@ -115,7 +125,17 @@ alias pa='/Applications/MAMP/bin/php/php8.4.1/bin/php artisan'
 
 8. **Tidak ada dependency baru tanpa bertanya.** Yang sudah disetujui ada di daftar Stack. Jangan pernah menulis sendiri autentikasi, penanganan upload, atau validasi — Laravel sudah menyediakannya.
 
-9. **Blade server-rendered secara default.** JavaScript hanya untuk lightbox galeri, navigasi mobile, dan editor admin. Tidak ada SPA, tidak ada state management.
+9. **DUA LAPIS RENDER, DAN BATASNYA MUTLAK.**
+
+   | Lapisan | Teknologi | Alasan |
+   |---|---|---|
+   | Situs publik (`/`, `/profil`, `/berita`, …) | **Blade server-rendered**, JavaScript hanya Alpine untuk nav mobile dan lightbox | Audiensnya orang tua di ponsel dengan kuota terbatas. Halaman tanpa React itu keunggulan, bukan keterbatasan |
+   | Panel admin (`/admin/*`) | **Inertia + React + TypeScript** | Pemakainya segelintir staf di laptop, di balik login, dan tidak diindeks mesin pencari |
+   | Halaman auth (`/login`, reset password) | **Blade** | Milik Breeze, hanya dua formulir, di luar "aplikasi" admin |
+
+   **Jangan pernah memasang middleware `inertia` secara global.** Ia hanya terpasang pada grup rute admin di `routes/web.php`. Memasangnya di seluruh web akan menyuntikkan payload JSON dan aset React ke halaman publik yang justru dirancang tanpa JavaScript.
+
+   Entry Vite juga sengaja dua: `resources/js/app.js` (publik, Alpine ±46KB) dan `resources/js/admin.tsx` (admin, React + TipTap ±720KB). Pengunjung situs publik tidak boleh ikut mengunduh React. Kalau menambah dependensi berat, pastikan ia masuk entry admin.
 
 10. **Setiap gambar lewat helper media.** Varian `thumbnail`/`card`/`hero` dibuat saat upload. Wajib `loading="lazy"`, `width`, dan `height` untuk mencegah layout shift. Kolom `alt` wajib terisi di tabel media. Situs publik tidak pernah meminta file asli.
 
@@ -133,15 +153,23 @@ database/
 resources/
   css/app.css                 # @theme — satu-satunya sumber kebenaran visual
   js/
+    app.js                    # entry SITUS PUBLIK — Alpine saja, tanpa React
+    admin.tsx                 # entry PANEL ADMIN — Inertia + React
+    types.d.ts                # tipe props bersama dari HandleInertiaRequests
+    Layouts/Layout.tsx        # kerangka panel admin
+    Components/               # Ui.tsx (primitif), EditorTeks.tsx (TipTap)
+    Pages/                    # dipetakan dari Inertia::render('Berita/Index')
   views/
-    layouts/                  # app.blade.php (publik), admin.blade.php
-    components/ui/            # tombol, kartu, badge, judul-section, statistik
-    components/sections/      # hero, sambutan, kurikulum, ekstrakurikuler, guru, berita, galeri, cta
-    pages/                    # beranda, profil, kurikulum, guru, ekstrakurikuler, berita, galeri, kontak
-    admin/
+    inertia.blade.php         # root view panel admin
+    layouts/                  # guest.blade.php (auth), app.blade.php (halaman akun)
+    components/layout/        # situs, navbar, footer — publik
+    components/ui/            # primitif Blade publik
+    pages/                    # beranda, profil, struktur, guru, ekstrakurikuler, prosa, berita/, galeri/, kontak
 routes/web.php
 public/branding/
 ```
+
+Nama berkas di `resources/js/Pages/` menentukan argumen `Inertia::render()`. `Inertia::render('Berita/Form')` memuat `resources/js/Pages/Berita/Form.tsx` — huruf besar-kecil berpengaruh.
 
 ## Route
 
@@ -328,7 +356,8 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 ## Definisi selesai
 
-- [ ] `npm run build`, `php artisan test`, dan `./vendor/bin/pint` lolos
+- [ ] `npm run build`, `php artisan test`, `./vendor/bin/pint`, `./vendor/bin/phpstan analyse`, dan `tsc --noEmit` semuanya lolos
+- [ ] Aturan Token berlaku juga di TSX: tidak ada hex di `resources/js/` — warna dibaca dari variabel CSS
 - [ ] `php artisan migrate:fresh --seed` jalan bersih di SQLite
 - [ ] `grep -rniE '\b(nuptk|nik)\b' app/ resources/ database/` tidak mengembalikan apa pun
 - [ ] Dicek di 390px dan 1280px; admin dicek di lebar laptop

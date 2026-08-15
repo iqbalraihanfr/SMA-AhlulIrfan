@@ -1,0 +1,20 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - database
+        - routes
+        - tests
+
+    # Level 5 adalah titik jujur untuk proyek sprint: menangkap salah ketik
+    # properti, tipe argumen keliru, dan pemanggilan metode yang tidak ada,
+    # tanpa menuntut anotasi generic di setiap koleksi. Naikkan bertahap
+    # setelah rilis, jangan sekarang.
+    level: 5
+
+    # Tanpa ignoreErrors, dan memang tidak perlu. Kalau kelak muncul error
+    # magic property, perbaiki dengan menambah anotasi @property di model —
+    # jangan tambahkan pengecualian di sini. Anotasi itu sekaligus memperbaiki
+    # autocomplete editor, pengecualian tidak memperbaiki apa pun.

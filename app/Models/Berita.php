@@ -7,11 +7,22 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @property int $id
+ * @property string $judul
+ * @property string $slug
+ * @property string|null $ringkasan
+ * @property string $isi
+ * @property StatusBerita $status
+ * @property Carbon|null $diterbitkan_pada
+ * @property int|null $penulis_id
+ */
 class Berita extends Model implements HasMedia
 {
     use HasFactory;
@@ -48,9 +59,9 @@ class Berita extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumbnail')->fit(Fit::Crop, 320, 200)->nonQueued();
-        $this->addMediaConversion('card')->fit(Fit::Crop, 800, 500)->nonQueued();
-        $this->addMediaConversion('hero')->fit(Fit::Max, 1600, 1000)->nonQueued();
+        $this->addMediaConversion('thumbnail')->nonQueued()->fit(Fit::Crop, 320, 200);
+        $this->addMediaConversion('card')->nonQueued()->fit(Fit::Crop, 800, 500);
+        $this->addMediaConversion('hero')->nonQueued()->fit(Fit::Max, 1600, 1000);
     }
 
     /**

@@ -12,7 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Str;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class BeritaController extends Controller implements HasMiddleware
 {
@@ -25,7 +26,7 @@ class BeritaController extends Controller implements HasMiddleware
         return [new Middleware('can:'.Izin::KelolaBerita->value)];
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $daftar = Berita::query()
             ->when($request->string('cari')->trim()->value(), fn ($q, $cari) => $q->where('judul', 'like', "%{$cari}%"))
@@ -34,12 +35,32 @@ class BeritaController extends Controller implements HasMiddleware
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.berita.index', ['daftar' => $daftar]);
+        return Inertia::render('Berita/Index', [
+            'daftar' => $daftar->through(fn (Berita $b) => [
+                'id' => $b->id,
+                'judul' => $b->judul,
+                'slug' => $b->slug,
+                'status' => $b->status->value,
+                'statusLabel' => $b->status->label(),
+                'diterbitkanPada' => $b->diterbitkan_pada?->translatedFormat('j M Y'),
+                'urlUbah' => route('admin.berita.edit', $b),
+                'urlHapus' => route('admin.berita.destroy', $b),
+            ]),
+            'filter' => [
+                'cari' => $request->string('cari')->value(),
+                'status' => $request->string('status')->value(),
+            ],
+            'pilihanStatus' => $this->pilihanStatus(),
+        ]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view('admin.berita.form', ['berita' => new Berita(['status' => StatusBerita::Draft])]);
+        return Inertia::render('Berita/Form', [
+            'berita' => null,
+            'pilihanStatus' => $this->pilihanStatus(),
+            'aksi' => route('admin.berita.store'),
+        ]);
     }
 
     public function store(BeritaRequest $request): RedirectResponse
@@ -51,9 +72,36 @@ class BeritaController extends Controller implements HasMiddleware
         return to_route('admin.berita.index')->with('sukses', 'Berita berhasil dibuat.');
     }
 
-    public function edit(Berita $berita): View
+    public function edit(Berita $berita): Response
     {
-        return view('admin.berita.form', ['berita' => $berita]);
+        $sampul = $berita->getFirstMedia('sampul');
+
+        return Inertia::render('Berita/Form', [
+            'berita' => [
+                'id' => $berita->id,
+                'judul' => $berita->judul,
+                'slug' => $berita->slug,
+                'ringkasan' => $berita->ringkasan,
+                'isi' => $berita->isi,
+                'status' => $berita->status->value,
+                // Format datetime-local, bukan ISO penuh — input HTML menolak
+                // nilai yang membawa zona waktu.
+                'diterbitkanPada' => $berita->diterbitkan_pada?->format('Y-m-d\TH:i'),
+                'sampulUrl' => $sampul?->getUrl('card'),
+                'sampulAlt' => $sampul?->getCustomProperty('alt'),
+            ],
+            'pilihanStatus' => $this->pilihanStatus(),
+            'aksi' => route('admin.berita.update', $berita),
+        ]);
+    }
+
+    /** @return array<int, array{value: string, label: string}> */
+    private function pilihanStatus(): array
+    {
+        return array_map(
+            fn (StatusBerita $s) => ['value' => $s->value, 'label' => $s->label()],
+            StatusBerita::cases()
+        );
     }
 
     public function update(BeritaRequest $request, Berita $berita): RedirectResponse

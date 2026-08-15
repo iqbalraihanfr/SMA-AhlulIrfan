@@ -1,12 +1,60 @@
 {
+  "_Ui-BqnpIUWu.js": {
+    "file": "assets/Ui-BqnpIUWu.js",
+    "name": "Ui",
+    "imports": [
+      "resources/js/admin.tsx"
+    ]
+  },
   "resources/css/app.css": {
-    "file": "assets/app-FPOC0QrJ.css",
+    "file": "assets/app-C_VaxVUz.css",
     "name": "app",
     "names": [
       "app.css"
     ],
     "src": "resources/css/app.css",
     "isEntry": true
+  },
+  "resources/js/Pages/Berita/Form.tsx": {
+    "file": "assets/Form-DMUW3Mko.js",
+    "name": "Form",
+    "src": "resources/js/Pages/Berita/Form.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/admin.tsx",
+      "_Ui-BqnpIUWu.js"
+    ]
+  },
+  "resources/js/Pages/Berita/Index.tsx": {
+    "file": "assets/Index-B6JAQKY5.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Berita/Index.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/admin.tsx",
+      "_Ui-BqnpIUWu.js"
+    ]
+  },
+  "resources/js/Pages/Dasbor.tsx": {
+    "file": "assets/Dasbor-CKagvs4y.js",
+    "name": "Dasbor",
+    "src": "resources/js/Pages/Dasbor.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/admin.tsx",
+      "_Ui-BqnpIUWu.js"
+    ]
+  },
+  "resources/js/admin.tsx": {
+    "file": "assets/admin-Ca0PjDW2.js",
+    "name": "admin",
+    "src": "resources/js/admin.tsx",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/Pages/Berita/Form.tsx",
+      "resources/js/Pages/Berita/Index.tsx",
+      "resources/js/Pages/Dasbor.tsx"
+    ]
   },
   "resources/js/app.js": {
     "file": "assets/app-Cna13UPV.js",

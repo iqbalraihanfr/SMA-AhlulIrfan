@@ -10,6 +10,13 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @property int $id
+ * @property string $judul
+ * @property string $slug
+ * @property string|null $deskripsi
+ * @property int $urutan
+ */
 class Album extends Model implements HasMedia
 {
     use HasFactory;
@@ -33,9 +40,9 @@ class Album extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumbnail')->fit(Fit::Crop, 320, 320)->nonQueued();
-        $this->addMediaConversion('card')->fit(Fit::Crop, 800, 600)->nonQueued();
-        $this->addMediaConversion('hero')->fit(Fit::Max, 1600, 1200)->nonQueued();
+        $this->addMediaConversion('thumbnail')->nonQueued()->fit(Fit::Crop, 320, 320);
+        $this->addMediaConversion('card')->nonQueued()->fit(Fit::Crop, 800, 600);
+        $this->addMediaConversion('hero')->nonQueued()->fit(Fit::Max, 1600, 1200);
     }
 
     public function scopeUrut(Builder $q): Builder

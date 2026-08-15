@@ -10,6 +10,15 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @property int $id
+ * @property string $nama
+ * @property string $slug
+ * @property string|null $deskripsi
+ * @property string|null $pembina
+ * @property string|null $jadwal
+ * @property int $urutan
+ */
 class Ekstrakurikuler extends Model implements HasMedia
 {
     use HasFactory;
@@ -31,7 +40,7 @@ class Ekstrakurikuler extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('card')->fit(Fit::Crop, 800, 500)->nonQueued();
+        $this->addMediaConversion('card')->nonQueued()->fit(Fit::Crop, 800, 500);
     }
 
     public function scopeUrut(Builder $q): Builder

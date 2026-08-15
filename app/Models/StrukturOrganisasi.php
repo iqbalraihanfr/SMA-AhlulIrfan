@@ -9,6 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
+/**
+ * @property int $id
+ * @property string $label
+ * @property int|null $guru_id
+ * @property int|null $atasan_id
+ * @property TipeSimpul $tipe
+ * @property string|null $nama_luar
+ * @property int $baris
+ * @property int $urutan
+ * @property-read Guru|null $guru
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, self> $bawahan
+ */
 class StrukturOrganisasi extends Model
 {
     use HasFactory;
@@ -55,7 +67,7 @@ class StrukturOrganisasi extends Model
      */
     public function namaTampil(): ?string
     {
-        return $this->guru?->nama ?? $this->nama_luar;
+        return $this->guru->nama ?? $this->nama_luar;
     }
 
     /** Bawahan yang digambar di bawah, tidak termasuk penasihat di samping. */

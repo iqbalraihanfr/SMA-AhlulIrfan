@@ -16,6 +16,16 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * ATURAN PRIVASI: model ini tidak boleh punya atribut NUPTK, NIK, atau
  * identitas kependudukan apa pun. Lihat AGENTS-SMA.md.
  */
+/**
+ * @property int $id
+ * @property string $nama
+ * @property KategoriGuru $kategori
+ * @property string|null $jenis_kelamin
+ * @property string|null $jabatan
+ * @property string|null $mata_pelajaran
+ * @property int $urutan
+ * @property bool $aktif
+ */
 class Guru extends Model implements HasMedia
 {
     use HasFactory;
@@ -42,8 +52,8 @@ class Guru extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumbnail')->fit(Fit::Crop, 320, 320)->nonQueued();
-        $this->addMediaConversion('card')->fit(Fit::Crop, 800, 800)->nonQueued();
+        $this->addMediaConversion('thumbnail')->nonQueued()->fit(Fit::Crop, 320, 320);
+        $this->addMediaConversion('card')->nonQueued()->fit(Fit::Crop, 800, 800);
     }
 
     public function scopeAktif(Builder $q): Builder

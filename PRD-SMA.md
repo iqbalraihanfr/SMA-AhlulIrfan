@@ -175,6 +175,14 @@ Gagasan awal "turunkan bagan dari tabel `guru` lewat kolom `atasan_id`" **ditola
 
 Solusinya tabel `struktur_organisasi` tersendiri dengan `guru_id` opsional: simpul yang merujuk pegawai nyata mengambil namanya dari tabel `guru` lewat relasi, simpul kelompok dan Komite berdiri dengan label sendiri. Nama tetap punya satu sumber kebenaran, tapi bentuk bagan bebas berbeda dari daftar kepegawaian.
 
+**ADR-11 — Panel admin memakai Inertia + React; situs publik tetap Blade.**
+Diambil atas permintaan pemilik proyek untuk nilai belajar dan portofolio, dengan konsekuensi yang disadari: dua paradigma render permanen dalam satu repo, dan penerus proyek harus paham keduanya. Batasnya dijaga ketat — middleware `inertia` hanya dipasang pada grup rute admin, dan entry Vite dipisah agar pengunjung situs publik tidak ikut mengunduh React (±46KB Alpine untuk publik, ±720KB React+TipTap untuk admin).
+
+Keputusan ini membuka kembali reuse yang sebelumnya ditutup di ADR-5: editor TipTap situs pesantren kini bisa diadaptasi, walau ditulis ulang tanpa shadcn, lucide, dan dialog media Supabase yang tidak ada di sini.
+
+**ADR-12 — `larastan` dipasang sejak awal, bukan setelah rilis.**
+Pada pemasangan pertama ia langsung menemukan enam kesalahan tipe nyata di model — di antaranya perbandingan enum yang selalu bernilai salah — yang tidak terdeteksi 36 test karena jalur kodenya belum pernah dieksekusi. Level 5 dipilih sebagai titik jujur untuk proyek sprint. Naikkan bertahap setelah rilis.
+
 **ADR-9 — `spatie/laravel-medialibrary` menggantikan tabel media buatan sendiri.**
 Rencana awal memakai `intervention/image` dengan tabel `media` yang ditulis tangan. Diganti setelah menghitung ulang: medialibrary menangani unggah, varian ukuran, dan penyimpanan sekaligus, sehingga memenuhi Aturan #8 (jangan pernah menulis sendiri penanganan upload) dan memangkas sekitar empat jam kerja admin. Konversi berjalan sinkron karena shared hosting tidak punya daemon queue — cukup untuk situs sekecil ini.
 

@@ -48,7 +48,18 @@ Route::get('/kontak', [KontakController::class, 'index'])->name('kontak');
 | Rute dasbor sengaja diberi nama `dashboard` karena controller bawaan Breeze
 | mengarahkan ke nama itu setelah login dan setelah konfirmasi kata sandi.
 */
-Route::middleware('auth')->group(function () {
+/*
+| Panel admin — Inertia + React.
+|
+| Middleware `inertia` SENGAJA hanya dipasang di sini, bukan global. Situs
+| publik harus tetap Blade murni: memasang Inertia di seluruh web akan
+| menyisipkan payload JSON dan aset React ke halaman yang justru dirancang
+| tanpa JavaScript demi pengunjung berkuota terbatas.
+|
+| Halaman auth (login, reset password) juga tetap Blade — milik Breeze,
+| cuma dua formulir, dan berada di luar "aplikasi" admin.
+*/
+Route::middleware(['auth', 'inertia'])->group(function () {
     Route::get('/admin', DasborController::class)->name('dashboard');
 
     Route::prefix('admin')->name('admin.')->group(function () {
@@ -56,7 +67,9 @@ Route::middleware('auth')->group(function () {
             ->except('show')
             ->parameters(['berita' => 'berita']);
     });
+});
 
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
