@@ -388,6 +388,9 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 - [ ] `git ls-files | grep -iE '\.(docx?|xlsx?)$'` tidak mengembalikan apa pun
 - [ ] `grep -rE '[0-9]{16}' docs/ database/` tidak mengembalikan apa pun — NUPTK panjangnya 16 digit, ini menangkap yang terbawa walau labelnya sudah dihapus
 - [ ] Halaman yang naskahnya belum ada tidak muncul di navigasi maupun sitemap
+- [ ] **`CHANGELOG.md` ditambah entri baru** — apa yang berubah, apa yang diperbaiki beserta gejalanya, apa yang diputuskan beserta alasannya, apa yang sengaja tidak dikerjakan, dan hasil verifikasi. Formatnya ada di berkas itu
+
+> Kenapa CHANGELOG wajib: situs ini akan diwariskan ke orang yang tidak mengikuti pengerjaannya. Riwayat git menyimpan *apa* yang berubah; `CHANGELOG.md` menyimpan **kenapa** — dan "kenapa" itulah yang hilang duluan. Termasuk mencatat yang sengaja TIDAK dikerjakan, supaya orang berikutnya tidak menemukan alasan yang sama dengan susah payah.
 
 > Batas kata `\b` pada perintah grep itu penting: tanpa itu, `nik` cocok dengan `teknik`, `klinik`, dan `unik` — yang pasti ada di situs sekolah Indonesia, sehingga checklist mustahil hijau.
 
