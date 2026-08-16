@@ -8,7 +8,12 @@
 *.doc
 *.xlsx
 *.xls
-/naskah/
+
+# Tempat menaruh bahan mentah dari sekolah: naskah, foto, scan dokumen.
+# Isinya TIDAK ikut git (berkas besar, dan foto siswa punya soal izin),
+# tapi petunjuknya ikut supaya orang berikutnya tahu harus menaruh di mana.
+/naskah/*
+!/naskah/README.md
 
 # === Laravel ===
 /vendor

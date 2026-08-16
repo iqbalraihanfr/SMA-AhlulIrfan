@@ -108,6 +108,19 @@
         color: var(--color-ink);
     }
 
+    /*
+    | WAJIB ADA. `x-cloak` hanyalah atribut kosong — Alpine hanya menghapusnya,
+    | yang menyembunyikan adalah aturan CSS ini.
+    |
+    | Tanpa ini, seluruh dropdown navbar dan menu mobile tampil TERBUKA sejak
+    | halaman pertama dicat sampai Alpine selesai boot. Aset dimuat sebagai
+    | modul (defer), jadi di 3G Indonesia jeda itu ratusan milidetik — cukup
+    | untuk terlihat, dan memicu pergeseran tata letak (CLS).
+    */
+    [x-cloak] {
+        display: none !important;
+    }
+
     /* Fokus keyboard wajib terlihat — lihat Bagian 9 PRD. */
     :focus-visible {
         outline: 2px solid var(--color-brand);

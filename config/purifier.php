@@ -24,12 +24,44 @@ return [
     'cachePath' => storage_path('app/purifier'),
     'cacheFileMode' => 0755,
     'settings' => [
+        /*
+        | Daftar putih HTML untuk isi berita dan halaman prosa.
+        |
+        | Bawaan paket mengizinkan p[style] dan span[style] tapi TIDAK
+        | mengizinkan heading maupun blockquote. Akibatnya editor TipTap
+        | berbohong kepada admin: tombol "Sub-judul" dan "Kutipan" tampak
+        | bekerja di editor, lalu diam-diam jadi paragraf biasa di situs.
+        | Kelas `arab` untuk basmalah pun ikut hilang.
+        |
+        | Perubahan di sini:
+        | - h2/h3/h4 dan blockquote diizinkan — halaman terpanjang di situs
+        |   (Profil, Kurikulum, Tata Tertib) butuh struktur heading, baik untuk
+        |   pembaca layar maupun mesin pencari.
+        | - figure/figcaption diizinkan agar gambar di dalam artikel bisa
+        |   membawa keterangan yang menempel pada gambarnya.
+        | - `style` DIBUANG total. Menempel dari Word membawa warna dan font
+        |   sembarangan yang melanggar Aturan Token. Yang menentukan tampilan
+        |   adalah token, bukan isi yang ditempel admin.
+        | - `class` dibatasi hanya nilai `arab` lewat Attr.AllowedClasses,
+        |   sehingga admin tidak bisa menyuntik kelas Tailwind sembarangan.
+        |
+        | Setelah mengubah daftar ini, kosongkan cache: storage/app/purifier/
+        */
         'default' => [
             'HTML.Doctype' => 'HTML 4.01 Transitional',
-            'HTML.Allowed' => 'div,b,strong,i,em,u,a[href|title],ul,ol,li,p[style],br,span[style],img[width|height|alt|src]',
-            'CSS.AllowedProperties' => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align',
+            'HTML.Allowed' => 'p[class],br,b,strong,i,em,u,'
+                .'h2,h3,h4,blockquote,'
+                .'ul,ol,li,'
+                .'a[href|title],'
+                .'img[src|alt|width|height],figure,figcaption,'
+                .'span[class|lang|dir],div',
+            'Attr.AllowedClasses' => 'arab',
             'AutoFormat.AutoParagraph' => true,
             'AutoFormat.RemoveEmpty' => true,
+            // Tautan keluar tidak boleh membawa referer dan tidak boleh
+            // mendapat akses window.opener.
+            'HTML.TargetBlank' => true,
+            'HTML.Nofollow' => false,
         ],
         'test' => [
             'Attr.EnableID' => 'true',
