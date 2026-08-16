@@ -55,3 +55,10 @@ _ide_helper_models.php
 
 # === macOS ===
 .DS_Store
+
+# Database SQLite untuk pengembangan lokal.
+# Bukan sumber kode: isinya berubah tiap `migrate:fresh` sehingga mengotori
+# tiap diff, dan kalau kelak ada data nyata masuk ke DB lokal ia akan ikut
+# ter-commit. Buat ulang dengan `touch database/database.sqlite && pa migrate --seed`.
+/database/*.sqlite
+/database/*.sqlite-journal
