@@ -18,17 +18,9 @@ Fakta ini membentuk hampir semua keputusan teknis: yang mewarisi bukan pengemban
 
 ## 2. Keadaan sekarang
 
-5 commit, **semuanya masih lokal — belum pernah di-push**. Remote `origin/main` masih kosong.
-
-```
-80877ca fix(konten): purifier tidak lagi membuang heading, kutipan, dan kelas arab
-fca5158 feat(admin): panel lengkap 9 bagian, kerangka sidebar, pemulihan sandi tanpa SMTP
-332d9d8 fix(cli): pengguna:buat dapat dijalankan tanpa TTY dan saat config di-cache
-9a8c05f feat(admin): panel admin jadi Inertia + React, tambah larastan dan editor TipTap
-ab23ace feat: situs profil SMA Ahlul Irfan — fondasi, situs publik, admin berita
-```
-
-**Push adalah pekerjaan nomor satu.** Semua kerja masih ada di satu laptop.
+Repo sudah terhubung dan sinkron lewat `origin/main`. Riwayat yang semula hanya
+berada di satu laptop telah dipublikasikan ke GitHub; perubahan berikutnya harus
+tetap didorong setelah seluruh gerbang mutu bersih.
 
 ### Sudah jalan dan teruji
 
@@ -36,7 +28,7 @@ ab23ace feat: situs profil SMA Ahlul Irfan — fondasi, situs publik, admin beri
 
 **Panel admin, 9 bagian:** Dasbor, Berita, Halaman, Guru & Tendik, Struktur Organisasi, Ekstrakurikuler, Galeri, Pengaturan Situs, Akun Pengguna.
 
-**Verifikasi:** 65 test lolos, phpstan level 5 nol error, tsc bersih, pint bersih.
+**Verifikasi:** 73 test lolos, phpstan level 5 nol error, tsc bersih, pint bersih.
 
 ### Menjalankan
 
@@ -119,12 +111,11 @@ Tiga arah desain pengganti sudah disusun, semuanya menjauh dari biru dan sudah d
 
 ## 6. Yang belum selesai, urut prioritas
 
+Pekerjaan lama nomor 1–4 (push awal, halaman error, `og:image`, dan SEO teknis)
+selesai pada 17 Agustus 2026. Rinciannya ada di `CHANGELOG.md`.
+
 | # | Pekerjaan | Kenapa | Perkiraan |
 |---|---|---|---|
-| 1 | **Push ke GitHub** | 5 commit masih di satu laptop | 5 menit |
-| 2 | Halaman error 404/403/500 | Sekarang halaman bawaan Laravel berbahasa Inggris | 1 jam |
-| 3 | `og:image` | Tautan di grup WA wali murid muncul tanpa gambar — itu kanal utama audiens | 1 jam |
-| 4 | `sitemap.xml`, `robots.txt`, JSON-LD `EducationalOrganization` | Google belum bisa mengenali ini sebagai sekolah. Tulis tangan, **jangan pasang paket** — rutenya cuma ~30 | 2 jam |
 | 5 | Audit keamanan, performa, maintainability | **Belum pernah dijalankan.** Percobaan sebelumnya gagal kena batas kuota | 3 jam |
 | 6 | Deploy ke BiznetGio | Lihat bagian Deploy di `AGENTS-SMA.md` | 3–4 jam |
 | 7 | Bagan organisasi bergaris penghubung | Diminta pemilik: sekarang hanya kotak tanpa garis, tidak terbaca sebagai hierarki. CSS murni, jangan paket JS | 3 jam |

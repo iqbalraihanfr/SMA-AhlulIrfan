@@ -1,6 +1,11 @@
-<x-layout.situs :judul="$berita->judul" :deskripsi="$berita->ringkasan">
+@php
+    $sampul = $berita->getFirstMedia('sampul');
+    $hero = $sampul?->getUrl('hero');
+    $altSampul = $sampul?->getCustomProperty('alt') ?? $berita->judul;
+@endphp
 
-    @php $hero = $berita->getFirstMediaUrl('sampul', 'hero'); @endphp
+<x-layout.situs :judul="$berita->judul" :deskripsi="$berita->ringkasan"
+    :gambar="$hero" :gambar-alt="$altSampul" tipe="article">
 
     <article class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <p class="text-sm">
@@ -21,7 +26,7 @@
 
         @if ($hero)
             <img src="{{ $hero }}"
-                 alt="{{ $berita->getFirstMedia('sampul')?->getCustomProperty('alt') ?? $berita->judul }}"
+                 alt="{{ $altSampul }}"
                  width="1600" height="1000"
                  class="mt-8 w-full rounded-lg object-cover">
         @endif

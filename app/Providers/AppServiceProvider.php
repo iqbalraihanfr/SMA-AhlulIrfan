@@ -23,10 +23,14 @@ class AppServiceProvider extends ServiceProvider
         // tersebut sengaja tidak diberi daftar izin eksplisit di PeranSeeder.
         Gate::before(fn (User $user) => $user->hasRole(Peran::SuperAdmin->value) ? true : null);
 
-        // Di balik proxy shared hosting, request bisa terdeteksi sebagai http
-        // sehingga aset dan tautan reset password memakai skema yang salah.
-        // APP_URL adalah sumber kebenaran; ikuti skemanya.
-        if (str_starts_with((string) config('app.url'), 'https://')) {
+        // APP_URL adalah satu-satunya sumber URL publik. Selain skema yang bisa
+        // salah di balik proxy shared hosting, Host request juga bisa berupa
+        // domain sementara. Keduanya tidak boleh mencemari canonical, sitemap,
+        // og:image, maupun tautan reset password.
+        $alamatAplikasi = (string) config('app.url');
+        URL::useOrigin($alamatAplikasi);
+
+        if (str_starts_with($alamatAplikasi, 'https://')) {
             URL::forceScheme('https');
         }
 

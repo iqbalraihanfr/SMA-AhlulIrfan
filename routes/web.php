@@ -14,6 +14,7 @@ use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\HalamanController;
 use App\Http\Controllers\KontakController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SeoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +26,9 @@ use Illuminate\Support\Facades\Route;
 | dan navbar tidak menampilkan tautannya — halaman setengah isi lebih merusak
 | kepercayaan calon orang tua daripada halaman yang belum ada.
 */
+
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
 Route::get('/', [HalamanController::class, 'beranda'])->name('beranda');
 

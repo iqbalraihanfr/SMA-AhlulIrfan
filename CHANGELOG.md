@@ -37,6 +37,90 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ---
 
+## 2026-08-17 — Halaman error dan fondasi SEO publik
+
+**Dikerjakan:** Codex
+
+### Berubah
+- Halaman 403, 404, dan 500 kini memakai tampilan sekolah berbahasa Indonesia,
+  responsif, dapat dinavigasi dengan keyboard, dan diberi `noindex`. Layout-nya
+  sengaja mandiri dari database supaya halaman 500 tetap dapat dirender ketika
+  sumber gangguan justru koneksi database.
+- Seluruh halaman publik kini mengirim `og:image`, `og:image:alt`, Open Graph
+  berbahasa Indonesia, dan Twitter large card. Sampul berita dan foto pertama
+  album diprioritaskan; hero situs dipakai bila tersedia; ilustrasi bawaan
+  1730×909 menjadi fallback agar instalasi baru tetap menghasilkan pratinjau
+  gambar di WhatsApp.
+- `sitemap.xml` memuat rute publik yang ditulis eksplisit, halaman prosa yang
+  sudah terbit, berita yang sudah terbit dan tidak terjadwal di masa depan,
+  serta album galeri. `robots.txt` kini dibentuk dari `APP_URL`, menunjuk sitemap,
+  dan menutup rute admin serta autentikasi dari perayap.
+- Setiap halaman publik kini memuat JSON-LD `EducationalOrganization` dari
+  pengaturan situs. Alamat, telepon, email, koordinat, logo, yayasan, dan media
+  sosial hanya ikut bila datanya memang tersedia; tidak ada fakta sekolah yang
+  ditebak di view.
+- `HANDOFF.md` diperbarui agar pekerjaan lama nomor 1–4 tidak dikerjakan ulang.
+
+### Diperbaiki
+- Cache Blade hasil kompilasi sebelumnya ikut dilacak Git. Gejalanya terbukti
+  saat test memuat layout SEO lama walaupun source Blade sudah berubah, karena
+  timestamp cache lebih baru daripada source. Seluruh cache terkompilasi
+  dihapus dari repo dan `storage/framework/views` kini diabaikan; produksi tetap
+  membangunnya ulang lewat `php artisan view:cache` saat deploy. Pemindaian
+  Tailwind juga dibatasi eksplisit ke source aplikasi agar hash dan ukuran CSS
+  tidak berubah mengikuti isi cache runtime.
+- Tautan situs sebelumnya tidak memiliki `og:image`, sehingga kanal utama
+  audiens—grup WhatsApp wali murid—tidak memperoleh pratinjau gambar.
+- Galat HTTP sebelumnya jatuh ke halaman bawaan Laravel berbahasa Inggris dan
+  tidak memiliki jalur kembali yang jelas.
+- `public/robots.txt` sebelumnya kosong secara semantik (`Disallow:` tanpa
+  sitemap), dan belum ada sitemap maupun structured data yang mengenalkan situs
+  sebagai lembaga pendidikan.
+- Generator URL sebelumnya masih dapat mengikuti `Host` request, sehingga
+  domain sementara atau konfigurasi proxy berisiko masuk ke canonical, sitemap,
+  dan `og:image`. Origin kini dipaksa mengikuti `APP_URL`, sesuai aturan deploy.
+- Konfigurasi Vite masih memakai `__dirname` yang tidak didukung calon default
+  native config loader. Alias admin kini memakai `import.meta.dirname`, sehingga
+  build tidak lagi mengeluarkan peringatan kompatibilitas tersebut.
+- Riwayat yang oleh handoff lama disebut hanya berada di satu laptop ternyata
+  sudah sinkron dengan `origin/main` pada awal pekerjaan; dokumentasinya
+  diluruskan sebelum perubahan baru didorong.
+
+### Diputuskan
+- Sitemap dan schema tetap ditulis tangan tanpa paket baru. Rute publiknya
+  sedikit, sudah diketahui, dan status terbit di database perlu menjadi gerbang
+  eksplisit—crawler paket akan menambah dependensi tanpa menyederhanakan aturan.
+- `robots.txt` dilayani Laravel, bukan berkas statis, karena URL sitemap harus
+  mengikuti `APP_URL` dan domain final belum ditentukan.
+- Structured data memakai pengaturan situs sebagai sumber kebenaran. Data yang
+  belum diberikan sekolah tidak dimasukkan, supaya markup mesin pencari tidak
+  mengubah placeholder menjadi klaim resmi.
+
+### Sengaja tidak dikerjakan
+- Arah warna baru tidak diterapkan karena pemilik belum memilih Hijau Santri,
+  Marun Akademik, atau Tembakau Jember. Halaman error memakai token semantik
+  yang ada sehingga akan ikut berubah tanpa refactor setelah pilihan dibuat.
+- Halaman Prestasi, Tata Tertib, Organisasi Siswa, dan E-Learning tetap tidak
+  masuk sitemap karena naskahnya belum terbit. Memiliki route bukan izin untuk
+  mengenalkannya ke mesin pencari.
+- Schema `Article` tidak ditambahkan karena pekerjaan ini meminta identitas
+  sekolah; prioritasnya satu blok `EducationalOrganization` yang akurat dan
+  mudah dirawat.
+
+### Verifikasi
+- 73 test lolos dengan 366 asersi, termasuk fallback/prioritas `og:image`,
+  parsing JSON-LD, filter sitemap, robots, serta render 403/404/500.
+- Pint bersih; PHPStan level 5 nol error (dijalankan dengan batas memori 512 MB
+  karena worker melewati batas lokal 128 MB); TypeScript `tsc --noEmit` bersih;
+  `vite build` berhasil.
+- Browser nyata memverifikasi 404 pada 390×844 dan 1280×800, metadata halaman
+  utama, JSON-LD yang dapat diurai, serta URL absolut untuk canonical dan
+  `og:image`. Pemeriksaan HTTP memastikan `robots.txt` dan `sitemap.xml` berstatus
+  200 dengan tipe konten yang benar, dan fallback gambar berstatus 200
+  `image/png`.
+
+---
+
 ## 2026-08-16 — Purifier membuang heading, dan draft handoff
 
 **Dikerjakan:** Claude Opus 5

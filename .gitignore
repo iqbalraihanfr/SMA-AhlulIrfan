@@ -22,6 +22,9 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/framework/testing/
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
 /bootstrap/cache/*
 !/bootstrap/cache/.gitkeep
 .env

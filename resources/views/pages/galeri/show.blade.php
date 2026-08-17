@@ -1,4 +1,12 @@
-<x-layout.situs :judul="$album->judul" :deskripsi="$album->deskripsi">
+@php
+    $foto = $album->getMedia('foto');
+    $sampul = $foto->first();
+    $gambarSosial = $sampul?->getUrl('hero');
+    $altGambarSosial = $sampul?->getCustomProperty('alt') ?? $album->judul;
+@endphp
+
+<x-layout.situs :judul="$album->judul" :deskripsi="$album->deskripsi"
+    :gambar="$gambarSosial" :gambar-alt="$altGambarSosial">
     <x-ui.page-hero :judul="$album->judul" :keterangan="$album->deskripsi" />
 
     <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -6,8 +14,6 @@
             <a href="{{ route('galeri.index') }}"
                class="text-brand underline-offset-4 hover:underline">&larr; Semua album</a>
         </p>
-
-        @php $foto = $album->getMedia('foto'); @endphp
 
         @if ($foto->isEmpty())
             <x-ui.empty-state class="mt-8" judul="Album ini belum berisi foto" />

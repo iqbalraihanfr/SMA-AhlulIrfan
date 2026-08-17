@@ -49,7 +49,7 @@ alias pa='/Applications/MAMP/bin/php/php8.4.1/bin/php artisan'
 Kelimanya harus bersih sebelum pekerjaan dianggap selesai:
 
 ```bash
-pa test                            # 65 test
+pa test                            # 73 test
 ./vendor/bin/pint                  # format PHP
 ./vendor/bin/phpstan analyse       # larastan level 5, harus nol error
 ./node_modules/.bin/tsc --noEmit   # tipe TypeScript
