@@ -28,6 +28,7 @@ class MediaSekolahSeederTest extends TestCase
         $this->assertNotNull($logo);
         $this->assertSame('Logo SMA Ahlul Irfan Bangsalsari', $logo->getCustomProperty('alt'));
         $this->assertSame('seeder-sekolah', $logo->getCustomProperty('sumber'));
+        $this->assertSame('2026-08-20.2', $logo->getCustomProperty('versi_aset'));
         $this->assertSame(14, Guru::whereHas('media')->count());
         $this->assertNotNull($fotoAnik);
         $this->assertNotNull($fotoFathur);

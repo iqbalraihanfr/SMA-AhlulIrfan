@@ -39,13 +39,15 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ## 2026-08-20 — Enam foto guru tambahan dan pembaruan aset resmi
 
-**Dikerjakan:** Iqbal di room terpisah, diintegrasikan dan diverifikasi oleh
+**Dikerjakan:** Iqbal (penyediaan aset), diintegrasikan dan diverifikasi oleh
 Codex GPT-5.6 Sol
 
 ### Berubah
 - Enam foto bernama tambahan dipasang untuk Fathur Rohman, Nur Rochman Hidayat,
   Yeni Sri Astutik, Noviani, Ahmad Saini, dan Sofiatul Lailiyah. Bersama delapan
   aset sebelumnya, 14 dari 16 guru/tendik kini memiliki potret resmi.
+- Logo yayasan yang sebelumnya dipakai sebagai fallback diganti dengan logo
+  resmi SMA Ahlul Irfan 512×512 dari batch terbaru.
 - Seluruh potret seeder diseragamkan menjadi WebP 1200×1800 tanpa metadata
   kamera. Foto mentah 59 MB dipindahkan dari `public/` ke
   `naskah/foto-original/2026-08-20-tambahan/` yang diabaikan Git agar tidak
@@ -56,14 +58,19 @@ Codex GPT-5.6 Sol
   lama dapat diperbarui saat aset resmi berubah, tetapi foto yang pernah
   diunggah admin tidak pernah ditimpa oleh seeder.
 - Dokumentasi kebutuhan foto diperbarui: hanya Hilmi Fathiyatul Baroroh dan
-  Anis Novi Rahayu yang masih memakai inisial. `GEMA2770.JPG` tetap tidak
-  digunakan karena tidak mempunyai nama; identitas tidak ditebak dari wajah.
+  Anis Novi Rahayu yang masih memakai inisial. `GEMA2770.JPG` tidak dibuat
+  menjadi media kedua karena hash-nya identik dengan foto Sofiatul Lailiyah;
+  deduplikasi ini mencegah satu orang dipetakan dua kali.
+- Judul halaman Guru & Tenaga Kependidikan tidak lagi menampilkan teks literal
+  `&amp;` akibat entitas HTML yang di-escape dua kali oleh properti komponen.
 
 ### Verifikasi
 - Tes seeder memeriksa 14 pemetaan, idempotensi, konversi media, penanda sumber,
   serta perlindungan foto pilihan admin.
 - Audit berkas memastikan seluruh aset repo berupa WebP 1200×1800 atau logo
   WebP 512×512, total 1,6 MB, tanpa metadata EXIF/GPS yang terbaca.
+- Browser Chromium nyata memverifikasi seluruh kartu pada 1280×900 dan 390×844:
+  crop wajah benar, logo baru tampil, judul terbaca normal, dan konsol nol error.
 
 ---
 

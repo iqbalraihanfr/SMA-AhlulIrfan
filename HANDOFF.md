@@ -153,9 +153,10 @@ Seeder memakai versi tabel sementara, dan menandainya dengan komentar.
 **Menyusul:** foto gedung dan kegiatan, dua foto pendidik yang belum tersedia,
 minimal satu berita, NPSN, akreditasi, serta koordinat peta. Izin publikasi foto
 siswa dikonfirmasi sudah diperoleh oleh pemilik proyek pada 20 Agustus 2026;
-bukti izinnya tetap harus disimpan bersama dokumen serah-terima. Logo dan 14 foto guru/tendik yang namanya dapat
-dipastikan sudah masuk melalui `MediaSekolahSeeder`; satu foto tanpa nama tidak
-digunakan agar identitas orang tidak ditebak.
+bukti izinnya tetap harus disimpan bersama dokumen serah-terima. Logo SMA dan
+14 foto guru/tendik yang namanya dapat dipastikan sudah masuk melalui
+`MediaSekolahSeeder`; `GEMA2770.JPG` dideduplikasi karena identik dengan foto
+Sofiatul Lailiyah.
 
 ---
 

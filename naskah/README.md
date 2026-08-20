@@ -66,8 +66,8 @@ Taruh di folder ini, boleh langsung dari HP tanpa dikecilkan — sistem mengompr
 - [ ] **Foto tiap ekstrakurikuler** — Pramuka, Paskibra, Hadrah, Futsal, Voli, Tata Boga, Tata Rias
 - [ ] **Foto guru**, potret menghadap depan. Empat belas foto bernama sudah
   dipasang; Hilmi Fathiyatul Baroroh dan Anis Novi Rahayu masih memakai
-  inisial. `GEMA2770.JPG` tidak memiliki nama dan tidak boleh dipetakan
-  berdasarkan tebakan wajah.
+  inisial. `GEMA2770.JPG` identik dengan foto Sofiatul Lailiyah dan sengaja
+  dideduplikasi agar tidak membuat media ganda.
 
 **Izin foto siswa.** Foto yang memuat wajah siswa tidak diterbitkan sebelum ada izin tertulis. Kalau belum ada, kirim foto kegiatan yang tidak menampilkan wajah dari dekat — foto punggung, kegiatan dari jauh, atau tangan yang sedang bekerja. Ini bukan formalitas; menerbitkan foto anak tanpa izin tidak bisa diperbaiki setelah tersebar.
 

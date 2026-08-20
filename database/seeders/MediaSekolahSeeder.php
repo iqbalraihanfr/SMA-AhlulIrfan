@@ -70,6 +70,7 @@ class MediaSekolahSeeder extends Seeder
     private function pasangFotoGuru(): void
     {
         $guru = Guru::query()
+            ->with('media')
             ->whereIn('nama', array_keys(self::FOTO_GURU))
             ->get()
             ->keyBy('nama');
