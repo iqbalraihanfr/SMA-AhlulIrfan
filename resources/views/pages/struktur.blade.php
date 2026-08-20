@@ -3,11 +3,18 @@
 
     <x-ui.page-hero judul="Struktur Organisasi" />
 
-    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div class="overflow-x-auto">
-            <ul class="space-y-3 sm:flex sm:justify-center sm:space-y-0">
-                <x-ui.simpul-struktur :simpul="$akar" />
-            </ul>
+    <div class="section-shell py-14 sm:py-20">
+        <div class="struktur-viewport" role="region" tabindex="0"
+             aria-label="Bagan struktur organisasi; geser secara mendatar bila bagan melebihi lebar layar">
+            <figure class="struktur-bagan" data-bagan-organisasi>
+                <figcaption class="sr-only">
+                    Bagan struktur organisasi {{ $situs->nama_sekolah }}
+                </figcaption>
+
+                <ul class="struktur-bagan__akar">
+                    <x-ui.simpul-struktur :simpul="$akar" />
+                </ul>
+            </figure>
         </div>
 
         <p class="mt-10 border-t border-line pt-6 text-sm text-ink-muted">

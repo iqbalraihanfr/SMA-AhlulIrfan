@@ -8,9 +8,9 @@
     <x-ui.page-hero judul="Kontak"
         keterangan="Hubungi kami untuk informasi pendaftaran, kunjungan, dan pertanyaan lainnya." />
 
-    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2">
+    <div class="section-shell grid gap-10 py-14 sm:py-20 lg:grid-cols-2">
 
-        <div class="space-y-6">
+        <div class="surface-card space-y-6 p-6 sm:p-8">
             <dl class="space-y-5">
                 <div>
                     <dt class="text-sm font-semibold text-ink">Alamat</dt>
@@ -59,13 +59,13 @@
 
             @if ($tautanWa = $situs->tautanWhatsapp('Assalamu\'alaikum, saya ingin bertanya tentang '.$situs->nama_sekolah))
                 <a href="{{ $tautanWa }}" target="_blank" rel="noopener"
-                   class="inline-block rounded-md bg-highlight px-5 py-2.5 text-sm font-semibold text-on-highlight transition hover:opacity-90">
+                   class="button-highlight">
                     Chat WhatsApp
                 </a>
             @endif
         </div>
 
-        <div>
+        <div class="surface-card overflow-hidden p-2">
             @if ($situs->peta_lat && $situs->peta_lng)
                 <iframe
                     title="Peta lokasi {{ $situs->nama_sekolah }}"

@@ -1,7 +1,7 @@
 <x-layout.situs judul="Berita" deskripsi="Kabar dan kegiatan terbaru {{ $situs->nama_sekolah }}.">
     <x-ui.page-hero judul="Berita" keterangan="Kabar, kegiatan, dan pengumuman dari sekolah." />
 
-    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <div class="section-shell py-14 sm:py-20">
         @if ($daftar->isEmpty())
             <x-ui.empty-state judul="Belum ada berita"
                 pesan="Kegiatan dan pengumuman sekolah akan tampil di halaman ini." />

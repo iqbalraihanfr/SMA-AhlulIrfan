@@ -29,6 +29,38 @@ class SitusPublikTest extends TestCase
         }
     }
 
+    /** Beranda mempertahankan jalur galeri meski album belum berisi foto. */
+    public function test_beranda_memiliki_teaser_galeri(): void
+    {
+        $this->get(route('beranda'))
+            ->assertOk()
+            ->assertSee('Momen di sekolah')
+            ->assertSee(route('galeri.index'), false);
+    }
+
+    /** Sambutan aman harus lengkap sampai identitas jabatan penandatangan. */
+    public function test_sambutan_kepala_sekolah_tampil_lengkap(): void
+    {
+        $this->get(route('profil'))
+            ->assertOk()
+            ->assertSee('Sambutan Kepala Sekolah')
+            ->assertSee('Bangsalsari, Juli 2026')
+            ->assertSee('Kepala SMA Ahlul Irfan Bangsalsari')
+            ->assertSee('FATHUR ROHMAN, S.P');
+    }
+
+    /** URL beranda adalah prefix semua URL, tetapi hanya aktif di route beranda. */
+    public function test_navbar_hanya_menandai_beranda_pada_route_beranda(): void
+    {
+        $polaBerandaAktif = '/<a\s+href="'.preg_quote(route('beranda'), '/').'"[^>]+aria-current="page"/s';
+
+        $htmlBeranda = $this->get(route('beranda'))->assertOk()->getContent();
+        $htmlKontak = $this->get(route('kontak'))->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression($polaBerandaAktif, $htmlBeranda);
+        $this->assertDoesNotMatchRegularExpression($polaBerandaAktif, $htmlKontak);
+    }
+
     /**
      * Halaman yang naskahnya belum datang dari sekolah memberi 404,
      * bukan halaman kosong yang terlihat seolah situsnya rusak.

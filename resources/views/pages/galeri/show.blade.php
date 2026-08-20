@@ -9,7 +9,7 @@
     :gambar="$gambarSosial" :gambar-alt="$altGambarSosial">
     <x-ui.page-hero :judul="$album->judul" :keterangan="$album->deskripsi" />
 
-    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <div class="section-shell py-14 sm:py-20">
         <p class="text-sm">
             <a href="{{ route('galeri.index') }}"
                class="text-brand underline-offset-4 hover:underline">&larr; Semua album</a>

@@ -2,7 +2,7 @@
 <x-layout.situs :judul="$halaman->judul" :gambar="$halaman->getFirstMediaUrl('gambar') ?: null">
     <x-ui.page-hero :judul="$halaman->judul" />
 
-    <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <div class="section-shell py-14 sm:py-20">
         <x-ui.prosa :html="$halaman->isi" />
     </div>
 </x-layout.situs>

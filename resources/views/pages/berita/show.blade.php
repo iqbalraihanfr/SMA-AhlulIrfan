@@ -7,13 +7,13 @@
 <x-layout.situs :judul="$berita->judul" :deskripsi="$berita->ringkasan"
     :gambar="$hero" :gambar-alt="$altSampul" tipe="article">
 
-    <article class="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <article class="section-shell max-w-3xl py-14 sm:py-20">
         <p class="text-sm">
             <a href="{{ route('berita.index') }}"
                class="text-brand underline-offset-4 hover:underline">&larr; Semua berita</a>
         </p>
 
-        <h1 class="mt-4 font-heading text-3xl leading-tight font-semibold text-ink sm:text-4xl">
+        <h1 class="mt-4 font-heading text-4xl leading-tight font-semibold tracking-tight text-ink-deep sm:text-5xl">
             {{ $berita->judul }}
         </h1>
 
@@ -28,15 +28,15 @@
             <img src="{{ $hero }}"
                  alt="{{ $altSampul }}"
                  width="1600" height="1000"
-                 class="mt-8 w-full rounded-lg object-cover">
+                 class="mt-10 w-full rounded-md object-cover shadow-card">
         @endif
 
         <div class="mt-8"><x-ui.prosa :html="$berita->isi" /></div>
     </article>
 
     @if ($lainnya->isNotEmpty())
-        <section class="border-t border-line bg-paper-raised">
-            <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <section class="section section--muted">
+            <div class="section-shell">
                 <x-ui.section-heading judul="Berita lainnya" />
                 <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($lainnya as $lain)
