@@ -67,6 +67,9 @@ Codex GPT-5.6 Sol
 ### Verifikasi
 - Tes seeder memeriksa 14 pemetaan, idempotensi, konversi media, penanda sumber,
   serta perlindungan foto pilihan admin.
+- Gerbang integrasi lengkap lulus: 88 test PHP dengan 542 asersi, 5 test Node,
+  Pint, PHPStan level 5 tanpa error, TypeScript tanpa error, dan build produksi
+  Vite 8.2.1 sebanyak 2.406 modul.
 - Audit berkas memastikan seluruh aset repo berupa WebP 1200×1800 atau logo
   WebP 512×512, total 1,6 MB, tanpa metadata EXIF/GPS yang terbaca.
 - Browser Chromium nyata memverifikasi seluruh kartu pada 1280×900 dan 390×844:
