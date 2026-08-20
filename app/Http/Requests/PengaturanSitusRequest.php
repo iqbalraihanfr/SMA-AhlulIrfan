@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Support\AturanGambar;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\File;
 
 class PengaturanSitusRequest extends FormRequest
 {
@@ -29,7 +29,7 @@ class PengaturanSitusRequest extends FormRequest
             'facebook' => ['nullable', 'url', 'max:255'],
             'youtube' => ['nullable', 'url', 'max:255'],
 
-            'logo' => ['nullable', File::image()->max(2 * 1024)],
+            'logo' => ['nullable', AturanGambar::statis(2 * 1024)],
             'logo_alt' => ['nullable', 'required_with:logo', 'string', 'max:200'],
         ];
     }
@@ -56,6 +56,7 @@ class PengaturanSitusRequest extends FormRequest
             'facebook.url' => 'Alamat Facebook harus berupa URL lengkap, diawali https://',
             'youtube.url' => 'Alamat YouTube harus berupa URL lengkap, diawali https://',
             'logo.max' => 'Ukuran logo maksimal 2 MB.',
+            'logo.mimes' => 'Logo harus berformat JPG, PNG, atau WebP.',
             'logo_alt.required_with' => 'Teks alternatif logo wajib diisi.',
         ];
     }

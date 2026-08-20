@@ -1,5 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Textarea, Tombol } from '@/Components/Ui';
+import { useOptimasiGambar } from '@/hooks/useOptimasiGambar';
+import { TIPE_GAMBAR_DITERIMA } from '@/lib/optimalkanGambar';
 
 type EkskulProp = {
     id: number;
@@ -15,6 +17,7 @@ type EkskulProp = {
 
 export default function Form({ ekskul, aksi }: { ekskul: EkskulProp; aksi: string }) {
     const baru = ekskul === null;
+    const { pilihGambar, sedangMenyiapkan, pesanOptimasi, melewatiBatas } = useOptimasiGambar(5 * 1024 * 1024);
 
     const { data, setData, post, processing, errors } = useForm({
         _method: baru ? 'post' : 'put',
@@ -30,6 +33,8 @@ export default function Form({ ekskul, aksi }: { ekskul: EkskulProp; aksi: strin
 
     const kirim = (e: { preventDefault: () => void }) => {
         e.preventDefault();
+        if (sedangMenyiapkan || melewatiBatas) return;
+
         post(aksi, { forceFormData: true });
     };
 
@@ -94,10 +99,11 @@ export default function Form({ ekskul, aksi }: { ekskul: EkskulProp; aksi: strin
                             <input
                                 id="gambar"
                                 type="file"
-                                accept="image/*"
-                                onChange={(e) => setData('gambar', e.target.files?.[0] ?? null)}
+                                accept={TIPE_GAMBAR_DITERIMA}
+                                onChange={(e) => void pilihGambar(e.target.files?.[0] ?? null, (gambar) => setData('gambar', gambar))}
                                 className="mt-1 block w-full text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-paper-sunken file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
                             />
+                            {pesanOptimasi && <Petunjuk>{pesanOptimasi}</Petunjuk>}
                             <Galat pesan={errors.gambar} />
                         </div>
 
@@ -109,7 +115,9 @@ export default function Form({ ekskul, aksi }: { ekskul: EkskulProp; aksi: strin
                     </Kartu>
 
                     <div className="flex items-center gap-3">
-                        <Tombol disabled={processing}>{baru ? 'Simpan' : 'Simpan Perubahan'}</Tombol>
+                        <Tombol disabled={processing || sedangMenyiapkan || melewatiBatas}>
+                            {sedangMenyiapkan ? 'Menyiapkan gambar…' : baru ? 'Simpan' : 'Simpan Perubahan'}
+                        </Tombol>
                         <Link href={route('admin.ekstrakurikuler.index')} className="text-sm text-ink-muted underline underline-offset-4">Batal</Link>
                     </div>
                 </form>

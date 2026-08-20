@@ -55,13 +55,14 @@ class Berita extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('sampul')->singleFile();
+        $this->addMediaCollection('isi');
     }
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumbnail')->nonQueued()->fit(Fit::Crop, 320, 200);
-        $this->addMediaConversion('card')->nonQueued()->fit(Fit::Crop, 800, 500);
-        $this->addMediaConversion('hero')->nonQueued()->fit(Fit::Max, 1600, 1000);
+        $this->addMediaConversion('thumbnail')->performOnCollections('sampul')->nonQueued()->format('webp')->quality(75)->fit(Fit::Crop, 320, 200);
+        $this->addMediaConversion('card')->performOnCollections('sampul')->nonQueued()->format('webp')->quality(75)->fit(Fit::Crop, 800, 500);
+        $this->addMediaConversion('hero')->performOnCollections('sampul', 'isi')->nonQueued()->format('webp')->quality(75)->fit(Fit::Max, 1600, 1000);
     }
 
     /**

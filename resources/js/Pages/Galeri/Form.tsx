@@ -1,6 +1,7 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Textarea, Tombol } from '@/Components/Ui';
+import { formatUkuranBerkas, optimalkanGambar, TIPE_GAMBAR_DITERIMA } from '@/lib/optimalkanGambar';
 
 type Foto = { id: number; url: string; alt: string | null; urlHapus: string };
 
@@ -18,25 +19,74 @@ type Props = { album: AlbumProp; aksi: string; aksiUnggah?: string };
 /** Unggah beberapa foto sekaligus; tiap berkas wajib punya teks alternatif. */
 function UnggahFoto({ aksiUnggah }: { aksiUnggah: string }) {
     const [berkas, setBerkas] = useState<File[]>([]);
+    const [sedangMenyiapkan, setSedangMenyiapkan] = useState(false);
+    const [pesanOptimasi, setPesanOptimasi] = useState<string | null>(null);
+    const [melewatiBatas, setMelewatiBatas] = useState(false);
+    const pilihanTerakhir = useRef(0);
     const { data, setData, post, processing, errors, reset } = useForm<{ foto: File[]; alt: string[] }>({
         foto: [],
         alt: [],
     });
 
-    const pilih = (daftar: FileList | null) => {
+    const pilih = async (daftar: FileList | null) => {
+        const pilihan = ++pilihanTerakhir.current;
         const isi = Array.from(daftar ?? []);
-        setBerkas(isi);
-        setData({ foto: isi, alt: isi.map(() => '') });
+
+        if (isi.length === 0) {
+            setBerkas([]);
+            setData({ foto: [], alt: [] });
+            setPesanOptimasi(null);
+            setSedangMenyiapkan(false);
+            setMelewatiBatas(false);
+
+            return;
+        }
+
+        setSedangMenyiapkan(true);
+        setPesanOptimasi(`Menyiapkan 1 dari ${isi.length} foto…`);
+        const hasil = [];
+
+        for (const [indeks, foto] of isi.entries()) {
+            if (pilihan !== pilihanTerakhir.current) return;
+
+            setPesanOptimasi(`Menyiapkan ${indeks + 1} dari ${isi.length} foto…`);
+            hasil.push(await optimalkanGambar(foto));
+        }
+
+        if (pilihan !== pilihanTerakhir.current) return;
+
+        const fotoSiap = hasil.map((item) => item.berkas);
+        const ukuranAwal = hasil.reduce((total, item) => total + item.ukuranAwal, 0);
+        const ukuranAkhir = hasil.reduce((total, item) => total + item.ukuranAkhir, 0);
+        const jumlahDikompres = hasil.filter((item) => item.dikompres).length;
+        const jumlahTerlaluBesar = hasil.filter((item) => item.ukuranAkhir > 8 * 1024 * 1024).length;
+        let pesan = `${fotoSiap.length} foto siap diunggah (${formatUkuranBerkas(ukuranAkhir)}).`;
+
+        if (jumlahTerlaluBesar > 0) {
+            pesan = `${jumlahTerlaluBesar} foto masih melebihi batas 8 MB. Pilih foto yang lebih kecil.`;
+        } else if (jumlahDikompres > 0) {
+            pesan = `${jumlahDikompres} foto diperkecil: ${formatUkuranBerkas(ukuranAwal)} menjadi ${formatUkuranBerkas(ukuranAkhir)}.`;
+        }
+
+        setBerkas(fotoSiap);
+        setData({ foto: fotoSiap, alt: fotoSiap.map(() => '') });
+        setMelewatiBatas(jumlahTerlaluBesar > 0);
+        setPesanOptimasi(pesan);
+        setSedangMenyiapkan(false);
     };
 
     const kirim = (e: { preventDefault: () => void }) => {
         e.preventDefault();
+        if (sedangMenyiapkan || melewatiBatas) return;
+
         post(aksiUnggah, {
             forceFormData: true,
             preserveScroll: true,
             onSuccess: () => {
                 reset();
                 setBerkas([]);
+                setPesanOptimasi(null);
+                setMelewatiBatas(false);
             },
         });
     };
@@ -48,12 +98,13 @@ function UnggahFoto({ aksiUnggah }: { aksiUnggah: string }) {
                 <input
                     id="foto"
                     type="file"
-                    accept="image/*"
+                    accept={TIPE_GAMBAR_DITERIMA}
                     multiple
-                    onChange={(e) => pilih(e.target.files)}
+                    onChange={(e) => void pilih(e.target.files)}
                     className="mt-1 block w-full text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-paper-sunken file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
                 />
                 <Petunjuk>Bisa pilih banyak sekaligus. Maksimal 8 MB per foto.</Petunjuk>
+                {pesanOptimasi && <Petunjuk>{pesanOptimasi}</Petunjuk>}
                 <Galat pesan={errors.foto} />
             </div>
 
@@ -82,7 +133,9 @@ function UnggahFoto({ aksiUnggah }: { aksiUnggah: string }) {
                         </div>
                     ))}
 
-                    <Tombol disabled={processing}>Unggah {berkas.length} foto</Tombol>
+                    <Tombol disabled={processing || sedangMenyiapkan || melewatiBatas}>
+                        {sedangMenyiapkan ? 'Menyiapkan foto…' : `Unggah ${berkas.length} foto`}
+                    </Tombol>
                 </div>
             )}
         </form>

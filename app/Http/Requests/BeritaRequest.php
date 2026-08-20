@@ -3,9 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Enums\StatusBerita;
+use App\Support\AturanGambar;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\File;
 
 class BeritaRequest extends FormRequest
 {
@@ -24,7 +24,7 @@ class BeritaRequest extends FormRequest
             'status' => ['required', Rule::enum(StatusBerita::class)],
             'diterbitkan_pada' => ['nullable', 'date'],
 
-            'sampul' => ['nullable', File::image()->max(5 * 1024)],
+            'sampul' => ['nullable', AturanGambar::statis(5 * 1024)],
             // Alt text wajib begitu ada gambar yang diunggah — ini syarat
             // aksesibilitas, bukan pelengkap. Lihat Definisi Selesai.
             'sampul_alt' => ['nullable', 'required_with:sampul', 'string', 'max:200'],
@@ -52,7 +52,7 @@ class BeritaRequest extends FormRequest
             'isi.required' => 'Isi berita wajib diisi.',
             'slug.alpha_dash' => 'Slug hanya boleh berisi huruf, angka, dan tanda hubung.',
             'slug.unique' => 'Slug tersebut sudah dipakai berita lain.',
-            'sampul.image' => 'Berkas sampul harus berupa gambar.',
+            'sampul.mimes' => 'Gambar sampul harus berformat JPG, PNG, atau WebP.',
             'sampul.max' => 'Ukuran gambar sampul maksimal 5 MB.',
             'sampul_alt.required_with' => 'Teks alternatif wajib diisi agar gambar terbaca pembaca layar.',
         ];

@@ -1,5 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Select, Tombol } from '@/Components/Ui';
+import { useOptimasiGambar } from '@/hooks/useOptimasiGambar';
+import { TIPE_GAMBAR_DITERIMA } from '@/lib/optimalkanGambar';
 
 type GuruProp = {
     id: number;
@@ -22,6 +24,7 @@ type Props = {
 
 export default function Form({ guru, pilihanKategori, aksi }: Props) {
     const baru = guru === null;
+    const { pilihGambar, sedangMenyiapkan, pesanOptimasi, melewatiBatas } = useOptimasiGambar(5 * 1024 * 1024);
 
     const { data, setData, post, processing, errors } = useForm({
         _method: baru ? 'post' : 'put',
@@ -38,6 +41,8 @@ export default function Form({ guru, pilihanKategori, aksi }: Props) {
 
     const kirim = (e: { preventDefault: () => void }) => {
         e.preventDefault();
+        if (sedangMenyiapkan || melewatiBatas) return;
+
         post(aksi, { forceFormData: true });
     };
 
@@ -136,11 +141,12 @@ export default function Form({ guru, pilihanKategori, aksi }: Props) {
                             <input
                                 id="foto"
                                 type="file"
-                                accept="image/*"
-                                onChange={(e) => setData('foto', e.target.files?.[0] ?? null)}
+                                accept={TIPE_GAMBAR_DITERIMA}
+                                onChange={(e) => void pilihGambar(e.target.files?.[0] ?? null, (foto) => setData('foto', foto))}
                                 className="mt-1 block w-full text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-paper-sunken file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
                             />
                             <Petunjuk>Opsional. Tanpa foto, situs menampilkan inisial — bukan gambar rusak.</Petunjuk>
+                            {pesanOptimasi && <Petunjuk>{pesanOptimasi}</Petunjuk>}
                             <Galat pesan={errors.foto} />
                         </div>
 
@@ -152,7 +158,9 @@ export default function Form({ guru, pilihanKategori, aksi }: Props) {
                     </Kartu>
 
                     <div className="flex items-center gap-3">
-                        <Tombol disabled={processing}>{baru ? 'Simpan' : 'Simpan Perubahan'}</Tombol>
+                        <Tombol disabled={processing || sedangMenyiapkan || melewatiBatas}>
+                            {sedangMenyiapkan ? 'Menyiapkan gambar…' : baru ? 'Simpan' : 'Simpan Perubahan'}
+                        </Tombol>
                         <Link href={route('admin.guru.index')} className="text-sm text-ink-muted underline underline-offset-4">
                             Batal
                         </Link>

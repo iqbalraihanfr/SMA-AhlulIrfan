@@ -6,19 +6,19 @@ use App\Enums\Izin;
 use App\Enums\KategoriGuru;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
+use App\Support\AturanGambar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\File;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * ATURAN PRIVASI: formulir ini tidak boleh punya kolom NUPTK, NIK, atau
- * identitas kependudukan apa pun. Naskah sumber sekolah memuat NUPTK, jadi
- * larangan ini bukan teoretis.
+ * ATURAN PRIVASI: formulir ini tidak boleh punya kolom identitas kependudukan
+ * apa pun. Naskah sumber memuat data sensitif, jadi larangan ini bukan
+ * teoretis.
  */
 class GuruController extends Controller implements HasMiddleware
 {
@@ -123,10 +123,11 @@ class GuruController extends Controller implements HasMiddleware
     private function simpanFoto(Request $request, Guru $guru): void
     {
         $request->validate([
-            'foto' => ['nullable', File::image()->max(5 * 1024)],
+            'foto' => ['nullable', AturanGambar::statis(5 * 1024)],
             'foto_alt' => ['nullable', 'required_with:foto', 'string', 'max:200'],
         ], [
             'foto.max' => 'Ukuran foto maksimal 5 MB.',
+            'foto.mimes' => 'Foto harus berformat JPG, PNG, atau WebP.',
             'foto_alt.required_with' => 'Teks alternatif foto wajib diisi.',
         ]);
 

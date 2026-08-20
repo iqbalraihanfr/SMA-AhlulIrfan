@@ -40,7 +40,7 @@ class Ekstrakurikuler extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('card')->nonQueued()->fit(Fit::Crop, 800, 500);
+        $this->addMediaConversion('card')->nonQueued()->format('webp')->quality(75)->fit(Fit::Crop, 800, 500);
     }
 
     public function scopeUrut(Builder $q): Builder

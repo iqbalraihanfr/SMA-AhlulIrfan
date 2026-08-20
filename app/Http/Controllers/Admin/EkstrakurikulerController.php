@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\Izin;
 use App\Http\Controllers\Controller;
 use App\Models\Ekstrakurikuler;
+use App\Support\AturanGambar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\File;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -113,9 +113,10 @@ class EkstrakurikulerController extends Controller implements HasMiddleware
     private function simpanGambar(Request $request, Ekstrakurikuler $ekskul): void
     {
         $request->validate([
-            'gambar' => ['nullable', File::image()->max(5 * 1024)],
+            'gambar' => ['nullable', AturanGambar::statis(5 * 1024)],
             'gambar_alt' => ['nullable', 'required_with:gambar', 'string', 'max:200'],
         ], [
+            'gambar.mimes' => 'Gambar harus berformat JPG, PNG, atau WebP.',
             'gambar_alt.required_with' => 'Teks alternatif gambar wajib diisi.',
         ]);
 

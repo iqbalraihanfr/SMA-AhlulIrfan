@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\Izin;
 use App\Http\Controllers\Controller;
 use App\Models\Album;
+use App\Support\AturanGambar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\File;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -91,12 +91,13 @@ class GaleriController extends Controller implements HasMiddleware
     {
         $request->validate([
             'foto' => ['required', 'array', 'min:1'],
-            'foto.*' => [File::image()->max(8 * 1024)],
+            'foto.*' => [AturanGambar::statis(8 * 1024)],
             'alt' => ['required', 'array'],
             'alt.*' => ['required', 'string', 'max:200'],
         ], [
             'foto.required' => 'Pilih minimal satu foto.',
             'foto.*.max' => 'Ukuran tiap foto maksimal 8 MB.',
+            'foto.*.mimes' => 'Setiap foto harus berformat JPG, PNG, atau WebP.',
             'alt.*.required' => 'Setiap foto wajib diberi teks alternatif.',
         ]);
 

@@ -40,9 +40,9 @@ class Album extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumbnail')->nonQueued()->fit(Fit::Crop, 320, 320);
-        $this->addMediaConversion('card')->nonQueued()->fit(Fit::Crop, 800, 600);
-        $this->addMediaConversion('hero')->nonQueued()->fit(Fit::Max, 1600, 1200);
+        $this->addMediaConversion('thumbnail')->nonQueued()->format('webp')->quality(75)->fit(Fit::Crop, 320, 320);
+        $this->addMediaConversion('card')->nonQueued()->format('webp')->quality(75)->fit(Fit::Crop, 800, 600);
+        $this->addMediaConversion('hero')->nonQueued()->format('webp')->quality(75)->fit(Fit::Max, 1600, 1200);
     }
 
     public function scopeUrut(Builder $q): Builder

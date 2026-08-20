@@ -1,6 +1,8 @@
 import { Head, useForm } from '@inertiajs/react';
 import { AlertTriangle } from 'lucide-react';
 import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Textarea, Tombol } from '@/Components/Ui';
+import { useOptimasiGambar } from '@/hooks/useOptimasiGambar';
+import { TIPE_GAMBAR_DITERIMA } from '@/lib/optimalkanGambar';
 
 type Pengaturan = {
     nama_sekolah: string;
@@ -27,6 +29,7 @@ type Props = {
 };
 
 export default function Form({ pengaturan, wajibRilis }: Props) {
+    const { pilihGambar, sedangMenyiapkan, pesanOptimasi, melewatiBatas } = useOptimasiGambar(2 * 1024 * 1024);
     const { data, setData, post, processing, errors } = useForm({
         _method: 'put',
         nama_sekolah: pengaturan.nama_sekolah ?? '',
@@ -53,6 +56,8 @@ export default function Form({ pengaturan, wajibRilis }: Props) {
 
     const kirim = (e: { preventDefault: () => void }) => {
         e.preventDefault();
+        if (sedangMenyiapkan || melewatiBatas) return;
+
         post(route('admin.pengaturan.update'), { forceFormData: true, preserveScroll: true });
     };
 
@@ -194,11 +199,12 @@ export default function Form({ pengaturan, wajibRilis }: Props) {
                             <input
                                 id="logo"
                                 type="file"
-                                accept="image/*"
-                                onChange={(e) => setData('logo', e.target.files?.[0] ?? null)}
+                                accept={TIPE_GAMBAR_DITERIMA}
+                                onChange={(e) => void pilihGambar(e.target.files?.[0] ?? null, (logo) => setData('logo', logo))}
                                 className="mt-1 block w-full text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-paper-sunken file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
                             />
-                            <Petunjuk>PNG transparan atau SVG, maksimal 2 MB. Tanpa logo, navbar menampilkan inisial.</Petunjuk>
+                            <Petunjuk>JPG, PNG transparan, atau WebP; maksimal 2 MB. Tanpa logo, navbar menampilkan inisial.</Petunjuk>
+                            {pesanOptimasi && <Petunjuk>{pesanOptimasi}</Petunjuk>}
                             <Galat pesan={errors.logo} />
                         </div>
 
@@ -209,7 +215,9 @@ export default function Form({ pengaturan, wajibRilis }: Props) {
                         </div>
                     </Kartu>
 
-                    <Tombol disabled={processing}>Simpan Pengaturan</Tombol>
+                    <Tombol disabled={processing || sedangMenyiapkan || melewatiBatas}>
+                        {sedangMenyiapkan ? 'Menyiapkan gambar…' : 'Simpan Pengaturan'}
+                    </Tombol>
                 </form>
             </div>
         </>
