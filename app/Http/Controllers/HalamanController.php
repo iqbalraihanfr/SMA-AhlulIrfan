@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\KategoriGuru;
 use App\Enums\TipeSimpul;
+use App\Models\Album;
 use App\Models\Berita;
 use App\Models\Ekstrakurikuler;
 use App\Models\Guru;
@@ -16,12 +17,25 @@ class HalamanController extends Controller
 {
     public function beranda(): View
     {
+        $pendidik = Guru::aktif()
+            ->where('kategori', KategoriGuru::Pendidik)
+            ->with('media')
+            ->urut()
+            ->get();
+
         return view('pages.beranda', [
             'sambutan' => KontenHalaman::terbit('sambutan_kepsek'),
             'kurikulum' => KontenHalaman::terbit('kurikulum'),
             'ekstrakurikuler' => Ekstrakurikuler::urut()->take(7)->get(),
-            'pendidik' => Guru::aktif()->where('kategori', KategoriGuru::Pendidik)->urut()->take(8)->get(),
+            // Foto resmi diprioritaskan supaya beranda tidak seluruhnya berisi
+            // inisial ketika sebagian foto guru sudah tersedia.
+            'pendidik' => $pendidik
+                ->sortByDesc(fn (Guru $guru): bool => $guru->hasMedia('foto'))
+                ->take(4),
             'beritaTerbaru' => Berita::terbit()->take(3)->get(),
+            // Album tanpa foto tidak memberi nilai di beranda. Batasi teaser
+            // dan eager-load media agar tidak memicu query per kartu.
+            'galeriTerbaru' => Album::urut()->whereHas('media')->with('media')->take(4)->get(),
         ]);
     }
 
@@ -56,8 +70,8 @@ class HalamanController extends Controller
     public function guru(): View
     {
         return view('pages.guru', [
-            'pendidik' => Guru::aktif()->where('kategori', KategoriGuru::Pendidik)->urut()->get(),
-            'tendik' => Guru::aktif()->where('kategori', KategoriGuru::TenagaKependidikan)->urut()->get(),
+            'pendidik' => Guru::aktif()->where('kategori', KategoriGuru::Pendidik)->with('media')->urut()->get(),
+            'tendik' => Guru::aktif()->where('kategori', KategoriGuru::TenagaKependidikan)->with('media')->urut()->get(),
         ]);
     }
 

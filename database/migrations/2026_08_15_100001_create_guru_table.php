@@ -5,11 +5,11 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /*
-| ATURAN PRIVASI — JANGAN TAMBAHKAN KOLOM NUPTK, NIK, ATAU IDENTITAS
-| KEPENDUDUKAN APA PUN KE TABEL INI.
+| ATURAN PRIVASI — JANGAN TAMBAHKAN KOLOM IDENTITAS KEPENDUDUKAN APA PUN KE
+| TABEL INI.
 |
-| Naskah sumber dari sekolah memuat NUPTK 13 orang. Kolom itu sengaja tidak
-| dimodelkan, bukan lupa. Lihat Aturan Privasi di AGENTS-SMA.md dan ADR-8
+| Naskah sumber dari sekolah memuat data sensitif. Kolom semacam itu sengaja
+| tidak dimodelkan, bukan lupa. Lihat Aturan Privasi di AGENTS-SMA.md dan ADR-8
 | di PRD-SMA.md. Foto guru ditangani spatie/laravel-medialibrary, bukan kolom.
 */
 return new class extends Migration

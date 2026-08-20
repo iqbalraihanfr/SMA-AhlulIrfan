@@ -15,8 +15,8 @@ use Illuminate\Support\Str;
 /**
  * Konten nyata sekolah. Sumber tunggal: docs/KONTEN-SEKOLAH.md
  *
- * TIDAK ADA NUPTK di sini, dan tidak boleh ditambahkan. Naskah aslinya
- * (WEBSITE.docx) memuat NUPTK 13 orang dan sengaja diblokir .gitignore.
+ * Tidak ada identitas kependudukan di sini, dan data semacam itu tidak boleh
+ * ditambahkan. Naskah asli sengaja diblokir oleh .gitignore.
  *
  * Idempoten — aman dijalankan berulang kali.
  */
@@ -252,6 +252,9 @@ HTML;
 <p>Terima kasih kepada seluruh guru, tenaga kependidikan, peserta didik, alumni, orang tua, dan masyarakat atas kepercayaan serta dukungan yang telah diberikan kepada SMA Ahlul Irfan Bangsalsari. Semoga website ini dapat memberikan manfaat dan menjadi jembatan komunikasi yang efektif bagi kita semua.</p>
 <p>Akhir kata, semoga Allah SWT senantiasa memberikan kemudahan, keberkahan, dan kesuksesan dalam setiap langkah pengabdian kita di dunia pendidikan.</p>
 <p>Wassalamu'alaikum Warahmatullahi Wabarakatuh.</p>
+<p><em>Bangsalsari, Juli 2026</em><br>
+<em>Kepala SMA Ahlul Irfan Bangsalsari</em><br>
+<strong>FATHUR ROHMAN, S.P</strong></p>
 HTML;
     }
 

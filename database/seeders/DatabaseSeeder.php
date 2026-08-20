@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PeranSeeder::class,
             KontenSekolahSeeder::class,
+            MediaSekolahSeeder::class,
         ]);
 
         // Akun admin TIDAK dibuat otomatis — tidak ada kata sandi bawaan yang
