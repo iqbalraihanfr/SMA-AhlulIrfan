@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Ekstrakurikuler;
 use App\Models\Guru;
 use App\Models\KontenHalaman;
+use App\Models\PengaturanSitus;
 use App\Models\StrukturOrganisasi;
 use App\Models\User;
 use Database\Seeders\KontenSekolahSeeder;
@@ -65,6 +66,23 @@ class AdminPanelTest extends TestCase
         $this->actingAs($this->admin)->get(route('admin.pengguna.index'))->assertForbidden();
         $this->actingAs($this->admin)->get(route('admin.guru.index'))->assertOk();
         $this->actingAs($this->admin)->get(route('admin.pengaturan.edit'))->assertOk();
+    }
+
+    public function test_panel_admin_menerima_logo_sekolah_dari_pengaturan_situs(): void
+    {
+        $situs = PengaturanSitus::ambil();
+        $logo = $situs
+            ->addMedia(UploadedFile::fake()->image('logo-sma.png', 512, 512))
+            ->withCustomProperties(['alt' => 'Logo resmi SMA Ahlul Irfan'])
+            ->toMediaCollection('logo');
+
+        $this->actingAs($this->super)
+            ->get(route('dashboard'))
+            ->assertInertia(fn (AssertableInertia $halaman) => $halaman
+                ->where('situs.nama', $situs->nama_sekolah)
+                ->where('situs.logoUrl', $logo->getUrl())
+                ->where('situs.logoAlt', 'Logo resmi SMA Ahlul Irfan')
+            );
     }
 
     public function test_pengaturan_situs_dapat_disimpan_dan_langsung_tampil_di_kontak(): void

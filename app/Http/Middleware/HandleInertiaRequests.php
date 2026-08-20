@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Izin;
+use App\Models\PengaturanSitus;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -30,6 +31,8 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        $situs = PengaturanSitus::ambil()->loadMissing('media');
+        $logo = $situs->getFirstMedia('logo');
 
         return [
             ...parent::share($request),
@@ -52,8 +55,10 @@ class HandleInertiaRequests extends Middleware
             ],
 
             'situs' => [
-                'nama' => config('app.name'),
+                'nama' => $situs->nama_sekolah ?: config('app.name'),
                 'urlPublik' => route('beranda'),
+                'logoUrl' => $logo?->getUrl(),
+                'logoAlt' => $logo ? (string) $logo->getCustomProperty('alt', 'Logo '.$situs->nama_sekolah) : null,
             ],
         ];
     }

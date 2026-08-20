@@ -75,6 +75,31 @@ function KakiSidebar({ urlPublik }: { urlPublik: string }) {
     );
 }
 
+function LogoPanel({ logoUrl, logoAlt }: { logoUrl: string | null; logoAlt: string | null }) {
+    if (logoUrl) {
+        return (
+            <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-on-brand p-1 shadow-card">
+                <img src={logoUrl} alt={logoAlt ?? 'Logo SMA Ahlul Irfan'} width={44} height={44} className="size-full object-contain" />
+            </span>
+        );
+    }
+
+    return (
+        <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-on-brand/12 font-heading text-sm font-semibold text-on-brand">
+            AI
+        </span>
+    );
+}
+
+function IdentitasPanel({ logoUrl, logoAlt }: { logoUrl: string | null; logoAlt: string | null }) {
+    return (
+        <div className="flex min-w-0 items-center gap-3">
+            <LogoPanel logoUrl={logoUrl} logoAlt={logoAlt} />
+            <span className="font-heading text-sm leading-tight font-semibold text-on-brand">Panel Admin</span>
+        </div>
+    );
+}
+
 export default function Layout({ children }: { children: ReactNode }) {
     const { auth, situs, flash } = usePage().props;
     const [notifikasi, setNotifikasi] = useState<string | null>(null);
@@ -103,11 +128,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="min-h-screen bg-paper-sunken text-ink">
             {/* Sidebar desktop */}
             <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-brand-strong lg:flex">
-                <div className="flex items-center gap-3 border-b border-on-brand/10 p-5">
-                    <span className="grid size-9 shrink-0 place-items-center rounded-md bg-on-brand/12 font-heading text-sm font-semibold text-on-brand">
-                        AI
-                    </span>
-                    <span className="font-heading text-sm leading-tight font-semibold text-on-brand">Panel Admin</span>
+                <div className="border-b border-on-brand/10 p-4">
+                    <IdentitasPanel logoUrl={situs.logoUrl} logoAlt={situs.logoAlt} />
                 </div>
 
                 <DaftarMenu menu={menu} />
@@ -124,8 +146,8 @@ export default function Layout({ children }: { children: ReactNode }) {
                         className="absolute inset-0 bg-ink-deep/50"
                     />
                     <aside className="relative flex h-full w-64 flex-col bg-brand-strong">
-                        <div className="flex items-center justify-between border-b border-on-brand/10 p-5">
-                            <span className="font-heading text-sm font-semibold text-on-brand">Panel Admin</span>
+                        <div className="flex items-center justify-between gap-3 border-b border-on-brand/10 p-4">
+                            <IdentitasPanel logoUrl={situs.logoUrl} logoAlt={situs.logoAlt} />
                             <button type="button" onClick={() => setNavMobile(false)} className="text-on-brand/70 hover:text-on-brand">
                                 <X className="size-5" aria-hidden="true" />
                                 <span className="sr-only">Tutup menu</span>

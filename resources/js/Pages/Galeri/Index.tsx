@@ -43,7 +43,7 @@ export default function Index({ daftar }: { daftar: BarisAlbum[] }) {
                             {a.sampulUrl ? (
                                 <img src={a.sampulUrl} alt="" width={320} height={240} className="aspect-[4/3] w-full object-cover" />
                             ) : (
-                                <div className="grid aspect-[4/3] w-full place-items-center bg-paper-sunken text-sm text-ink-faint">
+                                <div className="grid aspect-[4/3] w-full place-items-center bg-paper-sunken text-sm text-ink-muted">
                                     Belum ada foto
                                 </div>
                             )}

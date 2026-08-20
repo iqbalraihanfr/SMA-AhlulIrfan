@@ -31,6 +31,8 @@ export interface SharedProps {
     situs: {
         nama: string;
         urlPublik: string;
+        logoUrl: string | null;
+        logoAlt: string | null;
     };
 }
 
