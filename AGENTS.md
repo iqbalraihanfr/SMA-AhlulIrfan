@@ -51,7 +51,7 @@ Kelimanya harus bersih sebelum pekerjaan dianggap selesai:
 ```bash
 pa test                            # 73 test
 ./vendor/bin/pint                  # format PHP
-./vendor/bin/phpstan analyse       # larastan level 5, harus nol error
+./vendor/bin/phpstan analyse --memory-limit=512M # larastan level 5, harus nol error
 ./node_modules/.bin/tsc --noEmit   # tipe TypeScript
 ./node_modules/.bin/vite build     # aset
 ```

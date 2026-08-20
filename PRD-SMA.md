@@ -291,7 +291,9 @@ Kalau keenam korban dipakai, 3 hari tercapai dengan admin yang hanya mengelola b
 6. Nasib situs pesantren — tetap di Vercel + Supabase, atau menyusul ke Laravel? **Harus diputuskan sebelum serah terima.**
 7. Domain final `.sch.id` — apakah SK pendirian (`421/1334/463.41.6/2003`) dan surat permohonan kepala sekolah sudah siap untuk verifikasi PANDI?
 8. Siapa dua orang di pihak sekolah yang akan memegang akun admin?
-9. Apakah izin publikasi foto siswa sudah terdokumentasi tertulis?
+9. **Terjawab.** Izin publikasi foto siswa dikonfirmasi sudah diperoleh oleh pemilik proyek
+   pada 20 Agustus 2026. Bukti persetujuannya tetap disimpan bersama dokumen
+   serah-terima sekolah.
 10. Siapa yang membayar perpanjangan domain dan hosting tahun kedua?
 
 ## 16. Risiko
@@ -306,5 +308,5 @@ Kalau keenam korban dipakai, 3 hari tercapai dengan admin yang hanya mengelola b
 | R-10 | Konflik nama Wakil Kepala Sekolah dan Kepala TU antara bagan dan tabel | Konfirmasi ke sekolah sebelum seeder final. Menerbitkan nama orang yang salah lebih merusak daripada menunda halaman |
 | R-4 | ~~Reset password mati kalau SMTP belum dikonfigurasi~~ **Selesai** | Pemulihan kata sandi kini lewat super admin di panel, dengan `php artisan pengguna:sandi` sebagai jaring pengaman SSH (ADR-13). SMTP tinggal pelengkap, bukan syarat rilis |
 | R-5 | Domain didaftarkan atas nama pribadi | Daftarkan atas nama yayasan sejak awal; memindahkan kepemilikan `.sch.id` belakangan jauh lebih repot |
-| R-6 | Foto siswa terbit tanpa izin | Jangan terbitkan foto siswa sampai izin tertulis ada. Ini bukan hal yang bisa diperbaiki setelah terbit |
+| R-6 | Foto siswa terbit tanpa izin | Izin dikonfirmasi sudah diperoleh pada 20 Agustus 2026. Simpan buktinya bersama dokumen serah-terima dan pastikan unggahan baru tetap termasuk dalam cakupan persetujuan |
 | R-7 | Grand design terlambat melewati jadwal rilis | Situs tetap rilis dengan tema provisional; swap dilakukan setelahnya — arsitektur token memang dibuat untuk itu |

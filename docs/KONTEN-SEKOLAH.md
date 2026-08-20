@@ -241,4 +241,5 @@ Mintakan ke sekolah, semuanya diperlukan sebelum rilis:
 - [ ] Foto tiap guru (opsional — tanpa foto akan tampil inisial)
 - [ ] Foto gedung dan kegiatan untuk hero dan galeri
 - [ ] Minimal satu berita untuk mengisi halaman Berita saat rilis
-- [ ] Izin tertulis publikasi foto, terutama yang memuat siswa
+- [x] Izin publikasi foto siswa dikonfirmasi sudah diperoleh oleh pemilik proyek
+  pada 20 Agustus 2026; bukti persetujuan disimpan bersama dokumen serah-terima

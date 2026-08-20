@@ -84,7 +84,7 @@ php artisan migrate:fresh --seed  # reset dev
 php artisan pengguna:buat         # membuat akun pengelola (satu-satunya cara)
 php artisan test
 ./vendor/bin/pint                 # format PHP — wajib sebelum commit
-./vendor/bin/phpstan analyse      # analisis statis — wajib bersih
+./vendor/bin/phpstan analyse --memory-limit=512M # analisis statis — wajib bersih
 ./node_modules/.bin/tsc --noEmit  # cek tipe TypeScript panel admin
 npm run build                     # WAJIB lolos sebelum task dianggap selesai
 ```
@@ -351,6 +351,16 @@ php artisan migrate --force
 php artisan config:cache && php artisan route:cache && php artisan view:cache
 ```
 
+Khusus deploy pertama yang memuat perubahan konversi WebP tanggal 20 Agustus
+2026, bangun ulang media lama sekali setelah migrasi:
+
+```bash
+php artisan media-library:regenerate --force
+```
+
+Tanpa langkah satu kali ini, database lama masih menandai konversi JPEG sebagai
+selesai sementara kode publik sudah meminta nama berkas WebP.
+
 **Hosting: BiznetGio NEO Web Hosting (cPanel), atas nama yayasan.** Alasannya di ADR-6 `PRD-SMA.md`.
 
 `git clone` ke home directory **di luar** `public_html`, lalu arahkan document root domain ke `~/sma/public`. Ini yang mencegah `.env` dan `storage/` bisa diunduh publik — kesalahan paling umum sekaligus paling fatal saat menaruh Laravel di shared hosting. Jangan pernah meletakkan root Laravel di dalam `public_html`.
@@ -376,7 +386,7 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 ## Definisi selesai
 
-- [ ] `npm run build`, `php artisan test`, `./vendor/bin/pint`, `./vendor/bin/phpstan analyse`, dan `tsc --noEmit` semuanya lolos
+- [ ] `npm run build`, `php artisan test`, `./vendor/bin/pint`, `./vendor/bin/phpstan analyse --memory-limit=512M`, dan `tsc --noEmit` semuanya lolos
 - [ ] Aturan Token berlaku juga di TSX: tidak ada hex di `resources/js/` — warna dibaca dari variabel CSS
 - [ ] `php artisan migrate:fresh --seed` jalan bersih di SQLite
 - [ ] `grep -rniE '\b(nuptk|nik)\b' app/ resources/ database/` tidak mengembalikan apa pun

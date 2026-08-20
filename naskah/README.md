@@ -52,9 +52,10 @@ Boleh menyusul setelah rilis, tapi **inilah yang paling menentukan** apakah situ
 
 ### Logo
 
-- [ ] File `.svg`, atau `.png` latar transparan minimal 512×512
+- [x] Logo diterima 20 Agustus 2026 dan dipasang oleh `MediaSekolahSeeder`
 
-Taruh di folder ini. Sekarang navbar memakai inisial "AI" sebagai pengganti sementara.
+Versi WebP 512×512 yang sudah dibersihkan dari metadata disimpan sebagai aset
+seeder. Berkas asli tetap berada di `naskah/foto-original/` dan tidak ikut Git.
 
 ### Foto
 
@@ -63,7 +64,10 @@ Taruh di folder ini, boleh langsung dari HP tanpa dikecilkan — sistem mengompr
 - [ ] **Foto gedung sekolah**, 2–3 buah, orientasi mendatar (landscape), minimal 1600px sisi panjang. Ini untuk hero beranda — foto paling menentukan kesan pertama
 - [ ] **Foto kegiatan**, 10–20 buah: upacara, pembelajaran, ekstrakurikuler, kegiatan keagamaan
 - [ ] **Foto tiap ekstrakurikuler** — Pramuka, Paskibra, Hadrah, Futsal, Voli, Tata Boga, Tata Rias
-- [ ] **Foto guru**, potret menghadap depan. Opsional — tanpa foto, situs menampilkan inisial, bukan gambar rusak
+- [ ] **Foto guru**, potret menghadap depan. Empat belas foto bernama sudah
+  dipasang; Hilmi Fathiyatul Baroroh dan Anis Novi Rahayu masih memakai
+  inisial. `GEMA2770.JPG` tidak memiliki nama dan tidak boleh dipetakan
+  berdasarkan tebakan wajah.
 
 **Izin foto siswa.** Foto yang memuat wajah siswa tidak diterbitkan sebelum ada izin tertulis. Kalau belum ada, kirim foto kegiatan yang tidak menampilkan wajah dari dekat — foto punggung, kegiatan dari jauh, atau tangan yang sedang bekerja. Ini bukan formalitas; menerbitkan foto anak tanpa izin tidak bisa diperbaiki setelah tersebar.
 
@@ -92,7 +96,7 @@ Didaftarkan **atas nama yayasan atau sekolah, bukan nama pribadi**. Memindahkan 
 |---|---|---|
 | Data kontak | Panel admin → Pengaturan Situs | tidak (di database) |
 | Naskah halaman | Panel admin → Halaman | tidak (di database) |
-| Logo | `public/branding/` lalu diunggah di Pengaturan Situs | ya (branding publik) |
+| Logo bawaan sekolah | `database/seeders/assets/` lalu dipasang medialibrary | ya (versi WebP) |
 | Foto kegiatan & guru | Diunggah lewat panel admin | tidak (di storage) |
 | Scan dokumen legal | Tetap di folder ini saja | tidak |
 

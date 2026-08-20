@@ -28,7 +28,8 @@ tetap didorong setelah seluruh gerbang mutu bersih.
 
 **Panel admin, 9 bagian:** Dasbor, Berita, Halaman, Guru & Tendik, Struktur Organisasi, Ekstrakurikuler, Galeri, Pengaturan Situs, Akun Pengguna.
 
-**Verifikasi:** 73 test lolos, phpstan level 5 nol error, tsc bersih, pint bersih.
+**Verifikasi terakhir:** lihat entri terbaru `CHANGELOG.md`. Gerbang tetap terdiri
+atas PHPUnit, Pint, PHPStan level 5, TypeScript, dan build Vite.
 
 ### Menjalankan
 
@@ -73,6 +74,13 @@ Semua ini sudah terjadi dan sudah diperbaiki. Jangan mengulanginya.
 
 **Media medialibrary bersifat polimorfik.** Endpoint hapus foto galeri memeriksa `model_type` dan `model_id`; tanpa itu URL karangan bisa menghapus media milik model lain.
 
+**Gambar isi berita mempunyai fase tertunda.** Upload editor langsung terikat ke
+berita agar ownership dapat diperiksa, tetapi baru berstatus `dipakai` setelah
+HTML berhasil tersimpan. Jangan menghapus media `tertunda` saat tab lain
+menyimpan berita. Scheduler harian memulihkan gambar yang sudah direferensikan
+dan menghapus upload tertunda berumur lebih dari 24 jam; cron cPanel
+`php artisan schedule:run` wajib tetap aktif.
+
 ---
 
 ## 4. Keputusan yang sudah dikunci
@@ -91,21 +99,19 @@ Detail lengkap ada di `PRD-SMA.md` (ADR-1 sampai ADR-14). Ringkasnya, **jangan d
 
 ---
 
-## 5. Koreksi penting yang belum dieksekusi
+## 5. Arah visual yang dipilih
 
-**Situs pesantren berwarna BIRU `#1e3a8a`, bukan hijau.**
+**Hijau Santri dipilih dan diterapkan pada 20 Agustus 2026.**
 
-Warna SMA sekarang `#0d4a5c` (biru-teal) dipilih dengan alasan "supaya beda dari hijau pesantren". Alasan itu salah — diambil dari contoh ilustratif di `PP_ahlulirfan/docs/DESIGN_SWAP_PLAYBOOK.md` yang barisnya sendiri menyatakan nilai aslinya berbeda. Akibatnya **dua situs sekarang berada di keluarga warna yang sama dan berisiko tertukar.**
+Situs pesantren berwarna biru `#1e3a8a`, sehingga arah hijau membuat identitas
+SMA mudah dibedakan. Warna brand `#14532d` dipasangkan dengan highlight
+`#b45309`; implementasinya tetap memakai token semantik di
+`resources/css/app.css`, bukan nilai warna langsung di Blade atau TSX.
 
-Tiga arah desain pengganti sudah disusun, semuanya menjauh dari biru dan sudah diverifikasi kontrasnya:
-
-| Arah | brand | highlight | Catatan |
-|---|---|---|---|
-| A · Hijau Santri | `#14532d` | `#b45309` | Tetap utuh tanpa foto bagus. Paling aman |
-| B · Marun Akademik | `#6b1f2a` | `#a16207` | Paling formal, paling jauh dari nuansa pesantren |
-| C · Tembakau Jember | `#2f3d2c` | `#8a6a1c` | Paling berkarakter, **tapi wajib ada foto bagus** |
-
-**Pemilik proyek belum memilih.** Jangan menerapkan salah satunya tanpa persetujuan.
+UI publik telah dirombak menjadi institusional-modern dengan pola informasi
+sekolah negeri rujukan, tetapi tetap ringan: Blade + Alpine untuk publik dan
+Inertia + React hanya untuk admin. Jangan mengganti stack atau menaruh Inertia
+secara global hanya untuk perubahan visual berikutnya.
 
 ---
 
@@ -118,11 +124,11 @@ selesai pada 17 Agustus 2026. Rinciannya ada di `CHANGELOG.md`.
 |---|---|---|---|
 | 5 | Audit keamanan, performa, maintainability | **Belum pernah dijalankan.** Percobaan sebelumnya gagal kena batas kuota | 3 jam |
 | 6 | Deploy ke BiznetGio | Lihat bagian Deploy di `AGENTS-SMA.md` | 3–4 jam |
-| 7 | Bagan organisasi bergaris penghubung | Diminta pemilik: sekarang hanya kotak tanpa garis, tidak terbaca sebagai hierarki. CSS murni, jangan paket JS | 3 jam |
-| 8 | Rombak UX editor berita | Diminta pemilik: "riweh". Perlu dua kolom (isi + sidebar metadata), seret-lepas gambar, caption menempel pada gambarnya | 4 jam |
-| 9 | Date picker yang layak | Diminta pemilik. `PP_ahlulirfan` memakai `react-day-picker` — periksa dan pertimbangkan reuse | 2 jam |
-| 10 | Kompresi gambar otomatis | Diminta pemilik. **Jangan pakai `spatie/laravel-image-optimizer`** — butuh binary CLI yang tidak ada di shared hosting. Pakai kompresi sisi klien sebelum unggah + kualitas WebP di konversi medialibrary | 2 jam |
-| 11 | Terapkan arah desain terpilih | Menunggu keputusan pemilik | 4–10 jam |
+| 7 | Bagan organisasi bergaris penghubung | **Selesai 20 Agustus 2026.** Konektor CSS murni, hierarki semantik, mode daftar sampai tablet, dan bagan desktop | — |
+| 8 | Rombak UX editor berita | **Selesai 20 Agustus 2026.** Dua kolom, drag/drop dan paste gambar, alt wajib, serta caption yang melekat pada gambar | — |
+| 9 | Date picker yang layak | **Selesai 20 Agustus 2026.** Kontrol tanggal+jam native, aksi Sekarang/Kosongkan, dan zona waktu WIB; tidak menambah paket | — |
+| 10 | Kompresi gambar otomatis | **Selesai 20 Agustus 2026.** Raster diperkecil ke WebP di browser sebelum seluruh jalur unggah; varian Media Library memakai WebP kualitas 75 tanpa optimizer CLI | — |
+| 11 | Terapkan arah desain terpilih | **Selesai 20 Agustus 2026** — Hijau Santri | — |
 | 12 | Panduan CMS + dokumen serah terima | Sekolah harus bisa jalan tanpa kita | 3 jam |
 
 ---
@@ -144,7 +150,12 @@ Ini di luar kendali pengembang. Daftar lengkap dan siap diteruskan ada di `naska
 
 Seeder memakai versi tabel sementara, dan menandainya dengan komentar.
 
-**Menyusul:** logo, foto gedung dan kegiatan, foto guru, minimal satu berita, NPSN, akreditasi, koordinat peta, izin tertulis publikasi foto siswa.
+**Menyusul:** foto gedung dan kegiatan, dua foto pendidik yang belum tersedia,
+minimal satu berita, NPSN, akreditasi, serta koordinat peta. Izin publikasi foto
+siswa dikonfirmasi sudah diperoleh oleh pemilik proyek pada 20 Agustus 2026;
+bukti izinnya tetap harus disimpan bersama dokumen serah-terima. Logo dan 14 foto guru/tendik yang namanya dapat
+dipastikan sudah masuk melalui `MediaSekolahSeeder`; satu foto tanpa nama tidak
+digunakan agar identitas orang tidak ditebak.
 
 ---
 
