@@ -96,16 +96,16 @@ class AdminBeritaTest extends TestCase
 
     public function test_admin_dapat_membuat_berita(): void
     {
-        $this->actingAs($this->admin)
+        $respons = $this->actingAs($this->admin)
             ->post(route('admin.berita.store'), [
                 'judul' => 'Peringatan Maulid Nabi',
                 'isi' => '<p>Kegiatan berjalan lancar.</p>',
                 'status' => StatusBerita::Terbit->value,
-            ])
-            ->assertRedirect(route('admin.berita.index'));
+            ]);
 
         $berita = Berita::first();
 
+        $respons->assertRedirect(route('admin.berita.edit', $berita));
         $this->assertSame('peringatan-maulid-nabi', $berita->slug);
         $this->assertSame($this->admin->id, $berita->penulis_id);
     }

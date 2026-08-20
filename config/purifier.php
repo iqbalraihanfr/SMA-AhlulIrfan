@@ -53,7 +53,7 @@ return [
                 .'h2,h3,h4,blockquote,'
                 .'ul,ol,li,'
                 .'a[href|title],'
-                .'img[src|alt|width|height],figure,figcaption,'
+                .'img[src|alt|width|height|data-media-id],figure,figcaption,'
                 .'span[class|lang|dir],div',
             'Attr.AllowedClasses' => 'arab',
             'AutoFormat.AutoParagraph' => true,
@@ -72,7 +72,7 @@ return [
         ],
         'custom_definition' => [
             'id' => 'html5-definitions',
-            'rev' => 1,
+            'rev' => 2,
             'debug' => false,
             'elements' => [
                 // http://developers.whatwg.org/sections.html
@@ -130,6 +130,7 @@ return [
         ],
         'custom_attributes' => [
             ['a', 'target', 'Enum#_blank,_self,_target,_top'],
+            ['img', 'data-media-id', 'Text'],
         ],
         'custom_elements' => [
             ['u', 'Inline', 'Inline', 'Common'],

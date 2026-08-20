@@ -1,35 +1,45 @@
-import { EditorContent, useEditor, type Editor } from '@tiptap/react';
+import { EditorContent, useEditor, useEditorState, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
-import { useEffect, type ReactNode } from 'react';
+import { ImagePlus, Trash2, Upload } from 'lucide-react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { GambarBerita, type MediaGambarBerita } from '@/Components/GambarBerita';
+import { Input, Label, Petunjuk, Tombol } from '@/Components/Ui';
+import { TIPE_GAMBAR_DITERIMA, tipeGambarDapatDioptimalkan } from '@/lib/optimalkanGambar';
 
 /**
  * Editor teks kaya untuk isi berita dan halaman.
  *
- * Pilihan ekstensi mengikuti editor situs pesantren
- * (PP_ahlulirfan/src/components/admin/rich-text-editor.tsx), tetapi ditulis
- * ulang tanpa shadcn, lucide, dan dialog media Supabase yang tidak ada di sini.
- *
- * Keluarannya HTML dan TETAP disanitasi mews/purifier di sisi server sebelum
- * dirender. Editor mengatur apa yang bisa diketik, bukan apa yang aman.
+ * Keluarannya HTML dan tetap dinormalisasi serta disanitasi di server. Editor
+ * mengatur apa yang nyaman diketik, bukan apa yang aman untuk dipercaya.
  */
 
 type Props = {
     nilai: string;
     onUbah: (html: string) => void;
+    onUnggahGambar?: (gambar: File, alt: string) => Promise<MediaGambarBerita>;
+    onStatusUnggahBerubah?: (aktif: boolean) => void;
     placeholder?: string;
     id?: string;
 };
+
+function gambarSedangTerpilih(editor: Editor): boolean {
+    const pilihan = editor.state.selection;
+
+    return !pilihan.empty && editor.state.doc.nodeAt(pilihan.from)?.type.name === GambarBerita.name;
+}
 
 function TombolAlat({
     aktif,
     onClick,
     label,
+    disabled = false,
     children,
 }: {
     aktif?: boolean;
     onClick: () => void;
     label: string;
+    disabled?: boolean;
     children: ReactNode;
 }) {
     return (
@@ -37,20 +47,29 @@ function TombolAlat({
             type="button"
             onClick={onClick}
             aria-pressed={aktif}
+            aria-label={label}
             title={label}
-            className={`rounded-sm px-2 py-1 text-sm font-medium transition ${
+            disabled={disabled}
+            className={`grid min-h-9 min-w-9 place-items-center rounded-sm px-2 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40 ${
                 aktif ? 'bg-brand text-on-brand' : 'text-ink-muted hover:bg-paper-sunken'
             }`}
         >
             <span aria-hidden="true">{children}</span>
-            <span className="sr-only">{label}</span>
         </button>
     );
 }
 
-function Toolbar({ editor }: { editor: Editor }) {
+function Toolbar({
+    editor,
+    bisaUnggahGambar,
+    onPilihGambar,
+}: {
+    editor: Editor;
+    bisaUnggahGambar: boolean;
+    onPilihGambar: () => void;
+}) {
     return (
-        <div className="flex flex-wrap gap-1 border-b border-line bg-paper-raised px-2 py-1.5">
+        <div role="toolbar" aria-label="Pemformatan isi berita" className="flex flex-wrap gap-1 border-b border-line bg-paper-raised px-2 py-1.5">
             <TombolAlat label="Tebal" aktif={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
                 <strong>B</strong>
             </TombolAlat>
@@ -99,25 +118,58 @@ function Toolbar({ editor }: { editor: Editor }) {
                 🔗
             </TombolAlat>
 
+            <TombolAlat label="Sisipkan gambar" disabled={!bisaUnggahGambar} onClick={onPilihGambar}>
+                <ImagePlus className="h-4 w-4" />
+            </TombolAlat>
+
             <span className="mx-1 w-px bg-line" aria-hidden="true" />
 
-            <TombolAlat label="Urungkan" onClick={() => editor.chain().focus().undo().run()}>
+            <TombolAlat label="Urungkan" disabled={!editor.can().chain().undo().run()} onClick={() => editor.chain().focus().undo().run()}>
                 ↶
             </TombolAlat>
 
-            <TombolAlat label="Ulangi" onClick={() => editor.chain().focus().redo().run()}>
+            <TombolAlat label="Ulangi" disabled={!editor.can().chain().redo().run()} onClick={() => editor.chain().focus().redo().run()}>
                 ↷
             </TombolAlat>
         </div>
     );
 }
 
-export default function EditorTeks({ nilai, onUbah, placeholder, id }: Props) {
+export default function EditorTeks({ nilai, onUbah, onUnggahGambar, onStatusUnggahBerubah, placeholder, id }: Props) {
+    const inputGambar = useRef<HTMLInputElement>(null);
+    const [gambarTertunda, setGambarTertunda] = useState<File | null>(null);
+    const [pratinjau, setPratinjau] = useState<string | null>(null);
+    const [alt, setAlt] = useState('');
+    const [caption, setCaption] = useState('');
+    const [galatGambar, setGalatGambar] = useState<string | null>(null);
+    const [mengunggah, setMengunggah] = useState(false);
+
+    function siapkanGambar(file: File): void {
+        setGalatGambar(null);
+
+        if (!onUnggahGambar) {
+            setGalatGambar('Simpan berita terlebih dahulu, lalu tambahkan gambar dari halaman ubah.');
+
+            return;
+        }
+
+        if (!tipeGambarDapatDioptimalkan(file.type)) {
+            setGalatGambar('Gambar harus berformat JPG, PNG, atau WebP.');
+
+            return;
+        }
+
+        setGambarTertunda(file);
+        setAlt('');
+        setCaption('');
+    }
+
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
                 link: { openOnClick: false, HTMLAttributes: { rel: 'noopener noreferrer' } },
             }),
+            GambarBerita,
             Placeholder.configure({ placeholder: placeholder ?? 'Tulis isi di sini…' }),
         ],
         content: nilai,
@@ -127,27 +179,225 @@ export default function EditorTeks({ nilai, onUbah, placeholder, id }: Props) {
                 id: id ?? 'editor',
                 class: 'min-h-64 px-4 py-3 focus:outline-none',
             },
+            handleDrop: (_view, event, _slice, dipindahkan) => {
+                if (dipindahkan) return false;
+
+                const file = Array.from(event.dataTransfer?.files ?? []).find((berkas) => berkas.type.startsWith('image/'));
+
+                if (!file) return false;
+
+                event.preventDefault();
+                siapkanGambar(file);
+
+                return true;
+            },
+            handlePaste: (_view, event) => {
+                const file = Array.from(event.clipboardData?.files ?? []).find((berkas) => berkas.type.startsWith('image/'));
+
+                if (!file) return false;
+
+                event.preventDefault();
+                siapkanGambar(file);
+
+                return true;
+            },
+            handleDOMEvents: {
+                dragover: (_view, event) => {
+                    if (Array.from(event.dataTransfer?.items ?? []).some((item) => item.type.startsWith('image/'))) {
+                        event.preventDefault();
+                    }
+
+                    return false;
+                },
+            },
         },
     });
 
-    // Saat server mengembalikan nilai baru (mis. setelah validasi gagal),
-    // isi editor harus ikut. Tanpa ini yang diketik ulang bisa hilang.
+    useEffect(() => {
+        if (!gambarTertunda) {
+            setPratinjau(null);
+
+            return;
+        }
+
+        const url = URL.createObjectURL(gambarTertunda);
+        setPratinjau(url);
+
+        return () => URL.revokeObjectURL(url);
+    }, [gambarTertunda]);
+
     useEffect(() => {
         if (!editor || editor.getHTML() === nilai) return;
 
         editor.commands.setContent(nilai, { emitUpdate: false });
     }, [editor, nilai]);
 
+    const gambarTerpilih = useEditorState({
+        editor,
+        selector: ({ editor }) => (editor ? gambarSedangTerpilih(editor) : false),
+    });
+
     if (!editor) return null;
 
-    return (
-        <div className="mt-1 overflow-hidden rounded-md border border-line bg-paper shadow-card focus-within:border-brand">
-            <Toolbar editor={editor} />
+    const atributGambar = editor.getAttributes('gambarBerita');
 
-            <EditorContent
+    async function unggahGambar(): Promise<void> {
+        if (!gambarTertunda || !onUnggahGambar || !alt.trim()) return;
+
+        setMengunggah(true);
+        onStatusUnggahBerubah?.(true);
+        setGalatGambar(null);
+
+        try {
+            const media = await onUnggahGambar(gambarTertunda, alt.trim());
+
+            editor
+                .chain()
+                .focus()
+                .insertContent([
+                    {
+                        type: GambarBerita.name,
+                        attrs: {
+                            mediaId: media.id,
+                            src: media.url,
+                            alt: media.alt,
+                            caption: caption.trim(),
+                            width: media.width,
+                            height: media.height,
+                        },
+                    },
+                    { type: 'paragraph' },
+                ])
+                .run();
+
+            setGambarTertunda(null);
+            setAlt('');
+            setCaption('');
+        } catch (error) {
+            setGalatGambar(error instanceof Error ? error.message : 'Gambar gagal diunggah. Coba lagi.');
+        } finally {
+            setMengunggah(false);
+            onStatusUnggahBerubah?.(false);
+        }
+    }
+
+    return (
+        <div className="editor-teks mt-1 overflow-hidden rounded-md border border-line bg-paper shadow-card focus-within:border-brand">
+            <Toolbar
                 editor={editor}
-                className="[&_.tiptap]:text-ink [&_a]:text-brand [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-brand [&_blockquote]:pl-4 [&_blockquote]:italic [&_h3]:font-heading [&_h3]:text-lg [&_h3]:font-semibold [&_ol]:list-decimal [&_ol]:pl-6 [&_p.is-editor-empty:first-child::before]:pointer-events-none [&_p.is-editor-empty:first-child::before]:float-left [&_p.is-editor-empty:first-child::before]:h-0 [&_p.is-editor-empty:first-child::before]:text-ink-faint [&_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_ul]:list-disc [&_ul]:pl-6"
+                bisaUnggahGambar={Boolean(onUnggahGambar)}
+                onPilihGambar={() => inputGambar.current?.click()}
             />
+
+            <input
+                ref={inputGambar}
+                type="file"
+                accept={TIPE_GAMBAR_DITERIMA}
+                className="hidden"
+                tabIndex={-1}
+                onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) siapkanGambar(file);
+                    event.target.value = '';
+                }}
+            />
+
+            {!onUnggahGambar && (
+                <p className="border-b border-line bg-paper-raised px-4 py-2 text-xs text-ink-muted">
+                    Simpan berita terlebih dahulu untuk mengaktifkan seret-lepas gambar dan caption.
+                </p>
+            )}
+
+            {gambarTertunda && (
+                <div className="grid gap-4 border-b border-line bg-paper-raised p-4 sm:grid-cols-3">
+                    {pratinjau && (
+                        <img src={pratinjau} alt="" className="aspect-video w-full rounded-md border border-line object-cover" />
+                    )}
+                    <div className="space-y-3 sm:col-span-2">
+                        <div>
+                            <Label htmlFor={`${id ?? 'editor'}_alt_gambar`}>Teks alternatif</Label>
+                            <Input
+                                id={`${id ?? 'editor'}_alt_gambar`}
+                                value={alt}
+                                onChange={(event) => setAlt(event.target.value)}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') event.preventDefault();
+                                }}
+                                maxLength={200}
+                                required
+                                autoFocus
+                            />
+                            <Petunjuk>Jelaskan informasi penting dalam gambar untuk pembaca layar.</Petunjuk>
+                        </div>
+                        <div>
+                            <Label htmlFor={`${id ?? 'editor'}_caption_gambar`}>Caption (opsional)</Label>
+                            <Input
+                                id={`${id ?? 'editor'}_caption_gambar`}
+                                value={caption}
+                                onChange={(event) => setCaption(event.target.value)}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') event.preventDefault();
+                                }}
+                                maxLength={300}
+                            />
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            <Tombol
+                                type="button"
+                                disabled={mengunggah || !alt.trim()}
+                                className="gap-2"
+                                onClick={() => void unggahGambar()}
+                            >
+                                <Upload aria-hidden="true" className="h-4 w-4" />
+                                {mengunggah ? 'Menyiapkan dan mengunggah…' : 'Sisipkan gambar'}
+                            </Tombol>
+                            <Tombol type="button" variasi="garis" onClick={() => setGambarTertunda(null)}>
+                                Batal
+                            </Tombol>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {gambarTerpilih && (
+                <div className="flex flex-wrap items-end gap-3 border-b border-line bg-paper-raised p-3">
+                    <div className="min-w-64 flex-1">
+                        <Label htmlFor={`${id ?? 'editor'}_caption_terpilih`}>Caption gambar terpilih</Label>
+                        <Input
+                            id={`${id ?? 'editor'}_caption_terpilih`}
+                            value={String(atributGambar.caption ?? '')}
+                            onChange={(event) => editor.chain().updateAttributes('gambarBerita', { caption: event.target.value }).run()}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter') event.preventDefault();
+                            }}
+                        />
+                        <Petunjuk>Teks alternatif: {String(atributGambar.alt ?? '')}</Petunjuk>
+                    </div>
+                    <Tombol
+                        type="button"
+                        variasi="bahaya"
+                        className="gap-2"
+                        onClick={() => {
+                            editor.chain().focus().deleteSelection().run();
+                        }}
+                    >
+                        <Trash2 aria-hidden="true" className="h-4 w-4" />
+                        Lepas gambar
+                    </Tombol>
+                </div>
+            )}
+
+            <EditorContent editor={editor} />
+
+            <p className="border-t border-line bg-paper-raised px-4 py-2 text-xs text-ink-muted">
+                {onUnggahGambar
+                    ? 'Seret atau tempel gambar ke area tulisan. Caption akan tetap menempel saat gambar dipindahkan.'
+                    : 'Gambar dapat ditambahkan setelah penyimpanan pertama.'}
+            </p>
+
+            <p aria-live="polite" className="px-4 text-sm text-danger">
+                {galatGambar}
+            </p>
         </div>
     );
 }

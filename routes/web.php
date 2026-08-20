@@ -75,6 +75,8 @@ Route::middleware(['auth', 'inertia'])->group(function () {
         Route::resource('berita', AdminBeritaController::class)
             ->except('show')
             ->parameters(['berita' => 'berita']);
+        Route::post('berita/{berita}/gambar', [AdminBeritaController::class, 'simpanGambarIsi'])
+            ->name('berita.gambar.store');
 
         // Baris konten_halaman dibuat seeder dan terikat pada route publik
         // tertentu, jadi tidak ada create/store/destroy — menghapus baris

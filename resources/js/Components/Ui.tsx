@@ -35,9 +35,9 @@ export function Kartu({ children, className = '' }: { children: ReactNode; class
     return <div className={`rounded-lg border border-line bg-paper p-6 shadow-card ${className}`}>{children}</div>;
 }
 
-export function Label({ children, ...props }: LabelHTMLAttributes<HTMLLabelElement>) {
+export function Label({ children, className = '', ...props }: LabelHTMLAttributes<HTMLLabelElement>) {
     return (
-        <label {...props} className="block text-sm font-medium text-ink">
+        <label {...props} className={`block text-sm font-medium text-ink ${className}`}>
             {children}
         </label>
     );

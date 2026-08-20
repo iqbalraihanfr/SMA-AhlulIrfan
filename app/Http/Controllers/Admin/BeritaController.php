@@ -6,7 +6,10 @@ use App\Enums\Izin;
 use App\Enums\StatusBerita;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BeritaRequest;
+use App\Http\Requests\UnggahGambarBeritaRequest;
 use App\Models\Berita;
+use App\Services\GambarIsiBerita;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -17,6 +20,8 @@ use Inertia\Response;
 
 class BeritaController extends Controller implements HasMiddleware
 {
+    public function __construct(private readonly GambarIsiBerita $gambarIsiBerita) {}
+
     /**
      * Sejak Laravel 11 middleware dideklarasikan lewat HasMiddleware,
      * bukan $this->middleware() di konstruktor.
@@ -60,6 +65,7 @@ class BeritaController extends Controller implements HasMiddleware
             'berita' => null,
             'pilihanStatus' => $this->pilihanStatus(),
             'aksi' => route('admin.berita.store'),
+            'unggahGambarUrl' => null,
         ]);
     }
 
@@ -67,9 +73,16 @@ class BeritaController extends Controller implements HasMiddleware
     {
         $berita = Berita::create($this->data($request));
 
-        $this->simpanSampul($request, $berita);
+        $berita->update([
+            'isi' => $this->gambarIsiBerita->normalisasi($berita, $berita->isi),
+        ]);
 
-        return to_route('admin.berita.index')->with('sukses', 'Berita berhasil dibuat.');
+        $this->simpanSampul($request, $berita);
+        $berita->refresh();
+        $this->gambarIsiBerita->selesaikanPenyimpanan($berita);
+
+        return to_route('admin.berita.edit', $berita)
+            ->with('sukses', 'Berita berhasil dibuat. Sekarang Anda dapat menyisipkan gambar ke dalam isi.');
     }
 
     public function edit(Berita $berita): Response
@@ -92,6 +105,7 @@ class BeritaController extends Controller implements HasMiddleware
             ],
             'pilihanStatus' => $this->pilihanStatus(),
             'aksi' => route('admin.berita.update', $berita),
+            'unggahGambarUrl' => route('admin.berita.gambar.store', $berita),
         ]);
     }
 
@@ -106,11 +120,38 @@ class BeritaController extends Controller implements HasMiddleware
 
     public function update(BeritaRequest $request, Berita $berita): RedirectResponse
     {
-        $berita->update($this->data($request));
+        $data = $this->data($request);
+        $data['isi'] = $this->gambarIsiBerita->normalisasi($berita, $data['isi']);
+
+        $berita->update($data);
 
         $this->simpanSampul($request, $berita);
+        $berita->refresh();
+        $this->gambarIsiBerita->selesaikanPenyimpanan($berita);
 
         return to_route('admin.berita.index')->with('sukses', 'Berita berhasil diperbarui.');
+    }
+
+    public function simpanGambarIsi(UnggahGambarBeritaRequest $request, Berita $berita): JsonResponse
+    {
+        $media = $berita->addMediaFromRequest('gambar')
+            ->withCustomProperties([
+                'alt' => $request->string('alt')->value(),
+                'status_editor' => 'tertunda',
+            ])
+            ->toMediaCollection('isi');
+
+        $ukuran = @getimagesize($media->getPath('hero'));
+
+        return response()->json([
+            'media' => [
+                'id' => $media->id,
+                'url' => $media->getUrl('hero'),
+                'alt' => $media->getCustomProperty('alt'),
+                'width' => is_array($ukuran) ? $ukuran[0] : null,
+                'height' => is_array($ukuran) ? $ukuran[1] : null,
+            ],
+        ], 201);
     }
 
     public function destroy(Berita $berita): RedirectResponse
