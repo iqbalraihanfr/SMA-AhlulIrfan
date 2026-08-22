@@ -36,10 +36,12 @@ Naskah itu **tidak selengkap yang dikira**. Tiga bagian — Prestasi Siswa, Tata
 ## 4. Non-Goals — di luar scope, JANGAN dikerjakan
 
 - Sistem pembelajaran daring (LMS): materi pelajaran, kelas daring, unggah tugas, login siswa
-- Presensi siswa atau guru
+- Presensi guru
+- Presensi/absensi siswa per mata pelajaran atau per jam pelajaran
+- Portal atau login wali siswa
 - Ujian atau kuis online
 - PPDB online dengan pembayaran
-- Login siswa atau orang tua
+- Login siswa
 - Aplikasi mobile
 - Forum, komentar, atau fitur sosial
 - Multi-bahasa
@@ -115,7 +117,7 @@ Urutan ini **dikunci**. Tim desain bebas menentukan tampilan tiap section, tapi 
 | P0-11 | Halaman Struktur Organisasi, dirender sebagai HTML/CSS responsif — bukan gambar |
 | P0-12 | Halaman Prestasi Siswa |
 | P0-13 | Halaman Tata Tertib Sekolah |
-| P0-14 | **NUPTK, NIK, dan identitas kependudukan tidak ada di repo, skema, maupun keluaran mana pun** — diverifikasi lewat perintah grep di Definisi Selesai |
+| P0-14 | **NUPTK, NIK, NISN, nomor KK, data orang tua, dan identitas kependudukan tidak ada di repo, skema, maupun keluaran mana pun** — diverifikasi lewat perintah grep di Definisi Selesai |
 | P0-3 | Login admin, logout, dan reset password lewat email berfungsi |
 | P0-4 | Admin berita: buat, ubah, hapus, draft/terbit |
 | P0-5 | Upload gambar dengan `alt` wajib; varian ukuran dibuat saat upload |
@@ -124,6 +126,30 @@ Urutan ini **dikunci**. Tim desain bebas menentukan tampilan tiap section, tapi 
 | P0-8 | Metadata SEO: title, description, canonical, Open Graph, sitemap, robots |
 | P0-9 | Terpasang di hosting produksi dengan HTTPS dan domain aktif |
 | P0-10 | Backup database dan media berhasil diuji restore sekali |
+
+### Fase kedua — P0 absensi harian siswa
+
+Fase kedua disetujui sebagai modul privat di panel admin. MVP hanya mencakup
+absensi **harian, satu kali per kelas**, yang diisi wali kelas dengan admin
+sebagai pengganti. Statusnya: Belum diisi, Hadir, Sakit, Izin, Alpa, dan
+Terlambat. Guru hanya dapat mengubah tanggal hari ini menurut
+`Asia/Jakarta`; koreksi tanggal lampau hanya oleh admin dengan alasan wajib.
+
+Ekspor awal berupa CSV UTF-8 per kelas dan rentang tanggal. Bukti surat
+izin/sakit tetap disimpan sekolah di luar sistem; sistem hanya menyimpan status
+dan catatan singkat. Data siswa terbatas pada `kode_siswa` internal unik dan
+nama. Tidak ada penghapusan otomatis sampai sekolah menetapkan kebijakan
+retensi.
+
+Presensi/absensi per mata pelajaran/per jam pelajaran dan portal/login wali siswa tetap
+Non-Goals. Keduanya memerlukan addendum scope baru karena mengubah model data,
+otorisasi, beban kerja, dan lingkup privasi secara material.
+
+Task 1–14 fase kedua hanya menargetkan kode dan verifikasi lokal yang siap
+untuk pilot. Deploy, impor data resmi, backup/restore produksi, dan pilot satu
+kelas selama lima hari sekolah adalah langkah operasional yang **belum
+dijalankan** dan memerlukan akses serta otorisasi eksternal. Tidak ada data
+siswa nyata di repo, seeder, fixture Git, screenshot publik, maupun log.
 
 ### P1 — Sebaiknya ada, kerjakan jika waktu cukup
 
@@ -205,9 +231,17 @@ Izin dipecah per area konten, bukan per operasi (lihat/buat/ubah/hapus). Dengan 
 **ADR-5 — Reuse dari pesantren terbatas pada lapisan presentasi.**
 Yang diambil: nilai token, markup HTML dan kelas Tailwind, struktur dokumen, gaya penulisan. Yang tidak bisa diambil: komponen React, `lib/data.ts`, admin TipTap-React, migrasi Supabase, dan seluruh test.
 
+**ADR-15 — Absensi harian tetap di Laravel + MySQL yang sama.**
+Modul berada di panel admin privat yang sudah ada, sehingga memakai satu login,
+hosting, backup, prosedur operasi, serta sumber data. Vercel, Supabase, dan
+aplikasi terpisah ditolak karena akan menambah stack, sinkronisasi data,
+penagihan, dan beban serah terima tanpa kebutuhan yang sebanding pada skala
+sekolah.
+
 ## 11. Model Konten
 
-Tanpa kecuali: **tidak ada kolom NUPTK, NIK, atau identitas kependudukan lain** di tabel mana pun.
+Tanpa kecuali: **tidak ada kolom NUPTK, NIK, NISN, nomor KK, data orang tua,
+atau identitas kependudukan lain** di tabel mana pun.
 
 | Tabel | Kolom inti |
 |---|---|

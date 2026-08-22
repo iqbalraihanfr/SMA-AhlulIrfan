@@ -107,7 +107,9 @@ alias pa='/Applications/MAMP/bin/php/php8.4.1/bin/php artisan'
 
 5. **ATURAN SKEMA-SEBAGAI-KODE.** Skema hidup di `database/migrations/`. Validasi dan pesan error Bahasa Indonesia hidup di `app/Http/Requests/`. Jangan mengubah tabel lewat phpMyAdmin — selalu lewat migrasi.
 
-6. **ATURAN PRIVASI.** `NUPTK`, `NIK`, dan identitas kependudukan apa pun tidak boleh ada di migrasi, model, response, structured data, maupun HTML yang dirender.
+6. **ATURAN PRIVASI.** `NUPTK`, `NIK`, `NISN`, nomor KK, data orang tua, dan
+   identitas kependudukan apa pun tidak boleh ada di migrasi, model, response,
+   structured data, maupun HTML yang dirender.
 
    **Ini bukan larangan teoretis.** Naskah sumber `WEBSITE.docx` memuat NUPTK 13 orang. File itu diblokir `.gitignore` dan naskahnya sudah ditranskrip tanpa kolom tersebut ke `docs/KONTEN-SEKOLAH.md`. Ambil konten dari file transkrip itu — **jangan pernah membuka atau menyalin dari `.docx` langsung**, dan jangan pernah memaksa file naskah masuk git dengan `git add -f`.
 
@@ -390,7 +392,7 @@ selesai sementara kode publik sudah meminta nama berkas WebP.
 - [ ] `npm run build`, `php artisan test`, `./vendor/bin/pint`, `./vendor/bin/phpstan analyse --memory-limit=512M`, dan `tsc --noEmit` semuanya lolos
 - [ ] Aturan Token berlaku juga di TSX: tidak ada hex di `resources/js/` — warna dibaca dari variabel CSS
 - [ ] `php artisan migrate:fresh --seed` jalan bersih di SQLite
-- [ ] `grep -rniE '\b(nuptk|nik)\b' app/ resources/ database/` tidak mengembalikan apa pun
+- [ ] `grep -rniE '\b(nuptk|nik|nisn)\b' app/ resources/ database/` tidak mengembalikan apa pun
 - [ ] Dicek di 390px dan 1280px; admin dicek di lebar laptop
 - [ ] Tidak ada nilai hex atau kelas palet Tailwind di luar `resources/css/app.css`
 - [ ] Tipe konten baru ada di migrasi, model, factory, **dan** seeder
@@ -417,8 +419,8 @@ Naskah yang sudah ada berikut status tiap bagiannya: `docs/KONTEN-SEKOLAH.md`. B
 
 ## Jangan
 
-- Jangan membangun e-learning, presensi, ujian online, PPDB berbayar, atau login siswa (lihat Non-Goals di `PRD-SMA.md`).
-- Jangan memodelkan atau merender NUPTK, NIK, atau identitas kependudukan apa pun.
+- Jangan membangun e-learning, presensi/absensi per mata pelajaran, portal wali siswa, ujian online, PPDB berbayar, atau login siswa (lihat Non-Goals di `PRD-SMA.md`).
+- Jangan memodelkan atau merender NUPTK, NIK, NISN, nomor KK, data orang tua, atau identitas kependudukan apa pun.
 - Jangan menerbitkan foto siswa sebelum ada izin tertulis.
 - Jangan mendesain ulang tampilan yang diport dari pesantren — ganti nilai token saja.
 - Jangan menulis keras nama domain di mana pun.

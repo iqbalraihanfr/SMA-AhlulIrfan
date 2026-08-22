@@ -37,6 +37,47 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ---
 
+## 2026-08-22 — Scope fase kedua absensi harian disepakati
+
+**Dikerjakan:** Codex
+
+### Berubah
+
+- PRD kini mengizinkan P0 fase kedua untuk absensi harian satu kali per kelas,
+  tanpa mengubah scope publik atau menjadikan absensi per mata pelajaran dan
+  portal wali siswa bagian MVP.
+- Decision Gate lengkap dicatat di HANDOFF: karena tidak ada jawaban sekolah
+  yang menyimpang, seluruh default aman berlaku untuk Task 1–14 tanpa memuat
+  data siswa.
+- Aturan privasi secara eksplisit menambahkan NISN, nomor KK, dan data orang
+  tua sambil mempertahankan larangan NIK, NUPTK, serta identitas kependudukan.
+
+### Diputuskan
+
+- Modul tetap privat di Laravel + MySQL yang sama agar login, hosting, backup,
+  prosedur operasi, dan handoff tidak terpecah ke layanan baru.
+- Task 14 dibatasi pada kesiapan pilot lokal. Deploy, impor data resmi,
+  backup/restore produksi, dan pilot satu kelas lima hari tetap langkah
+  operasional yang belum dilakukan karena memerlukan akses dan otorisasi
+  eksternal.
+
+### Sengaja tidak dikerjakan
+
+- Tidak ada kode aplikasi, migrasi, route, akun guru, maupun data siswa nyata
+  yang dibuat; task ini hanya mengikat scope dan baseline sebelum implementasi.
+- Tidak mengubah situs publik, memasang dependency, melakukan deploy, impor
+  data resmi, backup/restore produksi, atau menjalankan pilot karena semuanya
+  berada di luar otorisasi dokumentasi ini.
+
+### Verifikasi
+
+- `rg -n "presensi|absensi|NISN|wali siswa" PRD-SMA.md AGENTS-SMA.md HANDOFF.md`
+  dijalankan: scope harian, Non-Goals per mata pelajaran/portal wali, dan
+  larangan privasi tampil tanpa kontradiksi.
+- `git diff --check` dijalankan: tidak ada whitespace error.
+
+---
+
 ## 2026-08-22 — Rencana fase kedua absensi siswa
 
 **Dikerjakan:** Codex GPT-5.6 Sol

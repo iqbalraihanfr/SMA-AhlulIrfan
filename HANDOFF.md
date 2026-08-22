@@ -97,6 +97,39 @@ Detail lengkap ada di `PRD-SMA.md` (ADR-1 sampai ADR-14). Ringkasnya, **jangan d
 | Pemulihan sandi lewat super admin, bukan penyedia identitas | Menghapus SMTP dari jalur kritis peluncuran |
 | medialibrary, bukan tabel media sendiri | Jangan pernah menulis sendiri penanganan upload |
 
+### Fase kedua — absensi harian siswa
+
+Persetujuan pemilik proyek untuk menjalankan fase kedua dicatat pada 22 Agustus
+2026. Sekolah tidak memberi jawaban yang berbeda dari default aman Decision
+Gate; seluruh default berikut menjadi scope yang mengizinkan Task 1–14. Catatan
+ini tidak memuat data siswa.
+
+| Keputusan | Default yang disepakati |
+|---|---|
+| Bentuk absensi | Harian, satu kali per kelas |
+| Pengisi utama | Wali kelas; admin sebagai pengganti |
+| Status | Belum diisi, Hadir, Sakit, Izin, Alpa, Terlambat |
+| Batas edit guru | Hanya tanggal hari ini menurut `Asia/Jakarta` |
+| Koreksi tanggal lampau | Hanya admin, alasan wajib |
+| Ekspor awal | CSV UTF-8 per kelas dan rentang tanggal |
+| Bukti surat izin/sakit | Disimpan sekolah di luar sistem; hanya status dan catatan singkat di sistem |
+| Identitas siswa | `kode_siswa` internal unik dan nama; tanpa NISN/NIK |
+| Portal wali siswa | Tidak ada pada MVP |
+| Retensi data | Tidak ada penghapusan otomatis; sekolah menetapkan kebijakan kemudian |
+| Pilot | Satu kelas selama lima hari sekolah sebelum rollout penuh |
+
+Modul tetap privat dalam Laravel + MySQL yang sama: satu login, hosting,
+backup, prosedur operasi, dan sumber data. Situs publik tetap Blade + Alpine;
+admin tetap Inertia + React. Presensi/absensi per mata pelajaran/per jam pelajaran dan
+portal/login wali siswa tetap Non-Goals; keduanya membutuhkan addendum scope
+baru.
+
+Task 14 hanya menghasilkan kesiapan pilot lokal: kode dan verifikasi lokal
+dengan data factory. Deploy, impor data resmi melalui admin, backup/restore
+produksi, dan pilot lima hari belum dijalankan karena membutuhkan akses serta
+otorisasi eksternal. Jangan memasukkan data siswa nyata ke repo, seeder,
+fixture Git, screenshot publik, atau log.
+
 ---
 
 ## 5. Arah visual yang dipilih
