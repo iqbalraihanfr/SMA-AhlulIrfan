@@ -109,7 +109,7 @@ class GuruController extends Controller implements HasMiddleware
 
         $this->simpanFoto($request, $guru);
 
-        return to_route('admin.guru.index')->with('sukses', "{$guru->nama} diperbarui.");
+        return to_route('admin.guru.index')->with('sukses', "{$data['nama']} diperbarui.");
     }
 
     public function destroy(Guru $guru): RedirectResponse

@@ -20,6 +20,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 /**
  * Pengelolaan akun — hanya super admin (izin `pengguna.kelola`).
@@ -130,8 +131,7 @@ class PenggunaController extends Controller implements HasMiddleware
 
         try {
             DB::transaction(function () use ($data, $pengguna): void {
-                $this->cegahMenurunkanSuperAdminTerakhir($pengguna, $data['peran']);
-                $penggunaTerkunci = User::query()->lockForUpdate()->findOrFail($pengguna->id);
+                $penggunaTerkunci = $this->kunciSuperAdminDanPengguna($pengguna->id, $data['peran']);
                 $guruId = isset($data['guru_id']) ? (int) $data['guru_id'] : null;
                 $this->kunciDanValidasiGuru($guruId, $penggunaTerkunci->id);
 
@@ -154,8 +154,8 @@ class PenggunaController extends Controller implements HasMiddleware
         return to_route('admin.pengguna.index')->with(
             'sukses',
             filled($data['password'] ?? null)
-                ? "Akun {$pengguna->name} diperbarui dan kata sandinya diganti."
-                : "Akun {$pengguna->name} diperbarui."
+                ? "Akun {$data['name']} diperbarui dan kata sandinya diganti."
+                : "Akun {$data['name']} diperbarui."
         );
     }
 
@@ -165,8 +165,7 @@ class PenggunaController extends Controller implements HasMiddleware
         abort_if($pengguna->id === $request->user()->id, 403, 'Tidak bisa menghapus akun sendiri.');
 
         $nama = DB::transaction(function () use ($pengguna): string {
-            $this->cegahMenurunkanSuperAdminTerakhir($pengguna, null);
-            $penggunaTerkunci = User::query()->lockForUpdate()->findOrFail($pengguna->id);
+            $penggunaTerkunci = $this->kunciSuperAdminDanPengguna($pengguna->id, null);
 
             $nama = $penggunaTerkunci->name;
             $penggunaTerkunci->delete();
@@ -182,26 +181,33 @@ class PenggunaController extends Controller implements HasMiddleware
      * dirinya sendiri sehingga tidak ada lagi yang bisa mengelola akun —
      * hanya bisa dipulihkan lewat SSH.
      */
-    private function cegahMenurunkanSuperAdminTerakhir(User $pengguna, ?string $peranBaru): void
+    private function kunciSuperAdminDanPengguna(int $penggunaId, ?string $peranBaru): User
     {
-        if ($peranBaru === Peran::SuperAdmin->value) {
-            return;
-        }
-
-        $superAdmin = User::query()
-            ->whereHas('roles', fn ($query) => $query->where('name', Peran::SuperAdmin->value))
+        // Baris role ini adalah mutex bersama untuk seluruh perubahan anggota
+        // super admin. Mengunci users saja tidak cukup karena keanggotaannya
+        // disimpan Spatie pada tabel model_has_roles.
+        Role::query()
+            ->where('name', Peran::SuperAdmin->value)
             ->lockForUpdate()
-            ->get();
+            ->firstOrFail();
 
-        if (! $superAdmin->contains('id', $pengguna->id)) {
-            return;
+        $pengguna = User::query()->lockForUpdate()->findOrFail($penggunaId);
+
+        if ($peranBaru === Peran::SuperAdmin->value || ! $pengguna->hasRole(Peran::SuperAdmin->value)) {
+            return $pengguna;
         }
+
+        $jumlah = User::query()
+            ->whereHas('roles', fn ($query) => $query->where('name', Peran::SuperAdmin->value))
+            ->count();
 
         abort_if(
-            $superAdmin->count() <= 1,
+            $jumlah <= 1,
             422,
             'Ini super admin terakhir. Angkat super admin lain lebih dulu sebelum menurunkan atau menghapus akun ini.'
         );
+
+        return $pengguna;
     }
 
     private function kunciDanValidasiGuru(?int $guruId, ?int $abaikanPenggunaId = null): void

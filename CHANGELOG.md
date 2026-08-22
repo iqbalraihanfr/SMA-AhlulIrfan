@@ -37,6 +37,35 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ---
 
+## 2026-08-22 — Mutex role untuk super admin terakhir
+
+**Dikerjakan:** Codex
+
+### Diperbaiki
+
+- Penjaga super admin terakhir kini memakai baris role `super-admin` sebagai
+  mutex transaksi bersama. Ini menutup race karena keanggotaan Spatie berada
+  pada `model_has_roles`, bukan pada baris `users` yang sebelumnya dikunci.
+- Pesan sukses perubahan Guru maupun Akun Pengguna kini memakai nama baru yang
+  benar, bukan nilai lama dari route binding.
+
+### Diputuskan
+
+- Semua update/hapus akun mengambil mutex role sebelum mengunci pengguna dan
+  menghitung ulang keanggotaan super admin. Urutan yang konsisten ini mencegah
+  dua mutasi bersamaan lolos dari pemeriksaan yang sama.
+
+### Sengaja tidak dikerjakan
+
+- Tidak ada test konkurensi sintetis SQLite karena `lockForUpdate()` tidak
+  mereproduksi semantik MySQL pada database in-memory. Kontrak dikunci lewat
+  test perilaku guard yang ada dan review urutan lock.
+
+### Verifikasi
+
+- `PeranGuruTest`, `AdminPanelTest`, dan `BuatPenggunaTest` lulus: 37 test,
+  207 asersi. Pint dan PHPStan level 5 bersih.
+
 ## 2026-08-22 — Penguncian invariant akun Guru
 
 **Dikerjakan:** Codex

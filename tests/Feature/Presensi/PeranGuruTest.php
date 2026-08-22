@@ -270,6 +270,33 @@ class PeranGuruTest extends TestCase
         $this->assertTrue($akun->fresh()->hasRole('guru'));
     }
 
+    /** Notifikasi perubahan Guru memakai nama yang baru tersimpan. */
+    public function test_notifikasi_perubahan_guru_memakai_nama_baru(): void
+    {
+        $guru = $this->pendidik();
+
+        $this->actingAs($this->superAdmin)
+            ->put(route('admin.guru.update', $guru), $this->dataGuru($guru, [
+                'nama' => 'Pendidik Dengan Nama Baru',
+            ]))
+            ->assertSessionHas('sukses', 'Pendidik Dengan Nama Baru diperbarui.');
+    }
+
+    /** Notifikasi perubahan akun memakai nama yang baru tersimpan. */
+    public function test_notifikasi_perubahan_pengguna_memakai_nama_baru(): void
+    {
+        $pengguna = User::factory()->create(['name' => 'Nama Akun Lama']);
+        $pengguna->assignRole('admin');
+
+        $this->actingAs($this->superAdmin)
+            ->put(route('admin.pengguna.update', $pengguna), [
+                'name' => 'Nama Akun Baru',
+                'email' => $pengguna->email,
+                'peran' => 'admin',
+            ])
+            ->assertSessionHas('sukses', 'Akun Nama Akun Baru diperbarui.');
+    }
+
     private function pendidik(): Guru
     {
         return Guru::create([
