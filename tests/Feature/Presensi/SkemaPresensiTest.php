@@ -8,10 +8,12 @@ use App\Models\AnggotaKelas;
 use App\Models\KehadiranSiswa;
 use App\Models\Kelas;
 use App\Models\Presensi;
+use App\Models\RiwayatPresensi;
 use App\Models\Siswa;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class SkemaPresensiTest extends TestCase
@@ -97,5 +99,12 @@ class SkemaPresensiTest extends TestCase
         $this->expectException(QueryException::class);
 
         $kelas->delete();
+    }
+
+    public function test_riwayat_presensi_baru_langsung_memiliki_created_at_carbon(): void
+    {
+        $riwayat = RiwayatPresensi::factory()->create();
+
+        $this->assertInstanceOf(Carbon::class, $riwayat->created_at);
     }
 }

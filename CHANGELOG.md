@@ -37,6 +37,23 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ---
 
+## 2026-08-22 — Perbaikan timestamp audit presensi
+
+**Dikerjakan:** Codex
+
+### Diperbaiki
+
+- Riwayat presensi baru sebelumnya tidak memiliki `created_at` sampai dimuat
+  ulang karena model mematikan seluruh timestamps. Model kini mempertahankan
+  timestamp pembuatan dan secara eksplisit tidak memiliki `updated_at`, sesuai
+  skema audit append-only.
+
+### Verifikasi
+
+- Regresi awal gagal karena `created_at` bernilai `null`; focused
+  `SkemaPresensiTest` kemudian lulus 6 test dengan 13 asersi. Pint dan PHPStan
+  level 5 juga bersih.
+
 ## 2026-08-22 — Fondasi data absensi siswa
 
 **Dikerjakan:** Codex

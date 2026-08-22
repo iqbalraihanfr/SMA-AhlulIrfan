@@ -32,7 +32,7 @@ class RiwayatPresensi extends Model
 
     protected $table = 'riwayat_presensi';
 
-    public $timestamps = false;
+    public const UPDATED_AT = null;
 
     protected $fillable = [
         'presensi_id', 'siswa_id', 'user_id', 'aksi', 'status_sebelum', 'status_sesudah',
