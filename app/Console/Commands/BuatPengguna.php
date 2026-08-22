@@ -7,6 +7,7 @@ use App\Enums\Peran;
 use App\Models\Guru;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -150,18 +151,56 @@ class BuatPengguna extends Command
             return self::FAILURE;
         }
 
-        $user = DB::transaction(function () use ($nama, $email, $sandi, $peran, $guruId): User {
-            $user = User::create([
-                'name' => $nama,
-                'email' => $email,
-                'password' => Hash::make($sandi),
-                'guru_id' => $peran === Peran::Guru->value ? $guruId : null,
-            ]);
+        $pesanTautanGuru = null;
 
-            $user->assignRole($peran);
+        try {
+            $user = DB::transaction(function () use ($nama, $email, $sandi, $peran, $guruId, &$pesanTautanGuru): ?User {
+                $guruIdTerkunci = null;
 
-            return $user;
-        });
+                if ($peran === Peran::Guru->value) {
+                    $guru = Guru::query()->lockForUpdate()->find((int) $guruId);
+
+                    if ($guru === null || $guru->kategori !== KategoriGuru::Pendidik || ! $guru->aktif) {
+                        $pesanTautanGuru = 'Pendidik yang dipilih tidak aktif atau tidak ditemukan.';
+
+                        return null;
+                    }
+
+                    if (User::query()->where('guru_id', $guru->id)->lockForUpdate()->exists()) {
+                        $pesanTautanGuru = 'Pendidik tersebut sudah terhubung ke akun lain.';
+
+                        return null;
+                    }
+
+                    $guruIdTerkunci = $guru->id;
+                }
+
+                $user = User::create([
+                    'name' => $nama,
+                    'email' => $email,
+                    'password' => Hash::make($sandi),
+                    'guru_id' => $guruIdTerkunci,
+                ]);
+
+                $user->assignRole($peran);
+
+                return $user;
+            });
+        } catch (QueryException $exception) {
+            if (! str_contains($exception->getMessage(), 'users.guru_id') && ! str_contains($exception->getMessage(), 'users_guru_id_unique')) {
+                throw $exception;
+            }
+
+            $this->error('Pendidik tersebut sudah terhubung ke akun lain.');
+
+            return self::FAILURE;
+        }
+
+        if ($pesanTautanGuru !== null) {
+            $this->error($pesanTautanGuru);
+
+            return self::FAILURE;
+        }
 
         $this->info("Akun dibuat: {$user->email} sebagai ".Peran::from($peran)->label());
         $this->line('Masuk lewat '.rtrim((string) config('app.url'), '/').'/login');

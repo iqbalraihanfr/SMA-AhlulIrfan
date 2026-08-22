@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Izin;
 use App\Enums\KategoriGuru;
+use App\Enums\Peran;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
+use App\Models\User;
 use App\Support\AturanGambar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -89,7 +93,20 @@ class GuruController extends Controller implements HasMiddleware
 
     public function update(Request $request, Guru $guru): RedirectResponse
     {
-        $guru->update($this->validasi($request));
+        $data = $this->validasi($request);
+
+        DB::transaction(function () use ($guru, $data): void {
+            $guruTerkunci = Guru::query()->lockForUpdate()->findOrFail($guru->id);
+
+            if ($this->menjadiTidakLayakUntukAkunGuru($data) && $this->memilikiAkunGuru($guruTerkunci)) {
+                throw ValidationException::withMessages([
+                    $data['aktif'] ? 'kategori' : 'aktif' => 'Pendidik yang terhubung ke akun Guru tidak dapat dinonaktifkan atau diubah menjadi tenaga kependidikan. Lepaskan atau ubah peran akunnya terlebih dahulu.',
+                ]);
+            }
+
+            $guruTerkunci->update($data);
+        });
+
         $this->simpanFoto($request, $guru);
 
         return to_route('admin.guru.index')->with('sukses', "{$guru->nama} diperbarui.");
@@ -118,6 +135,20 @@ class GuruController extends Controller implements HasMiddleware
             'kategori.required' => 'Pilih pendidik atau tenaga kependidikan.',
             'jenis_kelamin.in' => 'Jenis kelamin harus L atau P.',
         ]);
+    }
+
+    /** @param array<string, mixed> $data */
+    private function menjadiTidakLayakUntukAkunGuru(array $data): bool
+    {
+        return ! $data['aktif'] || $data['kategori'] !== KategoriGuru::Pendidik->value;
+    }
+
+    private function memilikiAkunGuru(Guru $guru): bool
+    {
+        return User::query()
+            ->where('guru_id', $guru->id)
+            ->whereHas('roles', fn ($query) => $query->where('name', Peran::Guru->value))
+            ->exists();
     }
 
     private function simpanFoto(Request $request, Guru $guru): void

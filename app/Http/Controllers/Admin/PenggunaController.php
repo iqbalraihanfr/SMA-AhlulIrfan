@@ -8,6 +8,7 @@ use App\Enums\Peran;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -75,18 +77,25 @@ class PenggunaController extends Controller implements HasMiddleware
             'password' => ['required', 'confirmed', Password::min(12)],
         ], $this->pesan());
 
-        $user = DB::transaction(function () use ($data): User {
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'guru_id' => $data['guru_id'] ?? null,
-            ]);
+        try {
+            $user = DB::transaction(function () use ($data): User {
+                $guruId = isset($data['guru_id']) ? (int) $data['guru_id'] : null;
+                $this->kunciDanValidasiGuru($guruId);
 
-            $user->assignRole($data['peran']);
+                $user = User::create([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'password' => Hash::make($data['password']),
+                    'guru_id' => $guruId,
+                ]);
 
-            return $user;
-        });
+                $user->assignRole($data['peran']);
+
+                return $user;
+            });
+        } catch (QueryException $exception) {
+            $this->terjemahkanBenturanTautanGuru($exception);
+        }
 
         return to_route('admin.pengguna.index')
             ->with('sukses', "Akun {$user->name} dibuat. Sampaikan kata sandinya langsung, jangan lewat grup chat.");
@@ -119,21 +128,28 @@ class PenggunaController extends Controller implements HasMiddleware
             'password' => ['nullable', 'confirmed', Password::min(12)],
         ], $this->pesan());
 
-        $this->cegahMenurunkanSuperAdminTerakhir($request, $pengguna, $data['peran']);
+        try {
+            DB::transaction(function () use ($data, $pengguna): void {
+                $this->cegahMenurunkanSuperAdminTerakhir($pengguna, $data['peran']);
+                $penggunaTerkunci = User::query()->lockForUpdate()->findOrFail($pengguna->id);
+                $guruId = isset($data['guru_id']) ? (int) $data['guru_id'] : null;
+                $this->kunciDanValidasiGuru($guruId, $penggunaTerkunci->id);
 
-        DB::transaction(function () use ($data, $pengguna): void {
-            $pengguna->update([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'guru_id' => $data['guru_id'] ?? null,
-            ]);
+                $penggunaTerkunci->update([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'guru_id' => $guruId,
+                ]);
 
-            if (filled($data['password'] ?? null)) {
-                $pengguna->update(['password' => Hash::make($data['password'])]);
-            }
+                if (filled($data['password'] ?? null)) {
+                    $penggunaTerkunci->update(['password' => Hash::make($data['password'])]);
+                }
 
-            $pengguna->syncRoles([$data['peran']]);
-        });
+                $penggunaTerkunci->syncRoles([$data['peran']]);
+            });
+        } catch (QueryException $exception) {
+            $this->terjemahkanBenturanTautanGuru($exception);
+        }
 
         return to_route('admin.pengguna.index')->with(
             'sukses',
@@ -148,10 +164,15 @@ class PenggunaController extends Controller implements HasMiddleware
         // Menghapus diri sendiri akan mengunci pengguna keluar seketika.
         abort_if($pengguna->id === $request->user()->id, 403, 'Tidak bisa menghapus akun sendiri.');
 
-        $this->cegahMenurunkanSuperAdminTerakhir($request, $pengguna, null);
+        $nama = DB::transaction(function () use ($pengguna): string {
+            $this->cegahMenurunkanSuperAdminTerakhir($pengguna, null);
+            $penggunaTerkunci = User::query()->lockForUpdate()->findOrFail($pengguna->id);
 
-        $nama = $pengguna->name;
-        $pengguna->delete();
+            $nama = $penggunaTerkunci->name;
+            $penggunaTerkunci->delete();
+
+            return $nama;
+        });
 
         return to_route('admin.pengguna.index')->with('sukses', "Akun {$nama} dihapus.");
     }
@@ -161,23 +182,64 @@ class PenggunaController extends Controller implements HasMiddleware
      * dirinya sendiri sehingga tidak ada lagi yang bisa mengelola akun —
      * hanya bisa dipulihkan lewat SSH.
      */
-    private function cegahMenurunkanSuperAdminTerakhir(Request $request, User $pengguna, ?string $peranBaru): void
+    private function cegahMenurunkanSuperAdminTerakhir(User $pengguna, ?string $peranBaru): void
     {
-        if (! $pengguna->hasRole(Peran::SuperAdmin->value)) {
-            return;
-        }
-
         if ($peranBaru === Peran::SuperAdmin->value) {
             return;
         }
 
-        $jumlah = User::role(Peran::SuperAdmin->value)->count();
+        $superAdmin = User::query()
+            ->whereHas('roles', fn ($query) => $query->where('name', Peran::SuperAdmin->value))
+            ->lockForUpdate()
+            ->get();
+
+        if (! $superAdmin->contains('id', $pengguna->id)) {
+            return;
+        }
 
         abort_if(
-            $jumlah <= 1,
+            $superAdmin->count() <= 1,
             422,
             'Ini super admin terakhir. Angkat super admin lain lebih dulu sebelum menurunkan atau menghapus akun ini.'
         );
+    }
+
+    private function kunciDanValidasiGuru(?int $guruId, ?int $abaikanPenggunaId = null): void
+    {
+        if ($guruId === null) {
+            return;
+        }
+
+        $guru = Guru::query()->lockForUpdate()->find($guruId);
+
+        if ($guru === null || $guru->kategori !== KategoriGuru::Pendidik || ! $guru->aktif) {
+            throw ValidationException::withMessages([
+                'guru_id' => 'Pendidik harus aktif dan berkategori pendidik.',
+            ]);
+        }
+
+        $sudahTertaut = User::query()
+            ->where('guru_id', $guru->id)
+            ->when($abaikanPenggunaId !== null, fn ($query) => $query->whereKeyNot($abaikanPenggunaId))
+            ->lockForUpdate()
+            ->exists();
+
+        if ($sudahTertaut) {
+            throw ValidationException::withMessages([
+                'guru_id' => 'Pendidik tersebut sudah terhubung ke akun lain.',
+            ]);
+        }
+    }
+
+    private function terjemahkanBenturanTautanGuru(QueryException $exception): never
+    {
+        if (str_contains($exception->getMessage(), 'users.guru_id') || str_contains($exception->getMessage(), 'users_guru_id_unique')) {
+            throw ValidationException::withMessages([
+                'guru_id' => 'Pendidik tersebut sudah terhubung ke akun lain.',
+            ]);
+        }
+
+        throw $exception;
     }
 
     /** @return array<int, array{value: string, label: string, keterangan: string}> */

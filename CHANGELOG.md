@@ -37,6 +37,38 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ---
 
+## 2026-08-22 — Penguncian invariant akun Guru
+
+**Dikerjakan:** Codex
+
+### Diperbaiki
+
+- Pendidik yang telah tertaut ke akun berperan Guru kini tidak dapat diubah
+  menjadi nonaktif atau tenaga kependidikan. Permintaan ditolak dengan validasi
+  Bahasa Indonesia; akun tidak pernah didemosi diam-diam.
+- Pembuatan/perubahan tautan akun kini kembali mengunci dan memeriksa baris
+  Guru di dalam transaksi. Benturan constraint unik diterjemahkan menjadi galat
+  `guru_id`, bukan galat basis data.
+- Penjaga super admin terakhir kini mengunci seluruh baris super admin dan
+  melakukan pemeriksaan serta mutasi di transaksi yang sama, termasuk hapus.
+
+### Diputuskan
+
+- Mengubah status/kategori pendidik yang tertaut ditolak, bukan melepas akun
+  otomatis, karena demosi diam-diam bisa membuat guru kehilangan akses tanpa
+  pemberitahuan.
+
+### Sengaja tidak dikerjakan
+
+- Tidak menambahkan mekanisme retry atau dependency lock baru. Lock transaksi
+  database dan unique constraint yang sudah ada cukup untuk jalur akun kecil
+  ini di MySQL produksi.
+
+### Verifikasi
+
+- Regresi `PeranGuruTest`, `AdminPanelTest`, dan `BuatPenggunaTest` lulus:
+  35 test, 205 asersi. Pint dan PHPStan level 5 bersih.
+
 ## 2026-08-22 — Akun dan izin guru untuk presensi
 
 **Dikerjakan:** Codex

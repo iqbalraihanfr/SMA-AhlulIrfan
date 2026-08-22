@@ -238,11 +238,44 @@ class PeranGuruTest extends TestCase
             );
     }
 
+    /** Pendidik tertaut ke akun Guru tidak boleh dinonaktifkan diam-diam. */
+    public function test_super_admin_tidak_dapat_menonaktifkan_pendidik_tertaut_ke_akun_guru(): void
+    {
+        $guru = $this->pendidik();
+        $akun = User::factory()->create(['guru_id' => $guru->id]);
+        $akun->assignRole('guru');
+
+        $this->actingAs($this->superAdmin)
+            ->put(route('admin.guru.update', $guru), $this->dataGuru($guru, ['aktif' => false]))
+            ->assertSessionHasErrors('aktif');
+
+        $this->assertTrue($guru->fresh()->aktif);
+        $this->assertTrue($akun->fresh()->hasRole('guru'));
+    }
+
+    /** Pendidik tertaut ke akun Guru tidak boleh diubah menjadi tenaga kependidikan. */
+    public function test_super_admin_tidak_dapat_mengubah_kategori_pendidik_tertaut_ke_akun_guru(): void
+    {
+        $guru = $this->pendidik();
+        $akun = User::factory()->create(['guru_id' => $guru->id]);
+        $akun->assignRole('guru');
+
+        $this->actingAs($this->superAdmin)
+            ->put(route('admin.guru.update', $guru), $this->dataGuru($guru, [
+                'kategori' => KategoriGuru::TenagaKependidikan->value,
+            ]))
+            ->assertSessionHasErrors('kategori');
+
+        $this->assertSame(KategoriGuru::Pendidik, $guru->fresh()->kategori);
+        $this->assertTrue($akun->fresh()->hasRole('guru'));
+    }
+
     private function pendidik(): Guru
     {
         return Guru::create([
             'nama' => 'Pendidik Aktif',
             'kategori' => KategoriGuru::Pendidik,
+            'urutan' => 0,
             'aktif' => true,
         ]);
     }
@@ -259,5 +292,19 @@ class PeranGuruTest extends TestCase
                 'password_confirmation' => 'kata-sandi-uji-12',
             ])
             ->assertSessionHasNoErrors();
+    }
+
+    /** @param array<string, mixed> $perubahan */
+    private function dataGuru(Guru $guru, array $perubahan = []): array
+    {
+        return array_replace([
+            'nama' => $guru->nama,
+            'kategori' => $guru->kategori->value,
+            'jenis_kelamin' => $guru->jenis_kelamin,
+            'jabatan' => $guru->jabatan,
+            'mata_pelajaran' => $guru->mata_pelajaran,
+            'urutan' => $guru->urutan,
+            'aktif' => $guru->aktif,
+        ], $perubahan);
     }
 }
