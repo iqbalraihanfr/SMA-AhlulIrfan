@@ -37,6 +37,48 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ---
 
+## 2026-08-22 — Policy akses presensi per wali kelas
+
+**Dikerjakan:** Codex
+
+### Berubah
+
+- Menambahkan `PresensiPolicy` untuk membaca, menyimpan, mengoreksi, dan
+  mengekspor presensi. Guru hanya dapat membaca dan mengisi kelas yang
+  `wali_kelas_id`-nya sama dengan `guru_id` akun; riwayat kelasnya tetap bisa
+  dibaca tetapi tanggal lampau tidak dapat dimutasi.
+- Mendaftarkan policy secara eksplisit pada `Kelas` dan memakai kalender
+  `Asia/Jakarta`, sehingga batas hari guru tidak bergantung pada zona waktu
+  browser maupun server.
+
+### Diperbaiki
+
+- Sebelum policy ini, izin `presensi.isi` belum mempunyai pemeriksaan objek
+  kelas. Akun guru yang memiliki izin tersebut berisiko menjangkau kelas lain
+  bila endpoint berikutnya hanya mengandalkan middleware area.
+
+### Diputuskan
+
+- Policy adalah sumber kebenaran akses per kelas; middleware controller nanti
+  tetap memeriksa izin area sebagai lapisan awal. Admin berizin kelola dapat
+  menangani semua kelas dan koreksi lampau, sedangkan tanggal masa depan
+  ditolak di policy.
+
+### Sengaja tidak dikerjakan
+
+- Tidak menambah route, controller, UI, dependency, maupun data siswa. Jalur
+  tersebut memang menjadi pekerjaan task lanjutan.
+
+### Verifikasi
+
+- Siklus TDD RED: `OtorisasiPresensiTest` gagal 3 dari 8 test sebelum policy
+  tersedia; GREEN kemudian lulus 8 test dengan 24 asersi.
+- Pint dan PHPStan level 5 bersih; TypeScript `tsc --noEmit` exit 0; Vite
+  8.2.1 membangun 2.406 modul dengan sukses.
+- Suite PHP penuh dihentikan setelah 90 detik tanpa keluaran (exit 130),
+  konsisten dengan hang media test yang telah dicatat pada handoff; hasil itu
+  tidak diklaim sebagai lulus.
+
 ## 2026-08-22 — Mutex role untuk super admin terakhir
 
 **Dikerjakan:** Codex

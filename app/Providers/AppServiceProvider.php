@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Enums\Peran;
+use App\Models\Kelas;
 use App\Models\User;
+use App\Policies\PresensiPolicy;
 use App\View\Composers\SitusComposer;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
@@ -19,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Gate::policy(Kelas::class, PresensiPolicy::class);
+
         // super-admin melewati seluruh pemeriksaan izin. Ini alasan peran
         // tersebut sengaja tidak diberi daftar izin eksplisit di PeranSeeder.
         Gate::before(fn (User $user) => $user->hasRole(Peran::SuperAdmin->value) ? true : null);
