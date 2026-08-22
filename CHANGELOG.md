@@ -37,6 +37,44 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ---
 
+## 2026-08-22 — Fondasi data absensi siswa
+
+**Dikerjakan:** Codex
+
+### Berubah
+
+- Menambahkan enum status presensi dan kehadiran berlabel Bahasa Indonesia,
+  delapan migrasi akademik/presensi, tujuh model berelasi, serta factory data
+  fiktif untuk test. Skema menyimpan hanya kode internal dan nama siswa.
+- Menautkan akun pengguna secara opsional dan unik ke data guru; kelas dapat
+  menunjuk wali kelas tanpa menyalin data guru.
+- Menetapkan unique constraint untuk kode siswa, sesi kelas/tanggal, dan satu
+  kehadiran per siswa dalam satu sesi. Foreign key master dan riwayat bersifat
+  restrict; hanya kehadiran mengikuti penghapusan parent presensi.
+
+### Diputuskan
+
+- Presensi baru memiliki `versi` database awal `1`; client yang belum memiliki
+  sesi tetap akan memakai konvensi versi `0` pada task endpoint berikutnya.
+- Riwayat presensi append-only hanya memiliki `created_at`, agar jejak audit
+  tidak dapat berubah diam-diam melalui kolom pembaruan otomatis.
+
+### Sengaja tidak dikerjakan
+
+- Belum ada route, policy, form, UI, seed data siswa, atau mutasi presensi.
+  Fondasi ini sengaja berhenti pada kontrak data agar task lanjutan dapat
+  menambahkan aturan otorisasi dan transaksi tanpa memperluas scope.
+
+### Verifikasi
+
+- Test TDD awal gagal tepat karena model belum ada (5 error `Class ... not
+  found`), kemudian `SkemaPresensiTest` lulus: 5 test, 12 asersi.
+- Pint dan PHPStan level 5 bersih; `tsc --noEmit` bersih; Vite 8.2.1 membangun
+  2.406 modul dengan sukses.
+- Suite penuh dimulai sekali tetapi dihentikan setelah sekitar enam menit tanpa
+  output, ketika konversi media test meninggalkan artefak sementara. Artefak
+  dipindahkan ke Trash dan hasil suite penuh tidak diklaim sebagai lulus.
+
 ## 2026-08-22 — Scope fase kedua absensi harian disepakati
 
 **Dikerjakan:** Codex

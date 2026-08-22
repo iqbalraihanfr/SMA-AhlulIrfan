@@ -4,8 +4,11 @@ namespace App\Models;
 
 use App\Enums\KategoriGuru;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -25,6 +28,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string|null $mata_pelajaran
  * @property int $urutan
  * @property bool $aktif
+ * @property-read User|null $akun
+ * @property-read Collection<int, Kelas> $kelasDiwalikan
  */
 class Guru extends Model implements HasMedia
 {
@@ -65,6 +70,16 @@ class Guru extends Model implements HasMedia
     public function scopeUrut(Builder $q): Builder
     {
         return $q->orderBy('urutan')->orderBy('nama');
+    }
+
+    public function akun(): HasOne
+    {
+        return $this->hasOne(User::class);
+    }
+
+    public function kelasDiwalikan(): HasMany
+    {
+        return $this->hasMany(Kelas::class, 'wali_kelas_id');
     }
 
     /** Dipakai sebagai pengganti foto yang tidak ada — inisial, bukan gambar rusak. */
