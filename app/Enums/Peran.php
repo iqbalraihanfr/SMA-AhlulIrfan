@@ -12,12 +12,14 @@ enum Peran: string
 {
     case SuperAdmin = 'super-admin';
     case Admin = 'admin';
+    case Guru = 'guru';
 
     public function label(): string
     {
         return match ($this) {
             self::SuperAdmin => 'Super Admin',
             self::Admin => 'Admin Sekolah',
+            self::Guru => 'Guru',
         };
     }
 
@@ -26,6 +28,7 @@ enum Peran: string
         return match ($this) {
             self::SuperAdmin => 'Akses penuh, termasuk mengelola akun pengguna.',
             self::Admin => 'Mengelola seluruh konten situs, tanpa akses ke akun pengguna.',
+            self::Guru => 'Mengisi presensi kelas yang menjadi tanggung jawabnya.',
         };
     }
 }

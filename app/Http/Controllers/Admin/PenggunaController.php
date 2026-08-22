@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\Izin;
+use App\Enums\KategoriGuru;
 use App\Enums\Peran;
 use App\Http\Controllers\Controller;
+use App\Models\Guru;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -37,12 +40,13 @@ class PenggunaController extends Controller implements HasMiddleware
     public function index(Request $request): Response
     {
         return Inertia::render('Pengguna/Index', [
-            'daftar' => User::with('roles')->orderBy('name')->get()->map(fn (User $u) => [
+            'daftar' => User::with(['roles', 'guru'])->orderBy('name')->get()->map(fn (User $u) => [
                 'id' => $u->id,
                 'nama' => $u->name,
                 'email' => $u->email,
                 'peran' => $u->getRoleNames()->first(),
                 'peranLabel' => $this->labelPeran($u->getRoleNames()->first()),
+                'guruNama' => $u->guru?->nama,
                 'diriSendiri' => $u->id === $request->user()->id,
                 'urlUbah' => route('admin.pengguna.edit', $u),
                 'urlHapus' => route('admin.pengguna.destroy', $u),
@@ -56,6 +60,7 @@ class PenggunaController extends Controller implements HasMiddleware
         return Inertia::render('Pengguna/Form', [
             'pengguna' => null,
             'pilihanPeran' => $this->pilihanPeran(),
+            'pilihanGuru' => $this->pilihanGuru(),
             'aksi' => route('admin.pengguna.store'),
         ]);
     }
@@ -66,16 +71,22 @@ class PenggunaController extends Controller implements HasMiddleware
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150', 'unique:users,email'],
             'peran' => ['required', Rule::enum(Peran::class)],
+            'guru_id' => $this->aturanGuru(),
             'password' => ['required', 'confirmed', Password::min(12)],
         ], $this->pesan());
 
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        $user = DB::transaction(function () use ($data): User {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'guru_id' => $data['guru_id'] ?? null,
+            ]);
 
-        $user->assignRole($data['peran']);
+            $user->assignRole($data['peran']);
+
+            return $user;
+        });
 
         return to_route('admin.pengguna.index')
             ->with('sukses', "Akun {$user->name} dibuat. Sampaikan kata sandinya langsung, jangan lewat grup chat.");
@@ -89,8 +100,10 @@ class PenggunaController extends Controller implements HasMiddleware
                 'name' => $pengguna->name,
                 'email' => $pengguna->email,
                 'peran' => $pengguna->getRoleNames()->first(),
+                'guru_id' => $pengguna->guru_id,
             ],
             'pilihanPeran' => $this->pilihanPeran(),
+            'pilihanGuru' => $this->pilihanGuru(),
             'aksi' => route('admin.pengguna.update', $pengguna),
         ]);
     }
@@ -101,22 +114,26 @@ class PenggunaController extends Controller implements HasMiddleware
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150', Rule::unique('users', 'email')->ignore($pengguna)],
             'peran' => ['required', Rule::enum(Peran::class)],
+            'guru_id' => $this->aturanGuru($pengguna),
             // Kosongkan bila tidak ingin mengganti kata sandi.
             'password' => ['nullable', 'confirmed', Password::min(12)],
         ], $this->pesan());
 
         $this->cegahMenurunkanSuperAdminTerakhir($request, $pengguna, $data['peran']);
 
-        $pengguna->update([
-            'name' => $data['name'],
-            'email' => $data['email'],
-        ]);
+        DB::transaction(function () use ($data, $pengguna): void {
+            $pengguna->update([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'guru_id' => $data['guru_id'] ?? null,
+            ]);
 
-        if (filled($data['password'] ?? null)) {
-            $pengguna->update(['password' => Hash::make($data['password'])]);
-        }
+            if (filled($data['password'] ?? null)) {
+                $pengguna->update(['password' => Hash::make($data['password'])]);
+            }
 
-        $pengguna->syncRoles([$data['peran']]);
+            $pengguna->syncRoles([$data['peran']]);
+        });
 
         return to_route('admin.pengguna.index')->with(
             'sukses',
@@ -177,6 +194,39 @@ class PenggunaController extends Controller implements HasMiddleware
         return $peran ? Peran::from($peran)->label() : 'Tanpa peran';
     }
 
+    /** @return array<int, array{id: int, nama: string}> */
+    private function pilihanGuru(): array
+    {
+        return Guru::query()
+            ->where('kategori', KategoriGuru::Pendidik->value)
+            ->where('aktif', true)
+            ->orderBy('urutan')
+            ->orderBy('nama')
+            ->get(['id', 'nama'])
+            ->map(fn (Guru $guru) => ['id' => $guru->id, 'nama' => $guru->nama])
+            ->all();
+    }
+
+    /** @return array<int, mixed> */
+    private function aturanGuru(?User $pengguna = null): array
+    {
+        $unik = Rule::unique('users', 'guru_id');
+
+        if ($pengguna !== null) {
+            $unik->ignore($pengguna);
+        }
+
+        return [
+            'exclude_unless:peran,'.Peran::Guru->value,
+            'required',
+            'integer',
+            Rule::exists('guru', 'id')->where(fn ($query) => $query
+                ->where('kategori', KategoriGuru::Pendidik->value)
+                ->where('aktif', true)),
+            $unik,
+        ];
+    }
+
     /** @return array<string, string> */
     private function pesan(): array
     {
@@ -185,6 +235,10 @@ class PenggunaController extends Controller implements HasMiddleware
             'email.required' => 'Email wajib diisi.',
             'email.unique' => 'Email tersebut sudah dipakai akun lain.',
             'peran.required' => 'Pilih peran akun.',
+            'guru_id.required' => 'Pilih pendidik aktif untuk akun guru.',
+            'guru_id.integer' => 'Pendidik yang dipilih tidak valid.',
+            'guru_id.exists' => 'Pendidik harus aktif dan berkategori pendidik.',
+            'guru_id.unique' => 'Pendidik tersebut sudah terhubung ke akun lain.',
             'password.required' => 'Kata sandi wajib diisi.',
             'password.confirmed' => 'Kedua kata sandi tidak sama.',
             'password.min' => 'Kata sandi minimal 12 karakter.',

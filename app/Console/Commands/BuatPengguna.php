@@ -2,11 +2,15 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\KategoriGuru;
 use App\Enums\Peran;
+use App\Models\Guru;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 use function Laravel\Prompts\password;
@@ -35,9 +39,10 @@ class BuatPengguna extends Command
     protected $signature = 'pengguna:buat
         {--nama= : Nama lengkap}
         {--email= : Alamat email}
-        {--peran= : super-admin atau admin}';
+        {--peran= : super-admin, admin, atau guru}
+        {--guru-id= : ID pendidik aktif, wajib untuk peran guru}';
 
-    protected $description = 'Membuat akun pengelola situs (super admin atau admin sekolah)';
+    protected $description = 'Membuat akun pengelola situs (super admin, admin sekolah, atau guru)';
 
     public function handle(): int
     {
@@ -61,8 +66,37 @@ class BuatPengguna extends Command
                 default: Peran::Admin->value,
             ) : null);
 
+        $guruId = $this->option('guru-id');
+
+        if ($peran === Peran::Guru->value && blank($guruId) && $interaktif) {
+            $pilihanGuru = Guru::query()
+                ->where('kategori', KategoriGuru::Pendidik->value)
+                ->where('aktif', true)
+                ->orderBy('urutan')
+                ->orderBy('nama')
+                ->get()
+                ->mapWithKeys(fn (Guru $guru) => [$guru->id => $guru->nama])
+                ->all();
+
+            if ($pilihanGuru === []) {
+                $this->error('Belum ada pendidik aktif yang dapat ditautkan ke akun guru.');
+
+                return self::FAILURE;
+            }
+
+            $guruId = select('Pendidik yang ditautkan ke akun ini', options: $pilihanGuru);
+        }
+
         if (blank($nama) || blank($email) || blank($peran)) {
             $this->error('Mode non-interaktif memerlukan --nama, --email, dan --peran.');
+
+            return self::FAILURE;
+        }
+
+        $peranEnum = Peran::tryFrom($peran);
+
+        if ($peranEnum !== null && $peranEnum !== Peran::Guru && filled($guruId)) {
+            $this->error('Opsi --guru-id hanya boleh digunakan untuk peran guru.');
 
             return self::FAILURE;
         }
@@ -75,17 +109,34 @@ class BuatPengguna extends Command
             return self::FAILURE;
         }
 
+        $aturanGuru = ['nullable', 'integer'];
+
+        if ($peran === Peran::Guru->value) {
+            $aturanGuru = [
+                'required',
+                'integer',
+                Rule::exists('guru', 'id')->where(fn ($query) => $query
+                    ->where('kategori', KategoriGuru::Pendidik->value)
+                    ->where('aktif', true)),
+                Rule::unique('users', 'guru_id'),
+            ];
+        }
+
         $validator = Validator::make(
-            compact('nama', 'email', 'peran') + ['sandi' => $sandi, 'sandi_confirmation' => $ulang],
+            compact('nama', 'email', 'peran') + ['guru_id' => $guruId, 'sandi' => $sandi, 'sandi_confirmation' => $ulang],
             [
                 'nama' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'email', 'max:255', 'unique:users,email'],
                 'peran' => ['required', 'in:'.implode(',', array_column(Peran::cases(), 'value'))],
+                'guru_id' => $aturanGuru,
                 'sandi' => ['required', 'confirmed', Password::min(12)],
             ],
             [
                 'email.unique' => 'Email tersebut sudah dipakai akun lain.',
-                'peran.in' => 'Peran harus super-admin atau admin.',
+                'peran.in' => 'Peran harus super-admin, admin, atau guru.',
+                'guru_id.required' => 'Pendidik aktif wajib dipilih untuk akun guru.',
+                'guru_id.exists' => 'Pendidik yang dipilih tidak aktif atau tidak ditemukan.',
+                'guru_id.unique' => 'Pendidik tersebut sudah terhubung ke akun lain.',
                 'sandi.confirmed' => 'Kedua kata sandi tidak sama.',
                 'sandi.min' => 'Kata sandi minimal 12 karakter.',
             ]
@@ -99,13 +150,18 @@ class BuatPengguna extends Command
             return self::FAILURE;
         }
 
-        $user = User::create([
-            'name' => $nama,
-            'email' => $email,
-            'password' => Hash::make($sandi),
-        ]);
+        $user = DB::transaction(function () use ($nama, $email, $sandi, $peran, $guruId): User {
+            $user = User::create([
+                'name' => $nama,
+                'email' => $email,
+                'password' => Hash::make($sandi),
+                'guru_id' => $peran === Peran::Guru->value ? $guruId : null,
+            ]);
 
-        $user->assignRole($peran);
+            $user->assignRole($peran);
+
+            return $user;
+        });
 
         $this->info("Akun dibuat: {$user->email} sebagai ".Peran::from($peran)->label());
         $this->line('Masuk lewat '.rtrim((string) config('app.url'), '/').'/login');

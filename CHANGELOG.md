@@ -37,6 +37,50 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ---
 
+## 2026-08-22 — Akun dan izin guru untuk presensi
+
+**Dikerjakan:** Codex
+
+### Berubah
+
+- Menambahkan peran `guru`, izin `presensi.isi` dan `presensi.kelola`, serta
+  seeder idempoten. Guru hanya menerima izin mengisi; admin menerima kedua
+  izin presensi; super admin tetap menggunakan `Gate::before` tanpa izin
+  eksplisit.
+- Super admin dapat menautkan akun guru ke tepat satu data pendidik aktif.
+  Form hanya menampilkan pilihan itu untuk peran Guru dan daftar akun
+  menampilkan tautannya dengan bahasa yang mudah dipahami.
+- Perintah `pengguna:buat` mendukung `--guru-id`, memilih pendidik aktif pada
+  mode interaktif, dan menolak tautan guru untuk peran selain Guru.
+
+### Diperbaiki
+
+- Pembuatan maupun perubahan akun kini merupakan transaksi utuh mencakup data
+  akun, tautan pendidik, dan sinkronisasi peran; kegagalan tidak dapat
+  meninggalkan akun setengah jadi.
+- Perubahan peran Guru ke peran lain selalu melepaskan `guru_id`, sehingga
+  klien tidak dapat mempertahankan tautan tersembunyi.
+
+### Diputuskan
+
+- Hanya baris berkategori pendidik dan berstatus aktif yang valid sebagai
+  tautan akun Guru. Aturan ini ditegakkan kembali di server dan CLI, bukan
+  bergantung pada field yang disembunyikan UI.
+- Peran selain Guru dengan `--guru-id` pada CLI ditolak agar operator segera
+  mengetahui kesalahan input; form web menghapus field tersebut dari request.
+
+### Sengaja tidak dikerjakan
+
+- Tidak menambah dependency, route publik, data siswa, atau identitas sensitif.
+  Presensi tetap modul privat panel admin.
+
+### Verifikasi
+
+- `PeranGuruTest`, regresi `BuatPenggunaTest`, dan `AdminPanelTest` lulus:
+  33 test, 197 asersi.
+- Pint, TypeScript, PHPStan level 5, dan build Vite bersih. Suite penuh PHP
+  dijalankan sekali setelah itu; hasil akhirnya dicatat pada laporan task.
+
 ## 2026-08-22 — Perbaikan timestamp audit presensi
 
 **Dikerjakan:** Codex

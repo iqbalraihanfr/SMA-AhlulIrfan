@@ -6,6 +6,8 @@ export type Izin =
     | 'halaman.kelola'
     | 'struktur.kelola'
     | 'pengaturan.kelola'
+    | 'presensi.isi'
+    | 'presensi.kelola'
     | 'pengguna.kelola';
 
 export interface Pengguna {

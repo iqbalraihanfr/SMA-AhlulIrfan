@@ -7,6 +7,7 @@ type BarisPengguna = {
     email: string;
     peran: string | null;
     peranLabel: string;
+    guruNama: string | null;
     diriSendiri: boolean;
     urlUbah: string;
     urlHapus: string;
@@ -49,6 +50,7 @@ export default function Index({ daftar }: { daftar: BarisPengguna[] }) {
                             <th scope="col" className="px-4 py-3">Nama</th>
                             <th scope="col" className="px-4 py-3">Email</th>
                             <th scope="col" className="px-4 py-3">Peran</th>
+                            <th scope="col" className="px-4 py-3">Tautan guru</th>
                             <th scope="col" className="px-4 py-3"><span className="sr-only">Aksi</span></th>
                         </tr>
                     </thead>
@@ -70,6 +72,9 @@ export default function Index({ daftar }: { daftar: BarisPengguna[] }) {
                                     >
                                         {u.peranLabel}
                                     </span>
+                                </td>
+                                <td className="px-4 py-3 text-ink-muted">
+                                    {u.guruNama ?? 'Tidak ditautkan ke data pendidik'}
                                 </td>
                                 <td className="px-4 py-3 text-right">
                                     {u.diriSendiri ? (

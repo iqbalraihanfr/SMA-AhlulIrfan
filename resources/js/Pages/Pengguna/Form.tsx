@@ -1,27 +1,36 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Tombol } from '@/Components/Ui';
 
-type PenggunaProp = { id: number; name: string; email: string; peran: string | null } | null;
+type PenggunaProp = { id: number; name: string; email: string; peran: string | null; guru_id: number | null } | null;
 
 type Props = {
     pengguna: PenggunaProp;
     pilihanPeran: { value: string; label: string; keterangan: string }[];
+    pilihanGuru: { id: number; nama: string }[];
     aksi: string;
 };
 
-export default function Form({ pengguna, pilihanPeran, aksi }: Props) {
+export default function Form({ pengguna, pilihanPeran, pilihanGuru, aksi }: Props) {
     const baru = pengguna === null;
 
-    const { data, setData, post, put, processing, errors } = useForm({
+    const { data, setData, post, put, transform, processing, errors } = useForm({
         name: pengguna?.name ?? '',
         email: pengguna?.email ?? '',
         peran: pengguna?.peran ?? 'admin',
+        guru_id: pengguna?.guru_id?.toString() ?? '',
         password: '',
         password_confirmation: '',
     });
 
     const kirim = (e: { preventDefault: () => void }) => {
         e.preventDefault();
+        transform((nilai) => {
+            if (nilai.peran === 'guru') return nilai;
+
+            const { guru_id: _guruId, ...akun } = nilai;
+
+            return akun;
+        });
         baru ? post(aksi) : put(aksi);
     };
 
@@ -75,6 +84,24 @@ export default function Form({ pengguna, pilihanPeran, aksi }: Props) {
 
                             <Galat pesan={errors.peran} />
                         </fieldset>
+
+                        {data.peran === 'guru' && (
+                            <div>
+                                <Label htmlFor="guru_id">Data pendidik</Label>
+                                <select
+                                    id="guru_id"
+                                    value={data.guru_id}
+                                    onChange={(e) => setData('guru_id', e.target.value)}
+                                    required
+                                    className="block w-full rounded-md border border-line bg-paper px-3 py-2 text-sm text-ink shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                                >
+                                    <option value="">Pilih pendidik aktif</option>
+                                    {pilihanGuru.map((guru) => <option key={guru.id} value={guru.id}>{guru.nama}</option>)}
+                                </select>
+                                <Petunjuk>Pilih pendidik aktif yang menggunakan akun ini. Satu pendidik hanya dapat memiliki satu akun.</Petunjuk>
+                                <Galat pesan={errors.guru_id} />
+                            </div>
+                        )}
                     </Kartu>
 
                     <Kartu className="space-y-5">

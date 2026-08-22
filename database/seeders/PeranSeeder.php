@@ -29,5 +29,8 @@ class PeranSeeder extends Seeder
 
         Role::findOrCreate(Peran::Admin->value)
             ->syncPermissions(Izin::untukAdmin());
+
+        Role::findOrCreate(Peran::Guru->value)
+            ->syncPermissions(Izin::untukGuru());
     }
 }

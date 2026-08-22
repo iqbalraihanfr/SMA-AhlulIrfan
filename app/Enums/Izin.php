@@ -16,6 +16,8 @@ enum Izin: string
     case KelolaHalaman = 'halaman.kelola';
     case KelolaStruktur = 'struktur.kelola';
     case KelolaPengaturan = 'pengaturan.kelola';
+    case IsiPresensi = 'presensi.isi';
+    case KelolaPresensi = 'presensi.kelola';
 
     /** Hanya super admin. Admin sekolah tidak boleh membuat atau menghapus akun. */
     case KelolaPengguna = 'pengguna.kelola';
@@ -30,6 +32,8 @@ enum Izin: string
             self::KelolaHalaman => 'Kelola Halaman (Profil, Kurikulum, dll.)',
             self::KelolaStruktur => 'Kelola Struktur Organisasi',
             self::KelolaPengaturan => 'Kelola Pengaturan Situs',
+            self::IsiPresensi => 'Isi Presensi',
+            self::KelolaPresensi => 'Kelola Presensi',
             self::KelolaPengguna => 'Kelola Akun Pengguna',
         };
     }
@@ -41,5 +45,11 @@ enum Izin: string
             fn (self $i) => $i->value,
             array_filter(self::cases(), fn (self $i) => $i !== self::KelolaPengguna)
         );
+    }
+
+    /** Izin minimum untuk peran guru. */
+    public static function untukGuru(): array
+    {
+        return [self::IsiPresensi->value];
     }
 }
