@@ -14,6 +14,13 @@
             $batas,
         );
     };
+
+    $mediaKepalaSekolah = $kepalaSekolah?->getFirstMedia('foto');
+    $fotoKepalaSekolah = $mediaKepalaSekolah?->hasGeneratedConversion('portrait')
+        ? $mediaKepalaSekolah->getUrl('portrait')
+        : ($mediaKepalaSekolah?->hasGeneratedConversion('card') ? $mediaKepalaSekolah->getUrl('card') : null);
+    $altFotoKepalaSekolah = $mediaKepalaSekolah?->getCustomProperty('alt')
+        ?? ($kepalaSekolah ? 'Foto '.$kepalaSekolah->nama : 'Foto Kepala Sekolah');
 @endphp
 
 <x-layout.situs>
@@ -33,14 +40,49 @@
     </section>
 
     @if ($sambutan)
-        <section class="section">
-            <div class="section-shell grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
-                <x-ui.section-heading kicker="Dari sekolah" :judul="$sambutan->judul" keterangan="Membangun ruang belajar yang berilmu, berkarakter, dan berakar pada nilai keislaman." />
-                <div>
-                    <p class="max-w-2xl text-base leading-8 text-ink-muted">
-                        {{ $ringkas($sambutan->isi, 380) }}
-                    </p>
-                    <a href="{{ route('profil') }}#sambutan" class="mt-6 inline-flex text-sm font-bold text-brand hover:underline">Baca sambutan lengkap <span aria-hidden="true">&rarr;</span></a>
+        <section class="section sambutan-section">
+            <div class="section-shell sambutan-feature">
+                <div class="sambutan-feature__intro">
+                    <x-ui.section-heading kicker="Dari sekolah" :judul="$sambutan->judul" keterangan="Membangun ruang belajar yang berilmu, berkarakter, dan berakar pada nilai keislaman." />
+                </div>
+
+                <figure class="sambutan-portrait">
+                    @if ($fotoKepalaSekolah)
+                        <img src="{{ $fotoKepalaSekolah }}"
+                             alt="{{ $altFotoKepalaSekolah }}"
+                             width="1200"
+                             height="1800"
+                             loading="lazy"
+                             decoding="async">
+                    @else
+                        <div class="sambutan-portrait__placeholder" aria-hidden="true">
+                            {{ $kepalaSekolah?->inisial() ?? 'KS' }}
+                        </div>
+                    @endif
+
+                    <figcaption class="sambutan-portrait__caption">
+                        <span>{{ $kepalaSekolah?->nama ?? 'Kepala Sekolah' }}</span>
+                        <small>{{ $kepalaSekolah?->jabatan ?? 'Kepala Sekolah' }}</small>
+                    </figcaption>
+                </figure>
+
+                <div class="sambutan-feature__message">
+                    @if ($sambutanRingkas->arab || $sambutanRingkas->salam)
+                        <div class="sambutan-opening">
+                            @if ($sambutanRingkas->arab)
+                                <p class="sambutan-opening__arab" lang="ar" dir="rtl">{{ $sambutanRingkas->arab }}</p>
+                            @endif
+                            @if ($sambutanRingkas->salam)
+                                <p class="sambutan-opening__salam">{{ $sambutanRingkas->salam }}</p>
+                            @endif
+                        </div>
+                    @endif
+
+                    <p class="sambutan-feature__excerpt">{{ $sambutanRingkas->isi }}</p>
+
+                    <a href="{{ route('profil') }}#sambutan" class="mt-7 inline-flex text-sm font-bold text-brand hover:underline">
+                        Baca sambutan lengkap <span aria-hidden="true">&rarr;</span>
+                    </a>
                 </div>
             </div>
         </section>

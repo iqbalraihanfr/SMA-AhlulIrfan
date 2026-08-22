@@ -14,7 +14,6 @@
             $adaNaskah('prestasi') ? ['Prestasi Siswa', route('prestasi')] : null,
             $adaNaskah('organisasi_siswa') ? ['Organisasi Siswa', route('organisasi-siswa')] : null,
             $adaNaskah('tata_tertib') ? ['Tata Tertib', route('tata-tertib')] : null,
-            $adaNaskah('e_learning') ? ['E-Learning', route('e-learning')] : null,
         ])],
         ['label' => 'Berita', 'tautan' => route('berita.index')],
         ['label' => 'Kontak', 'tautan' => route('kontak')],

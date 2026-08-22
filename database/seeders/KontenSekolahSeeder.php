@@ -40,10 +40,9 @@ class KontenSekolahSeeder extends Seeder
             'nama_yayasan' => 'Yayasan Ahlul Irfan Al-Kholily',
             'semboyan' => 'Berilmu, Berakhlak Mulia, Berprestasi, dan Berdaya Saing Global',
 
-            // Naskah sekolah hanya menyebut desa dan kecamatan. Alamat lengkap,
-            // telepon, WhatsApp, email, dan koordinat BELUM diberikan — dan ini
-            // satu-satunya kekurangan naskah yang MEMBLOKIR peluncuran.
-            'alamat' => 'Desa Langkap, Kecamatan Bangsalsari, Kabupaten Jember, Jawa Timur',
+            // Alamat sekolah diterima dari pemilik proyek pada 21 Agustus 2026.
+            // Telepon, WhatsApp, email, dan koordinat masih menunggu pihak sekolah.
+            'alamat' => 'Jl. Mawar Gg. Al-Kholily, Langkap, Bangsalsari, Jember, Jawa Timur 68154',
             'fakta_terverifikasi' => false,
         ])->save();
     }
@@ -199,12 +198,11 @@ class KontenSekolahSeeder extends Seeder
             'sambutan_kepsek' => ['Sambutan Kepala Sekolah', $this->sambutan()],
             'kurikulum' => ['Kurikulum', $this->kurikulum()],
 
-            // Empat di bawah ini di WEBSITE.docx hanya berupa JUDUL KOSONG.
+            // Tiga di bawah ini di WEBSITE.docx hanya berupa JUDUL KOSONG.
             // Jangan diisi karangan sendiri — tagih naskahnya ke sekolah.
             'prestasi' => ['Prestasi Siswa', null],
             'tata_tertib' => ['Tata Tertib Sekolah', null],
             'organisasi_siswa' => ['Organisasi Siswa', null],
-            'e_learning' => ['E-Learning', null],
         ];
     }
 

@@ -37,12 +37,228 @@ Tiga hal yang harus ada, karena ini yang paling sering hilang:
 
 ---
 
+## 2026-08-22 — Rencana fase kedua absensi siswa
+
+**Dikerjakan:** Codex GPT-5.6 Sol
+
+### Berubah
+
+- Menambahkan `PLAN-ABSENSI-SISWA.md` di root sebagai dokumen serah konteks
+  mandiri untuk room pengembangan berikutnya. Dokumen memuat keputusan produk,
+  model data, peran dan policy, alur guru/admin, UI responsif, impor roster,
+  rekap CSV, audit, keamanan, rollout, serta 15 task implementasi berbasis TDD.
+- Menyertakan prompt pembuka room baru dan Decision Gate agar agent berikutnya
+  dapat melanjutkan tanpa bergantung pada riwayat percakapan ini.
+
+### Diputuskan
+
+- Rekomendasi MVP adalah absensi harian satu kali per kelas oleh wali kelas.
+  Pengguna dapat menandai semua siswa hadir lalu mengubah pengecualian, sehingga
+  operator sekolah tidak dibebani rekap manual dan guru tidak harus mengeklik
+  Hadir satu per satu.
+- Modul direncanakan tetap berada pada panel privat Laravel + MySQL yang sama.
+  Pendekatan ini mempertahankan satu login, hosting, backup, dan prosedur operasi;
+  Vercel, Supabase, atau aplikasi terpisah tidak ditambahkan.
+- Portal wali siswa, absensi per mata pelajaran, WhatsApp otomatis, biometrik,
+  dan lampiran surat berada di luar MVP karena mengubah model data, privasi,
+  biaya, dan beban operasional secara material.
+- Data siswa MVP hanya memakai kode internal sekolah dan nama. NISN, NIK, NUPTK,
+  nomor KK, data orang tua, serta identitas kependudukan lain dilarang.
+
+### Sengaja tidak dikerjakan
+
+- Belum ada kode, migrasi, route, akun guru, maupun data siswa yang dibuat.
+  `PRD-SMA.md` tetap menganggap presensi di luar scope website profil sampai
+  sekolah dan pemilik proyek menyetujui fase kedua secara tertulis.
+- Tidak mengubah website publik atau pekerjaan serah-terima yang sedang berjalan;
+  dokumen ini hanya menjadi rencana implementasi dan handoff lintas room.
+
+### Verifikasi
+
+- Dokumen terdiri dari 1.184 baris sebelum perapian akhir dan memuat 15 task
+  bernomor 0–14, Definition of Done, estimasi, serta instruksi room baru.
+- Pencarian placeholder memverifikasi tidak ada `TBD`, `TODO`, atau instruksi
+  generik yang belum dilengkapi; satu kemunculan berada di dalam perintah audit
+  dokumentasi Task 13 dan memang disengaja.
+- Audit istilah memastikan larangan identitas sensitif, dua izin presensi, service
+  transaksi, serta batas MVP disebut konsisten. `git diff --check` dijalankan
+  setelah perubahan dokumentasi.
+
+---
+
+## 2026-08-21 — Menunda fitur pembelajaran daring dan menerima alamat sekolah
+
+**Dikerjakan:** Codex GPT-5.6 Sol (orchestrator) dan GPT-5.6 Luna (executor)
+
+### Berubah
+
+- Route publik, tautan navbar, sitemap, seeder, dan panel admin tidak lagi
+  menyediakan E-learning. URL lama `/e-learning` tetap merespons 404 agar tidak
+  menjadi halaman yatim atau ikut terindeks.
+- Entri `konten_halaman` lama dengan kunci `e_learning` disaring dari panel admin
+  dan tidak dapat diedit melalui URL langsung. Baris lama tidak dihapus agar data
+  produksi tidak dirusak secara destruktif; tanpa route publik ia tidak terlihat.
+- Dokumentasi scope dan daftar bahan tidak lagi meminta naskah E-learning.
+  Fitur pembelajaran daring ditunda sampai sekolah menyepakati kebutuhan dan
+  tata kelolanya.
+- Alamat resmi sekolah diterima: `Jl. Mawar Gg. Al-Kholily, Langkap, Bangsalsari,
+  Jember, Jawa Timur 68154`. Telepon, WhatsApp, email, dan koordinat tidak diisi
+  berdasarkan asumsi.
+
+### Diperbaiki
+
+- Test publik sebelumnya merujuk route bernama `e-learning`, sehingga keputusan
+  menunda fitur masih menyisakan kontrak route. Test kini memverifikasi 404 pada
+  URL lama dan memastikan URL tersebut tidak muncul di navbar maupun sitemap.
+
+### Diputuskan
+
+- E-learning bukan bagian scope rilis atau kebutuhan konten saat ini. Jika
+  disepakati kelak, ia harus masuk PRD dan dirancang sebagai pekerjaan baru,
+  bukan diaktifkan hanya karena ada baris database lama.
+- Tidak ada migrasi penghapusan baris lama; penyaringan route/admin lebih aman
+  untuk deployment yang mungkin sudah memiliki data.
+
+### Sengaja tidak dikerjakan
+
+- Tidak membangun LMS, halaman informasi sementara, maupun tautan ke platform
+  pembelajaran karena kebutuhan tersebut belum disepakati sekolah.
+- Tidak menghapus baris `e_learning` dari database yang sudah berjalan. Baris
+  lama dibuat tidak terjangkau agar keputusan scope tidak menyebabkan kehilangan
+  data.
+- Telepon, WhatsApp, email, dan koordinat tidak ditebak dari alamat atau peta
+  pada tangkapan layar; seluruhnya tetap menunggu data resmi.
+
+### Verifikasi
+
+- Seluruh 93 test PHP lulus dengan 703 asersi. Test regresi memastikan URL lama
+  404 serta E-learning tidak muncul di navbar, sitemap, atau panel admin.
+- Pint bersih, PHPStan level 5 menghasilkan nol error, TypeScript tidak memiliki
+  error tipe, lima test Node lulus, dan Vite 8.2.1 membangun 2.406 modul.
+- Chromium nyata pada 1280×900 dan 390×844 memastikan menu Akademik tetap
+  berfungsi tanpa E-learning, `/e-learning` menampilkan halaman 404 bermerek,
+  dan alamat baru tampil pada halaman Kontak serta footer. Halaman normal tidak
+  menghasilkan error maupun peringatan konsol.
+- `rg` audit memastikan tidak ada route, controller, navbar, sitemap, seeder,
+  atau daftar kebutuhan aktif untuk E-learning; satu-satunya penyebutan tersisa
+  adalah larangan non-goal, catatan keputusan, test regresi, dan riwayat changelog.
+- `git diff --check` dan audit literal warna pada kode aplikasi bersih.
+
+---
+
+## 2026-08-21 — Galeri dinamis dokumentasi yayasan
+
+**Dikerjakan:** Iqbal (penyediaan aset), dikurasi, diintegrasikan, dan
+diverifikasi oleh Codex GPT-5.6 Sol
+
+### Berubah
+
+- Sepuluh dari 17 foto sumber dipilih berdasarkan relevansi, ketajaman, variasi,
+  dan minimnya repetisi. Tiga foto masuk ke album **Lingkungan dan Fasilitas
+  Yayasan**, sedangkan tujuh foto masuk ke album **Pembinaan Keagamaan di
+  Lingkungan Yayasan**.
+- `GaleriYayasanSeeder` membuat kedua album dan media awal secara idempoten.
+  Album tetap dikelola melalui CMS; seeder mempertahankan suntingan judul,
+  deskripsi, urutan, alt versi aktif, serta foto tambahan milik admin.
+- Aset terpilih diperkecil dari JPEG 6000×3376 menjadi WebP 2560×1441 kualitas
+  82 tanpa EXIF/XMP/ICC. Total aset produksi hanya 1,6 MB, dibandingkan 109 MB
+  untuk 17 sumber mentah.
+- Seluruh 17 sumber mentah dipindahkan, bukan dihapus, ke
+  `naskah/foto-original/yayasan-2026-08-21/` yang diabaikan Git. Dengan demikian
+  arsip lokal tetap utuh, tetapi foto mentah tidak dapat diakses pengunjung dan
+  tidak membengkakkan deployment.
+
+### Diperbaiki
+
+- Beranda sebelumnya meminta file asli potret Kepala Sekolah. Model `Guru` kini
+  menyediakan varian WebP `portrait` 800×1000; beranda memakainya dan hanya
+  kembali ke varian `card` bila media lama atau unggahan admin belum mempunyai
+  varian potret. `MediaSekolahSeeder` meregenerasi media kelolaannya satu kali
+  bila konversi baru tersebut belum tersedia.
+- Seeder galeri hanya menghapus media usang yang memiliki penanda
+  `seeder-yayasan`; media dengan nama serupa yang diunggah admin tidak disentuh.
+
+### Diputuskan
+
+- Foto diberi judul, deskripsi, dan alt sebagai dokumentasi **lingkungan
+  yayasan**, bukan diklaim sebagai siswa, kegiatan, atau fasilitas khusus SMA.
+  Asal foto belum cukup untuk membuat klaim yang lebih sempit.
+- File WebP HD disimpan sebagai aset seeder yang portabel, lalu Media Library
+  menghasilkan `thumbnail`, `card`, dan `hero`. Situs publik hanya merender URL
+  konversi, sedangkan admin tetap menjadi sumber data dinamis setelah instalasi.
+- Tidak ada dependensi, skema database, atau perubahan batas Blade/React baru.
+
+### Sengaja tidak dikerjakan
+
+- Tujuh foto yang kabur, terhalang, atau sangat mirip tidak dipublikasikan agar
+  galeri tetap ringkas. Semuanya tetap tersedia di arsip mentah lokal.
+- Foto yayasan tidak dipakai sebagai hero khusus SMA. Kebutuhan foto gedung dan
+  kegiatan yang terverifikasi milik SMA tetap dicatat menunggu pihak sekolah.
+
+### Verifikasi
+
+- Seluruh 92 test PHP lulus dengan 697 asersi. Test galeri secara khusus
+  memverifikasi 10 media, 30 varian responsif, alt wajib, idempotensi,
+  perlindungan suntingan/media admin, dan larangan URL file asli pada HTML.
+- `migrate:fresh --seed` berhasil pada SQLite sementara dengan prefix media
+  terisolasi. Pint bersih dan PHPStan level 5 menghasilkan nol error.
+- TypeScript `tsc --noEmit` bersih, 5 test Node lulus, dan Vite 8.2.1 berhasil
+  membangun 2.406 modul.
+- Chromium nyata pada 1280×900 dan 390×844 memverifikasi indeks serta dua detail
+  album. Seluruh request halaman/font/aset mendapat HTTP 200, tujuh thumbnail
+  album kegiatan termuat 320×320, potret Kepala Sekolah termuat 800×1000, dan
+  konsol browser nol error maupun peringatan.
+- `webpmux` melaporkan `No features present` untuk seluruh 10 WebP. Audit literal
+  privat, angka 16 digit, dokumen kantor terlacak, warna keras/kelas palet,
+  JPEG besar di `public/`, dan `git diff --check` seluruhnya bersih.
+
+---
+
+## 2026-08-20 — Potret dan pembuka sambutan kepala sekolah
+
+**Dikerjakan:** Codex GPT-5.6 Sol
+
+### Berubah
+
+- Beranda kini menampilkan potret resmi Fathur Rohman, S.P bersama nama dan
+  jabatannya dalam komposisi sambutan yang responsif. Bila media belum tersedia,
+  tampilan tetap aman dengan inisial dan identitas Kepala Sekolah.
+- Basmalah diberi konteks bahasa serta arah baca Arab, diratakan ke kanan, dan
+  salam ditempatkan sebagai paragraf terpisah tepat di bawahnya pada desktop
+  maupun ponsel.
+- Halaman profil ikut merapikan arah baca paragraf Arab dan jarak salam agar
+  penyajian naskah lengkap konsisten dengan beranda.
+
+### Diperbaiki
+
+- Ringkasan lama menghapus seluruh HTML sekaligus sehingga basmalah, salam, dan
+  isi pembuka menyatu dalam satu baris. `RingkasanSambutan` sekarang memisahkan
+  ketiganya sebelum pemotongan teks tanpa menggandakan naskah sekolah di view.
+
+### Diputuskan
+
+- Naskah sambutan tetap bersumber dari CMS dan foto tetap bersumber dari Media
+  Library. Tidak ada teks atau jalur foto yang ditanam permanen di template,
+  sehingga perubahan oleh admin tetap langsung terpakai.
+- Tidak ada perubahan skema atau duplikasi media; pekerjaan ini hanya mengubah
+  presentasi serta pemrosesan ringkasan yang sudah ada.
+
+### Verifikasi
+
+- Seluruh 91 test PHP lulus dengan 552 asersi, 5 test Node lulus, Pint bersih,
+  PHPStan level 5 nol error, dan TypeScript tidak memiliki error tipe.
+- Build produksi Vite 8.2.1 berhasil memproses 2.406 modul.
+- Chromium nyata pada 1280×900 dan 390×844 memastikan foto termuat, tulisan
+  Arab rata kanan, salam berada sesudahnya, urutan baca benar, dan konsol nol
+  error.
+
 ## 2026-08-20 — Enam foto guru tambahan dan pembaruan aset resmi
 
 **Dikerjakan:** Iqbal (penyediaan aset), diintegrasikan dan diverifikasi oleh
 Codex GPT-5.6 Sol
 
 ### Berubah
+
 - Enam foto bernama tambahan dipasang untuk Fathur Rohman, Nur Rochman Hidayat,
   Yeni Sri Astutik, Noviani, Ahmad Saini, dan Sofiatul Lailiyah. Bersama delapan
   aset sebelumnya, 14 dari 16 guru/tendik kini memiliki potret resmi.
@@ -54,6 +270,7 @@ Codex GPT-5.6 Sol
   dapat diunduh pengunjung dan tidak membengkakkan repositori.
 
 ### Diperbaiki
+
 - `MediaSekolahSeeder` kini memberi penanda sumber dan versi aset. Foto bawaan
   lama dapat diperbarui saat aset resmi berubah, tetapi foto yang pernah
   diunggah admin tidak pernah ditimpa oleh seeder.
@@ -65,6 +282,7 @@ Codex GPT-5.6 Sol
   `&amp;` akibat entitas HTML yang di-escape dua kali oleh properti komponen.
 
 ### Verifikasi
+
 - Tes seeder memeriksa 14 pemetaan, idempotensi, konversi media, penanda sumber,
   serta perlindungan foto pilihan admin.
 - Gerbang integrasi lengkap lulus: 88 test PHP dengan 542 asersi, 5 test Node,
@@ -83,6 +301,7 @@ Codex GPT-5.6 Sol
 GPT-5.6 Terra dan Luna
 
 ### Berubah
+
 - Seluruh jalur unggah gambar di panel admin—sampul dan isi berita, foto guru,
   gambar ekstrakurikuler, galeri multi-foto, serta logo—kini menyiapkan raster
   di browser sebelum dikirim. Sisi terpanjang dibatasi 2560 piksel dan hasil
@@ -96,6 +315,7 @@ GPT-5.6 Terra dan Luna
   konversi lama tidak meninggalkan URL WebP tanpa berkas.
 
 ### Diperbaiki
+
 - Konfigurasi Media Library tidak lagi menjalankan `jpegoptim`, `pngquant`,
   `cwebp`, atau binary optimizer lain yang tidak dijamin tersedia di shared
   hosting. Konversi server menggunakan GD PHP; pengecilan sumber dilakukan
@@ -114,6 +334,7 @@ GPT-5.6 Terra dan Luna
   tertunda tanpa node gambar di dalam HTML.
 
 ### Diputuskan
+
 - Tidak menambah paket kompresi. Canvas dan WebP browser mencukupi untuk klien,
   sedangkan GD yang memang menjadi syarat hosting menangani varian publik.
 - Galeri memproses foto secara serial. Sedikit lebih lama daripada dua proses
@@ -124,6 +345,7 @@ GPT-5.6 Terra dan Luna
   akhirnya melampaui validasi server.
 
 ### Verifikasi
+
 - Tes unit Node mengunci resize proporsional, whitelist format, fallback,
   pemilihan hasil yang lebih kecil, nama WebP, dan peringatan batas berkas.
 - Tes fitur PHP mengunci sembilan varian milik Album, Guru, Ekstrakurikuler,
@@ -143,6 +365,7 @@ GPT-5.6 Terra dan Luna
 **Dikerjakan:** Codex GPT-5.6 Sol, dengan audit read-only GPT-5.6 Luna
 
 ### Berubah
+
 - Sidebar desktop dan drawer navigasi mobile panel admin kini menampilkan logo
   sekolah di samping label **Panel Admin**. Bila logo belum tersedia, inisial
   `AI` tetap menjadi fallback agar instalasi baru tidak kehilangan identitas.
@@ -150,15 +373,18 @@ GPT-5.6 Terra dan Luna
   panel admin ikut berubah tanpa perlu menyentuh kode atau menjalankan seeder.
 
 ### Diputuskan
+
 - Layout menerima URL dan teks alternatif melalui shared props Inertia dari
   Media Library. Path berkas seeder tidak ditulis langsung karena itu hanya
   sumber instalasi awal, bukan sumber kebenaran setelah situs dikelola sekolah.
 
 ### Sengaja tidak dikerjakan
+
 - Halaman autentikasi Blade tidak diubah karena permintaan hanya menyasar panel
   admin. Batas Blade untuk auth dan Inertia/React untuk `/admin` tetap utuh.
 
 ### Verifikasi
+
 - 87 test lolos dengan 468 asersi, termasuk regresi bahwa shared props membawa
   URL dan alt logo aktif.
 - Pint, PHPStan level 5, dan TypeScript bersih; Vite 8.2.1 berhasil membangun
@@ -175,6 +401,7 @@ GPT-5.6 Terra dan Luna
 read-only dari GPT-5.6 Terra dan Luna
 
 ### Berubah
+
 - Bagan organisasi kini memakai hierarki daftar yang semantik dan konektor CSS
   murni. Ponsel dan tablet sampai 1023 piksel mendapat daftar bertingkat tanpa
   overflow; layar desktop mendapat bagan lengkap dengan rel antarsimpul dan
@@ -196,6 +423,7 @@ read-only dari GPT-5.6 Terra dan Luna
   bukti persetujuannya tetap harus ikut dokumen serah-terima.
 
 ### Diperbaiki
+
 - Upload gambar isi sekarang terikat ke berita pemiliknya; server menolak media
   berita lain dan hotlink, membersihkan HTML, lalu menulis ulang URL, dimensi,
   serta alt dari Media Library. Ini mencegah nilai klien dan URL pelacak masuk
@@ -215,6 +443,7 @@ read-only dari GPT-5.6 Terra dan Luna
   daftar sampai breakpoint desktop.
 
 ### Diputuskan
+
 - Tidak ada dependency baru. Node gambar ditulis dengan API TipTap yang sudah
   terpasang, sedangkan tanggal/jam memakai kontrol browser; ini mengurangi
   beban pemeliharaan dan ukuran bundle untuk kebutuhan yang sudah tercakup.
@@ -225,6 +454,7 @@ read-only dari GPT-5.6 Terra dan Luna
   pernah dipakai sebagai sampul kartu berita.
 
 ### Sengaja tidak dikerjakan
+
 - Kompresi gambar otomatis (pekerjaan nomor 10) tidak disentuh karena sedang
   dikerjakan pemilik di room lain. Perubahan ini hanya memakai konversi Media
   Library yang sudah ada untuk URL gambar isi.
@@ -232,6 +462,7 @@ read-only dari GPT-5.6 Terra dan Luna
   kebutuhan UX selesai tanpa memperluas dependency proyek.
 
 ### Verifikasi
+
 - 86 test lolos dengan 456 asersi. Cakupannya termasuk izin 403, alt wajib,
   berkas non-gambar/lebih dari 5 MB, ownership lintas berita, sanitasi hotlink,
   URL dan dimensi hasil konversi, persistensi caption, media tertunda, pemulihan
@@ -254,6 +485,7 @@ read-only dari GPT-5.6 Terra dan Luna
 **Dikerjakan:** Codex (orchestrator) dan GPT-5.6 Luna (executor)
 
 ### Berubah
+
 - Seluruh situs publik dirombak ke arah institusional-modern dengan palet Hijau
   Santri. Hierarki, ritme ruang, navigasi, footer, komponen kartu, halaman
   profil, guru, berita, galeri, ekstrakurikuler, kontak, dan prosa kini memakai
@@ -273,6 +505,7 @@ read-only dari GPT-5.6 Terra dan Luna
   pengunjung dan tidak membengkakkan repositori.
 
 ### Diperbaiki
+
 - Sambutan Kepala Sekolah sebelumnya kehilangan tiga baris penutup ketika
   ditranskripsikan ke seeder. Halaman profil kini memuat tanggal, jabatan, dan
   nama `FATHUR ROHMAN, S.P`, serta dijaga test fitur agar tidak terpotong lagi.
@@ -291,6 +524,7 @@ read-only dari GPT-5.6 Terra dan Luna
   identitas kependudukan.
 
 ### Diputuskan
+
 - Arah Hijau Santri (`brand #14532d`, `highlight #b45309`) menjadi arah visual
   SMA. Nilai warna hanya hidup di berkas CSS pusat; Blade dan TSX memakai token
   semantik.
@@ -301,6 +535,7 @@ read-only dari GPT-5.6 Terra dan Luna
   aman `docs/KONTEN-SEKOLAH.md`.
 
 ### Sengaja tidak dikerjakan
+
 - `GEMA2770.JPG` tidak digunakan karena tidak memuat nama orang. Identitas guru
   tidak ditebak dari wajah; sekolah perlu memberi pemetaan sebelum foto itu
   boleh dipublikasikan.
@@ -312,6 +547,7 @@ read-only dari GPT-5.6 Terra dan Luna
   diserahterimakan.
 
 ### Verifikasi
+
 - 77 test lolos dengan 388 asersi, termasuk kelengkapan sambutan, integrasi
   delapan foto, idempotensi seeder media, teaser galeri, dan status navigasi.
 - Pint bersih; PHPStan level 5 nol error dengan PHP MAMP 8.4.1; TypeScript
@@ -329,6 +565,7 @@ read-only dari GPT-5.6 Terra dan Luna
 **Dikerjakan:** Codex
 
 ### Berubah
+
 - Halaman 403, 404, dan 500 kini memakai tampilan sekolah berbahasa Indonesia,
   responsif, dapat dinavigasi dengan keyboard, dan diberi `noindex`. Layout-nya
   sengaja mandiri dari database supaya halaman 500 tetap dapat dirender ketika
@@ -349,6 +586,7 @@ read-only dari GPT-5.6 Terra dan Luna
 - `HANDOFF.md` diperbarui agar pekerjaan lama nomor 1–4 tidak dikerjakan ulang.
 
 ### Diperbaiki
+
 - Cache Blade hasil kompilasi sebelumnya ikut dilacak Git. Gejalanya terbukti
   saat test memuat layout SEO lama walaupun source Blade sudah berubah, karena
   timestamp cache lebih baru daripada source. Seluruh cache terkompilasi
@@ -374,6 +612,7 @@ read-only dari GPT-5.6 Terra dan Luna
   diluruskan sebelum perubahan baru didorong.
 
 ### Diputuskan
+
 - Sitemap dan schema tetap ditulis tangan tanpa paket baru. Rute publiknya
   sedikit, sudah diketahui, dan status terbit di database perlu menjadi gerbang
   eksplisit—crawler paket akan menambah dependensi tanpa menyederhanakan aturan.
@@ -384,6 +623,7 @@ read-only dari GPT-5.6 Terra dan Luna
   mengubah placeholder menjadi klaim resmi.
 
 ### Sengaja tidak dikerjakan
+
 - Arah warna baru tidak diterapkan karena pemilik belum memilih Hijau Santri,
   Marun Akademik, atau Tembakau Jember. Halaman error memakai token semantik
   yang ada sehingga akan ikut berubah tanpa refactor setelah pilihan dibuat.
@@ -395,6 +635,7 @@ read-only dari GPT-5.6 Terra dan Luna
   mudah dirawat.
 
 ### Verifikasi
+
 - 73 test lolos dengan 366 asersi, termasuk fallback/prioritas `og:image`,
   parsing JSON-LD, filter sitemap, robots, serta render 403/404/500.
 - Pint bersih; PHPStan level 5 nol error (dijalankan dengan batas memori 512 MB
@@ -413,15 +654,16 @@ read-only dari GPT-5.6 Terra dan Luna
 **Dikerjakan:** Claude Opus 5
 
 ### Diperbaiki
+
 - **Daftar putih HTMLPurifier membuang `<h2>`, `<h3>`, `<blockquote>`, dan `class="arab"`.** Gejalanya halus dan berbahaya: editor TipTap memberi admin tombol "Sub-judul" dan "Kutipan", admin memakainya, melihatnya bekerja di editor, menyimpan — lalu tag itu diam-diam menjadi `<p>` biasa di situs publik. Kelas `arab` untuk basmalah di Sambutan Kepala Sekolah ikut hilang, dan `prosa.blade.php` selama ini menata `[&_h3]`, `[&_blockquote]`, `[&_.arab]` untuk elemen yang tidak pernah sampai ke halaman.
 
   Dampaknya bukan kosmetik: `/profil`, `/kurikulum`, `/tata-tertib`, `/prestasi`, dan isi tiap berita adalah halaman paling padat teks di situs, dan semuanya terbit sebagai dinding `<p>` tanpa satu pun heading internal — pengguna pembaca layar tidak bisa melompat antarbagian, dan mesin pencari kehilangan sinyal struktur.
 
   Cara memastikannya: `clean('<h3>Judul</h3>')` mengembalikan `<p>Judul</p>` sebelum perbaikan.
-
 - **`[x-cloak]` tidak punya aturan CSS sama sekali.** `x-cloak` hanyalah atribut kosong yang dihapus Alpine; yang menyembunyikan adalah CSS. Tanpa aturan itu, seluruh dropdown navbar dan menu mobile tampil **terbuka** sejak halaman pertama dicat sampai Alpine selesai boot. Aset dimuat sebagai modul (defer), jadi di 3G jeda itu ratusan milidetik — terlihat, dan memicu pergeseran tata letak.
 
 ### Berubah
+
 - `figure` dan `figcaption` kini diizinkan, menyiapkan keterangan yang menempel pada gambar di dalam artikel.
 - Atribut `style` dibuang total dari isi editor. Menempel dari Word membawa warna dan font sembarangan yang melanggar Aturan Token.
 - Atribut `class` dibatasi hanya nilai `arab` lewat `Attr.AllowedClasses`, sehingga admin tidak bisa menyuntik kelas Tailwind sembarangan.
@@ -429,16 +671,19 @@ read-only dari GPT-5.6 Terra dan Luna
 - `AGENTS.md`, `HANDOFF.md`, dan `CHANGELOG.md` dibuat untuk serah terima pekerjaan ke agen atau pengembang lain.
 
 ### Diputuskan
+
 - **Situs pesantren ternyata biru `#1e3a8a`, bukan hijau.** Warna SMA sekarang `#0d4a5c` dipilih dengan alasan "supaya beda dari hijau pesantren" — alasan itu salah, diambil dari contoh ilustratif di `DESIGN_SWAP_PLAYBOOK.md` yang barisnya sendiri menyatakan nilai aslinya berbeda. Akibatnya dua situs berada di keluarga warna yang sama dan berisiko tertukar. Tiga arah desain pengganti sudah disusun dan diverifikasi kontrasnya; **pemilik proyek belum memilih**, jadi belum diterapkan.
 - Pemulihan kata sandi tetap lewat super admin, bukan Supabase/Firebase/Google Sign-In. Skala 5–10 admin tidak sepadan dengan menambah penyedia identitas, dan semuanya menghidupkan kembali tagihan dolar yang tidak bisa dialihkan ke yayasan.
 
 ### Sengaja tidak dikerjakan
+
 - **Paket sitemap** (`spatie/laravel-sitemap`) — paket itu bekerja dengan merayapi situs, sementara rute kita cuma ~30 dan sudah diketahui semua. Satu route Blade lebih sedikit kodenya daripada dependensinya.
 - **Paket schema.org** — hanya butuh satu blok JSON-LD.
 - **Laravel Telescope** — berat untuk shared hosting; debugbar sudah menutup kebutuhan lokal.
 - **Pest** — PHPUnit sudah jalan dengan 65 test; pindah hanya membeli gaya penulisan.
 
 ### Verifikasi
+
 - 65 test lolos, phpstan level 5 nol error, tsc bersih, pint bersih, `vite build` bersih.
 - Sanitasi diuji tujuh kasus: heading, kutipan, kelas arab, figure/figcaption lolos; `style`, kelas liar, dan `<script>` dibuang.
 
@@ -449,6 +694,7 @@ read-only dari GPT-5.6 Terra dan Luna
 **Dikerjakan:** Claude Opus 5
 
 ### Berubah
+
 - Panel admin dari dua bagian menjadi sembilan: Dasbor, Berita, Halaman, Guru & Tendik, Struktur Organisasi, Ekstrakurikuler, Galeri, Pengaturan Situs, Akun Pengguna.
 - Kerangka admin mengikuti panel situs yayasan — sidebar gelap tetap 16rem, nav mobile terpisah, header sambutan — tetapi memakai warna token SMA, bukan salinan palet pesantren.
 - Panel admin dipindah ke Inertia + React + TypeScript. Situs publik tetap Blade.
@@ -456,16 +702,19 @@ read-only dari GPT-5.6 Terra dan Luna
 - `pengguna:buat` dan `pengguna:sandi` bisa dijalankan tanpa TTY, untuk pemakaian lewat SSH.
 
 ### Diperbaiki
+
 - `pengguna:buat` gagal di lingkungan non-TTY dengan pesan "Required." yang tidak menjelaskan apa pun. Symfony menganggap perintah tetap interaktif selama `--no-interaction` tidak dipakai; diganti `stream_isatty(STDIN)`.
 - `env()` mengembalikan null setelah `php artisan config:cache`, sehingga pembuatan akun pertama di produksi akan gagal senyap tepat setelah deploy. Diganti `getenv()`. Ditemukan larastan.
 - Enam kesalahan tipe di model, termasuk perbandingan enum yang selalu bernilai salah, yang lolos dari 36 test karena jalur kodenya belum pernah dieksekusi. Ditemukan larastan pada pemasangan pertama.
 
 ### Diputuskan
+
 - Middleware `inertia` hanya dipasang pada grup rute admin, tidak global, dan entry Vite dipisah dua. Pengunjung situs publik memuat ~46KB, panel admin ~720KB. Memasang Inertia global akan menyamakan keduanya di angka besar.
 - `larastan` dipasang sejak awal, bukan setelah rilis, karena pada jalannya yang pertama ia langsung menemukan enam bug nyata.
 - Penjaga yang tidak boleh dilepas: halaman kosong tidak bisa diterbitkan; simpul akar bagan tidak bisa dihapus; simpul tidak bisa menjadi atasan dirinya sendiri; super admin terakhir tidak bisa diturunkan atau dihapus; menghapus akun sendiri ditolak.
 
 ### Verifikasi
+
 - 59 test lolos, phpstan nol error, tsc bersih.
 - Alur end-to-end diuji di browser: login, mengetik di TipTap, format kutipan, simpan lewat Inertia, HTML tersimpan utuh di database.
 
@@ -476,6 +725,7 @@ read-only dari GPT-5.6 Terra dan Luna
 **Dikerjakan:** Claude Opus 5
 
 ### Berubah
+
 - Laravel 13.25 + Blade + Tailwind v4, PHP 8.4.1, SQLite lokal / MySQL produksi.
 - Situs publik 15 rute, mengikuti struktur navigasi yang dipakai sekolah di `WEBSITE.docx`.
 - Naskah sekolah ditranskrip ke `docs/KONTEN-SEKOLAH.md` **tanpa kolom NUPTK**.
@@ -483,11 +733,13 @@ read-only dari GPT-5.6 Terra dan Luna
 - Bagan organisasi dirender HTML dari tabel `struktur_organisasi`, bukan dari gambar.
 
 ### Diputuskan
+
 - `WEBSITE.docx` diblokir `.gitignore` **sebelum commit pertama** — berkas itu memuat NUPTK 13 orang, dan sekali masuk riwayat git praktis tidak bisa ditarik lagi. Repo saat itu belum punya commit apa pun, jadi jendela ini tertutup pada commit pertama.
 - Halaman yang naskahnya belum ada memberi 404 dan hilang dari navigasi lewat `konten_halaman.terbit`, bukan terbit dalam keadaan kosong. **Kecuali `/kontak`** — situs sekolah tanpa cara menghubungi sekolah gagal memenuhi tujuannya, jadi kekurangan data kontak memblokir rilis, bukan menyembunyikan halaman.
 - Bagan organisasi tidak memakai gambar dari docx: tidak terbaca di 390px, tidak bisa dicari, dan menciptakan sumber kebenaran kedua yang akan berbeda dari daftar guru begitu ada mutasi.
 - Kolom `baris` ditambahkan ke `struktur_organisasi` karena bagan sekolah punya satu deret (BK, Wali Kelas, Guru Mapel) yang menggantung di bawah **keempat** kotak Waka sekaligus, dan pohon `atasan_id` biasa tidak bisa menyatakan induk jamak.
 
 ### Verifikasi
+
 - 36 test lolos, pint bersih, `migrate:fresh --seed` bersih di SQLite.
 - Nol kelas palet Tailwind dan nol hex di luar `resources/css/app.css`.

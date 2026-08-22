@@ -36,6 +36,7 @@ class MediaSekolahSeederTest extends TestCase
         $this->assertSame('Foto Anik Purwanti', $fotoAnik->getCustomProperty('alt'));
         $this->assertTrue($fotoAnik->hasGeneratedConversion('thumbnail'));
         $this->assertTrue($fotoAnik->hasGeneratedConversion('card'));
+        $this->assertTrue($fotoAnik->hasGeneratedConversion('portrait'));
 
         $this->get(route('beranda'))
             ->assertOk()

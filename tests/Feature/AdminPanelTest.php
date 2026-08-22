@@ -68,6 +68,26 @@ class AdminPanelTest extends TestCase
         $this->actingAs($this->admin)->get(route('admin.pengaturan.edit'))->assertOk();
     }
 
+    /** Baris fitur yang ditunda tidak bocor ke panel atau URL edit langsung. */
+    public function test_halaman_yang_ditunda_tidak_muncul_di_panel(): void
+    {
+        $lama = KontenHalaman::create([
+            'kunci' => 'e_learning',
+            'judul' => 'E-Learning',
+            'isi' => null,
+            'terbit' => false,
+        ]);
+
+        $this->actingAs($this->super)
+            ->get(route('admin.halaman.index'))
+            ->assertOk()
+            ->assertDontSee('E-Learning');
+
+        $this->actingAs($this->super)
+            ->get(route('admin.halaman.edit', $lama))
+            ->assertNotFound();
+    }
+
     public function test_panel_admin_menerima_logo_sekolah_dari_pengaturan_situs(): void
     {
         $situs = PengaturanSitus::ambil();

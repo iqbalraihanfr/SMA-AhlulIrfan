@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             PeranSeeder::class,
             KontenSekolahSeeder::class,
             MediaSekolahSeeder::class,
+            GaleriYayasanSeeder::class,
         ]);
 
         // Akun admin TIDAK dibuat otomatis — tidak ada kata sandi bawaan yang

@@ -24,7 +24,7 @@ tetap didorong setelah seluruh gerbang mutu bersih.
 
 ### Sudah jalan dan teruji
 
-**Situs publik, 15 rute:** `/`, `/profil`, `/profil/struktur-organisasi`, `/kurikulum`, `/guru`, `/e-learning`, `/ekstrakurikuler`, `/prestasi`, `/tata-tertib`, `/organisasi-siswa`, `/berita`, `/berita/{slug}`, `/galeri`, `/galeri/{slug}`, `/kontak`.
+**Situs publik, 14 rute:** `/`, `/profil`, `/profil/struktur-organisasi`, `/kurikulum`, `/guru`, `/ekstrakurikuler`, `/prestasi`, `/tata-tertib`, `/organisasi-siswa`, `/berita`, `/berita/{slug}`, `/galeri`, `/galeri/{slug}`, `/kontak`.
 
 **Panel admin, 9 bagian:** Dasbor, Berita, Halaman, Guru & Tendik, Struktur Organisasi, Ekstrakurikuler, Galeri, Pengaturan Situs, Akun Pengguna.
 
@@ -150,11 +150,14 @@ Ini di luar kendali pengembang. Daftar lengkap dan siap diteruskan ada di `naska
 
 Seeder memakai versi tabel sementara, dan menandainya dengan komentar.
 
-**Menyusul:** foto gedung dan kegiatan, dua foto pendidik yang belum tersedia,
-minimal satu berita, NPSN, akreditasi, serta koordinat peta. Izin publikasi foto
-siswa dikonfirmasi sudah diperoleh oleh pemilik proyek pada 20 Agustus 2026;
-bukti izinnya tetap harus disimpan bersama dokumen serah-terima. Logo SMA dan
-14 foto guru/tendik yang namanya dapat dipastikan sudah masuk melalui
+**Menyusul:** foto gedung dan kegiatan yang terverifikasi khusus SMA untuk hero,
+dua foto pendidik yang belum tersedia, minimal satu berita, NPSN, akreditasi,
+serta koordinat peta. Sepuluh foto kontekstual lingkungan yayasan sudah masuk ke
+dua album melalui `GaleriYayasanSeeder`; judul dan alt sengaja tidak mengklaimnya
+sebagai dokumentasi siswa atau fasilitas khusus SMA. Izin publikasi foto siswa
+dikonfirmasi sudah diperoleh oleh pemilik proyek pada 20 Agustus 2026; bukti
+izinnya tetap harus disimpan bersama dokumen serah-terima. Logo SMA dan 14 foto
+guru/tendik yang namanya dapat dipastikan sudah masuk melalui
 `MediaSekolahSeeder`; `GEMA2770.JPG` dideduplikasi karena identik dengan foto
 Sofiatul Lailiyah.
 

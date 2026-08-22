@@ -49,6 +49,19 @@ class SitusPublikTest extends TestCase
             ->assertSee('FATHUR ROHMAN, S.P');
     }
 
+    public function test_pembuka_sambutan_beranda_memiliki_urutan_baca_yang_benar(): void
+    {
+        $this->get(route('beranda'))
+            ->assertOk()
+            ->assertSeeInOrder([
+                'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ',
+                "Assalamu'alaikum Warahmatullahi Wabarakatuh",
+                "Alhamdulillahirabbil 'alamin",
+            ])
+            ->assertSee('class="sambutan-opening__arab" lang="ar" dir="rtl"', false)
+            ->assertSee('Fathur Rohman, S.P');
+    }
+
     /** URL beranda adalah prefix semua URL, tetapi hanya aktif di route beranda. */
     public function test_navbar_hanya_menandai_beranda_pada_route_beranda(): void
     {
@@ -67,9 +80,13 @@ class SitusPublikTest extends TestCase
      */
     public function test_halaman_tanpa_naskah_memberi_404(): void
     {
-        foreach (['prestasi', 'tata-tertib', 'organisasi-siswa', 'e-learning'] as $rute) {
+        foreach (['prestasi', 'tata-tertib', 'organisasi-siswa'] as $rute) {
             $this->get(route($rute))->assertNotFound();
         }
+
+        // Fitur E-learning ditunda sebelum menjadi bagian scope; URL lama harus
+        // tetap mati agar tidak menjadi halaman yatim yang dapat diindeks.
+        $this->get('/e-learning')->assertNotFound();
     }
 
     /** Halaman tanpa naskah juga tidak boleh muncul sebagai tautan di navbar. */
@@ -79,7 +96,9 @@ class SitusPublikTest extends TestCase
             ->assertOk()
             ->assertDontSee(route('prestasi'))
             ->assertDontSee(route('tata-tertib'))
-            ->assertDontSee(route('organisasi-siswa'));
+            ->assertDontSee(route('organisasi-siswa'))
+            ->assertDontSee('E-Learning')
+            ->assertDontSee('/e-learning');
     }
 
     /** Begitu naskahnya ada, halaman langsung terbit tanpa ubah kode. */

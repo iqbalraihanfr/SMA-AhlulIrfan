@@ -10,6 +10,7 @@ use App\Models\Ekstrakurikuler;
 use App\Models\Guru;
 use App\Models\KontenHalaman;
 use App\Models\StrukturOrganisasi;
+use App\Support\RingkasanSambutan;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -17,6 +18,7 @@ class HalamanController extends Controller
 {
     public function beranda(): View
     {
+        $sambutan = KontenHalaman::terbit('sambutan_kepsek');
         $pendidik = Guru::aktif()
             ->where('kategori', KategoriGuru::Pendidik)
             ->with('media')
@@ -24,7 +26,9 @@ class HalamanController extends Controller
             ->get();
 
         return view('pages.beranda', [
-            'sambutan' => KontenHalaman::terbit('sambutan_kepsek'),
+            'sambutan' => $sambutan,
+            'sambutanRingkas' => RingkasanSambutan::dariHtml($sambutan?->isi),
+            'kepalaSekolah' => $pendidik->firstWhere('jabatan', 'Kepala Sekolah'),
             'kurikulum' => KontenHalaman::terbit('kurikulum'),
             'ekstrakurikuler' => Ekstrakurikuler::urut()->take(7)->get(),
             // Foto resmi diprioritaskan supaya beranda tidak seluruhnya berisi
@@ -80,11 +84,6 @@ class HalamanController extends Controller
         return view('pages.ekstrakurikuler', [
             'daftar' => Ekstrakurikuler::urut()->get(),
         ]);
-    }
-
-    public function eLearning(): View
-    {
-        return view('pages.prosa', ['halaman' => $this->wajibTerbit('e_learning')]);
     }
 
     public function prestasi(): View

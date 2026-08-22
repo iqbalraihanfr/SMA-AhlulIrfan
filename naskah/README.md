@@ -14,7 +14,7 @@ Tiga hal ini menentukan situs bisa rilis atau tidak.
 
 Tidak perlu berkas. **Ketik langsung** di panel admin → **Pengaturan Situs**:
 
-- [ ] Alamat lengkap sampai nama jalan dan nomor. Yang ada sekarang baru `Desa Langkap, Kecamatan Bangsalsari` — itu belum cukup untuk orang tua yang mau berkunjung
+- [x] Alamat lengkap: `Jl. Mawar Gg. Al-Kholily, Langkap, Bangsalsari, Jember, Jawa Timur 68154`
 - [ ] Nomor telepon sekolah
 - [ ] Nomor WhatsApp (boleh diawali `0` atau `62`, sistem menyesuaikan)
 - [ ] Email resmi sekolah
@@ -68,6 +68,11 @@ Taruh di folder ini, boleh langsung dari HP tanpa dikecilkan — sistem mengompr
   dipasang; Hilmi Fathiyatul Baroroh dan Anis Novi Rahayu masih memakai
   inisial. `GEMA2770.JPG` identik dengan foto Sofiatul Lailiyah dan sengaja
   dideduplikasi agar tidak membuat media ganda.
+
+Sepuluh foto kontekstual dari lingkungan yayasan diterima 21 Agustus 2026 dan
+dipasang sebagai dua album melalui `GaleriYayasanSeeder`. Aset ini menambah isi
+galeri, tetapi tidak menutup kebutuhan foto gedung dan kegiatan yang
+terverifikasi khusus SMA untuk hero serta dokumentasi sekolah.
 
 **Izin foto siswa.** Foto yang memuat wajah siswa tidak diterbitkan sebelum ada izin tertulis. Kalau belum ada, kirim foto kegiatan yang tidak menampilkan wajah dari dekat — foto punggung, kegiatan dari jauh, atau tangan yang sedang bekerja. Ini bukan formalitas; menerbitkan foto anak tanpa izin tidak bisa diperbaiki setelah tersebar.
 

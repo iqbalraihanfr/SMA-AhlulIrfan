@@ -90,7 +90,8 @@ class MediaSekolahSeeder extends Seeder
                 continue;
             }
 
-            if ($foto?->getCustomProperty('versi_aset') === self::VERSI_ASET) {
+            if ($foto?->getCustomProperty('versi_aset') === self::VERSI_ASET
+                && $foto->hasGeneratedConversion('portrait')) {
                 continue;
             }
 

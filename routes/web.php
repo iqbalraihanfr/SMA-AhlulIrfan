@@ -37,7 +37,6 @@ Route::get('/profil/struktur-organisasi', [HalamanController::class, 'struktur']
 
 Route::get('/kurikulum', [HalamanController::class, 'kurikulum'])->name('kurikulum');
 Route::get('/guru', [HalamanController::class, 'guru'])->name('guru');
-Route::get('/e-learning', [HalamanController::class, 'eLearning'])->name('e-learning');
 
 Route::get('/ekstrakurikuler', [HalamanController::class, 'ekstrakurikuler'])->name('ekstrakurikuler');
 Route::get('/prestasi', [HalamanController::class, 'prestasi'])->name('prestasi');

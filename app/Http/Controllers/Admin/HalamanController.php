@@ -14,7 +14,7 @@ use Inertia\Response;
 
 /**
  * Halaman berbasis prosa: Sejarah, Visi-Misi, Sambutan, Kurikulum, Prestasi,
- * Tata Tertib, Organisasi Siswa, E-Learning.
+ * Tata Tertib, dan Organisasi Siswa.
  *
  * Baris-barisnya dibuat seeder dan tidak bisa ditambah atau dihapus dari sini —
  * setiap kunci terikat pada route publik tertentu. Membiarkan admin menghapus
@@ -37,26 +37,28 @@ class HalamanController extends Controller implements HasMiddleware
         'prestasi' => 'prestasi',
         'tata_tertib' => 'tata-tertib',
         'organisasi_siswa' => 'organisasi-siswa',
-        'e_learning' => 'e-learning',
     ];
 
     public function index(): Response
     {
         return Inertia::render('Halaman/Index', [
-            'daftar' => KontenHalaman::orderBy('id')->get()->map(fn (KontenHalaman $h) => [
-                'id' => $h->id,
-                'kunci' => $h->kunci,
-                'judul' => $h->judul,
-                'terbit' => $h->terbit,
-                'adaNaskah' => filled($h->isi),
-                'urlUbah' => route('admin.halaman.edit', $h),
-                'urlPublik' => $h->terbit ? route(self::ROUTE_PUBLIK[$h->kunci] ?? 'beranda') : null,
-            ]),
+            'daftar' => KontenHalaman::whereIn('kunci', array_keys(self::ROUTE_PUBLIK))
+                ->orderBy('id')->get()->map(fn (KontenHalaman $h) => [
+                    'id' => $h->id,
+                    'kunci' => $h->kunci,
+                    'judul' => $h->judul,
+                    'terbit' => $h->terbit,
+                    'adaNaskah' => filled($h->isi),
+                    'urlUbah' => route('admin.halaman.edit', $h),
+                    'urlPublik' => $h->terbit ? route(self::ROUTE_PUBLIK[$h->kunci] ?? 'beranda') : null,
+                ]),
         ]);
     }
 
     public function edit(KontenHalaman $halaman): Response
     {
+        $this->pastikanDidukung($halaman);
+
         return Inertia::render('Halaman/Form', [
             'halaman' => [
                 'id' => $halaman->id,
@@ -71,6 +73,8 @@ class HalamanController extends Controller implements HasMiddleware
 
     public function update(Request $request, KontenHalaman $halaman): RedirectResponse
     {
+        $this->pastikanDidukung($halaman);
+
         $data = $request->validate([
             'judul' => ['required', 'string', 'max:150'],
             'isi' => ['nullable', 'string'],
@@ -95,5 +99,10 @@ class HalamanController extends Controller implements HasMiddleware
                 ? "Halaman {$halaman->judul} disimpan dan tampil di situs."
                 : "Halaman {$halaman->judul} disimpan sebagai draf dan disembunyikan dari navigasi."
         );
+    }
+
+    private function pastikanDidukung(KontenHalaman $halaman): void
+    {
+        abort_unless(array_key_exists($halaman->kunci, self::ROUTE_PUBLIK), 404);
     }
 }

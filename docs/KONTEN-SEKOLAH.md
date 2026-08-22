@@ -14,7 +14,7 @@
 |---|---|
 | Nama | SMA Ahlul Irfan Bangsalsari |
 | Naungan | Yayasan Ahlul Irfan Al-Kholily / Pondok Pesantren Ahlul Irfan Al-Kholily |
-| Lokasi | Desa Langkap, Kecamatan Bangsalsari, Kabupaten Jember, Jawa Timur |
+| Lokasi | Jl. Mawar Gg. Al-Kholily, Langkap, Bangsalsari, Jember, Jawa Timur 68154 |
 | Berdiri | 3 November 2003 |
 | SK Pendirian | 421/1334/463.41.6/2003 |
 | Nama awal | SMA 06 Ma'arif Bangsalsari |
@@ -220,17 +220,11 @@ Ekstrakurikuler di SMA Ahlul Irfan Bangsalsari merupakan wadah pengembangan mina
 
 > ⚠️ **BELUM ADA NASKAH.** Di docx hanya berupa judul. P1 — butuh daftar pengurus OSIS dan program kerja.
 
-## E-Learning
-
-> ⚠️ **BELUM ADA NASKAH.** Di docx hanya berupa judul di bawah AKADEMIK. Diputuskan sebagai **halaman info statis** — bukan sistem, bukan login siswa, bukan unggahan materi. Butuh satu paragraf penjelasan dari sekolah.
-
----
-
 ## Data yang sama sekali tidak ada di docx
 
 Mintakan ke sekolah, semuanya diperlukan sebelum rilis:
 
-- [ ] Alamat lengkap (nama jalan dan nomor, bukan hanya nama desa)
+- [x] Alamat lengkap: `Jl. Mawar Gg. Al-Kholily, Langkap, Bangsalsari, Jember, Jawa Timur 68154`
 - [ ] Nomor telepon sekolah
 - [ ] Nomor WhatsApp untuk CTA
 - [ ] Alamat email resmi sekolah
@@ -239,7 +233,10 @@ Mintakan ke sekolah, semuanya diperlukan sebelum rilis:
 - [ ] Status dan tahun akreditasi
 - [ ] Logo sekolah (SVG atau PNG transparan resolusi tinggi)
 - [ ] Foto tiap guru (opsional — tanpa foto akan tampil inisial)
-- [ ] Foto gedung dan kegiatan untuk hero dan galeri
+- [ ] Foto gedung dan kegiatan khusus SMA untuk hero dan galeri
+  - Sebagian kebutuhan galeri dipenuhi 21 Agustus 2026 dengan 10 foto kontekstual
+    dari lingkungan yayasan. Foto tersebut ditempatkan dalam album yayasan dan
+    tidak diklaim sebagai dokumentasi siswa atau fasilitas khusus SMA.
 - [ ] Minimal satu berita untuk mengisi halaman Berita saat rilis
 - [x] Izin publikasi foto siswa dikonfirmasi sudah diperoleh oleh pemilik proyek
   pada 20 Agustus 2026; bukti persetujuan disimpan bersama dokumen serah-terima

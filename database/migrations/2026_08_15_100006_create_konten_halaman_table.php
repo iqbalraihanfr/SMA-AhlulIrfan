@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Schema;
 | Halaman berbasis prosa, satu baris per bagian, diambil lewat `kunci`.
 |
 | Kunci yang dipakai: sejarah, visi_misi, sambutan_kepsek, kurikulum,
-| prestasi, tata_tertib, organisasi_siswa, e_learning.
+| prestasi, tata_tertib, organisasi_siswa.
 |
 | Kolom `terbit` inilah yang menyembunyikan halaman dari navigasi selama
-| naskahnya belum datang dari sekolah. Empat kunci terakhir saat ini masih
+| naskahnya belum datang dari sekolah. Tiga kunci terakhir saat ini masih
 | kosong — lihat docs/KONTEN-SEKOLAH.md. Halaman setengah isi lebih merusak
 | kepercayaan calon orang tua daripada halaman yang belum ada.
 */

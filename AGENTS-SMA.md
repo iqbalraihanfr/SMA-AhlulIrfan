@@ -183,7 +183,7 @@ Publik, dikelompokkan seperti navigasi sekolah:
 |---|---|
 | — | `/` |
 | Profil | `/profil`, `/profil/struktur-organisasi` |
-| Akademik | `/kurikulum`, `/guru`, `/e-learning` |
+| Akademik | `/kurikulum`, `/guru` |
 | Kesiswaan | `/ekstrakurikuler`, `/prestasi`, `/tata-tertib`, `/organisasi-siswa` |
 | — | `/berita`, `/berita/{slug}`, `/galeri`, `/kontak` |
 
@@ -191,7 +191,8 @@ Admin: `/login`, `/lupa-password`, `/reset-password`, `/admin/*` — semua di ba
 
 **Halaman yang naskahnya belum ada disembunyikan dari navigasi**, dikendalikan kolom `konten_halaman.terbit`. Route-nya boleh ada, tapi tidak muncul di navbar dan tidak masuk sitemap sampai naskahnya datang. Halaman setengah isi lebih merusak kepercayaan calon orang tua daripada halaman yang belum ada. Naskah mana yang sudah ada dan mana yang belum: `docs/KONTEN-SEKOLAH.md`.
 
-`/e-learning` adalah **halaman informasi statis**, bukan sistem. Tidak ada login siswa, tidak ada materi, tidak ada unggah tugas. Keberadaan route ini bukan izin membangun LMS.
+Fitur pembelajaran daring ditunda di luar scope sampai sekolah menyepakati kebutuhan,
+platform, dan tata kelolanya. Tidak ada route, menu, atau naskah publik untuk fitur ini.
 
 **Urutan section Beranda (dikunci):**
 Hero → Sambutan Kepala Sekolah → Highlight Kurikulum → Grid Ekstrakurikuler → Grid Guru → Berita Terbaru → Teaser Galeri → CTA Kontak/WhatsApp

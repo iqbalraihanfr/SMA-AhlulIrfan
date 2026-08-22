@@ -19,7 +19,6 @@ class SeoController extends Controller
      */
     private const RUTE_HALAMAN = [
         'kurikulum' => 'kurikulum',
-        'e_learning' => 'e-learning',
         'prestasi' => 'prestasi',
         'tata_tertib' => 'tata-tertib',
         'organisasi_siswa' => 'organisasi-siswa',

@@ -40,6 +40,7 @@ class KompresiGambarTest extends TestCase
             [$mediaAlbum, 'hero', 1600, 1200],
             [$mediaGuru, 'thumbnail', 320, 320],
             [$mediaGuru, 'card', 800, 800],
+            [$mediaGuru, 'portrait', 800, 1000],
             [$mediaEkskul, 'card', 800, 500],
             [$mediaBerita, 'thumbnail', 320, 200],
             [$mediaBerita, 'card', 800, 500],

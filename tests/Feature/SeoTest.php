@@ -107,7 +107,8 @@ class SeoTest extends TestCase
             ->assertSee(route('berita.show', $terbit), false)
             ->assertSee(route('galeri.show', $album), false)
             ->assertDontSee(route('berita.show', $draft), false)
-            ->assertDontSee(route('tata-tertib'), false);
+            ->assertDontSee(route('tata-tertib'), false)
+            ->assertDontSee('/e-learning', false);
 
         $this->assertStringStartsWith('<?xml version="1.0" encoding="UTF-8"?>', trim($respons->getContent()));
 

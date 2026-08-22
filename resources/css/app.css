@@ -296,6 +296,162 @@
         border-block: 1px solid var(--color-line);
     }
 
+    .sambutan-section {
+        overflow: hidden;
+        background-image: radial-gradient(circle at 12% 38%, var(--color-brand-soft), transparent 28rem);
+    }
+
+    .sambutan-feature {
+        display: grid;
+        grid-template-areas:
+            "intro"
+            "portrait"
+            "message";
+        gap: 2rem;
+    }
+
+    .sambutan-feature__intro {
+        grid-area: intro;
+    }
+
+    .sambutan-portrait {
+        position: relative;
+        grid-area: portrait;
+        width: min(100%, 25rem);
+        margin-inline: auto;
+        isolation: isolate;
+        overflow: hidden;
+        border: 1px solid var(--color-line);
+        border-radius: var(--radius-xl);
+        background-color: var(--color-brand-soft);
+        box-shadow: var(--shadow-lift);
+    }
+
+    .sambutan-portrait::after {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(to top, var(--overlay), transparent 52%);
+        content: "";
+        pointer-events: none;
+    }
+
+    .sambutan-portrait img,
+    .sambutan-portrait__placeholder {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+    }
+
+    .sambutan-portrait img {
+        object-fit: cover;
+        object-position: center 32%;
+    }
+
+    .sambutan-portrait__placeholder {
+        display: grid;
+        place-items: center;
+        color: var(--color-brand);
+        font-family: var(--font-heading);
+        font-size: clamp(4rem, 18vw, 7rem);
+        font-weight: 600;
+    }
+
+    .sambutan-portrait__caption {
+        position: absolute;
+        inset-inline: 1.5rem;
+        inset-block-end: 1.5rem;
+        z-index: 2;
+        color: var(--color-on-brand);
+    }
+
+    .sambutan-portrait__caption span,
+    .sambutan-portrait__caption small {
+        display: block;
+    }
+
+    .sambutan-portrait__caption span {
+        font-family: var(--font-heading);
+        font-size: clamp(1.35rem, 4vw, 1.8rem);
+        font-weight: 600;
+        line-height: 1.1;
+    }
+
+    .sambutan-portrait__caption small {
+        margin-block-start: 0.35rem;
+        color: rgb(255 255 255 / 0.82);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .sambutan-feature__message {
+        grid-area: message;
+        align-self: start;
+    }
+
+    .sambutan-opening {
+        border-inline-end: 3px solid var(--color-highlight);
+        border-radius: var(--radius-md);
+        background: linear-gradient(115deg, var(--color-paper-raised), var(--color-brand-soft));
+        padding: clamp(1.25rem, 3vw, 2rem);
+        text-align: end;
+    }
+
+    .sambutan-opening__arab,
+    .prose-school .arab {
+        direction: rtl;
+        color: var(--color-ink-deep);
+        font-family: "Times New Roman", ui-serif, serif;
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+        font-weight: 500;
+        line-height: 1.75;
+        text-align: start;
+        text-wrap: balance;
+        unicode-bidi: isolate;
+    }
+
+    .sambutan-opening__salam {
+        margin-block-start: 0.7rem;
+        color: var(--color-brand);
+        font-size: clamp(0.9rem, 2vw, 1.05rem);
+        font-weight: 700;
+        line-height: 1.6;
+    }
+
+    .sambutan-feature__excerpt {
+        margin-block-start: 1.75rem;
+        max-width: 62ch;
+        color: var(--color-ink-muted);
+        font-size: 1rem;
+        line-height: 1.85;
+    }
+
+    .prose-school .arab + p {
+        margin-block-start: 0.75rem;
+        color: var(--color-brand);
+        font-weight: 600;
+        text-align: end;
+    }
+
+    @media (min-width: 56rem) {
+        .sambutan-feature {
+            grid-template-areas:
+                "portrait intro"
+                "portrait message";
+            grid-template-columns: minmax(18rem, 0.78fr) minmax(0, 1.22fr);
+            column-gap: clamp(3rem, 7vw, 6rem);
+            row-gap: 2.25rem;
+            align-items: start;
+        }
+
+        .sambutan-portrait {
+            width: 100%;
+            margin-inline: 0;
+        }
+    }
+
     .section-heading__kicker {
         color: var(--color-highlight);
         font-size: 0.72rem;

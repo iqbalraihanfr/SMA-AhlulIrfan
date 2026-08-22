@@ -54,6 +54,7 @@ class Guru extends Model implements HasMedia
     {
         $this->addMediaConversion('thumbnail')->nonQueued()->format('webp')->quality(75)->fit(Fit::Crop, 320, 320);
         $this->addMediaConversion('card')->nonQueued()->format('webp')->quality(75)->fit(Fit::Crop, 800, 800);
+        $this->addMediaConversion('portrait')->nonQueued()->format('webp')->quality(75)->fit(Fit::Crop, 800, 1000);
     }
 
     public function scopeAktif(Builder $q): Builder

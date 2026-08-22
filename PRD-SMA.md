@@ -18,7 +18,7 @@ SMA Ahlul Irfan Bangsalsari belum punya kehadiran daring resmi. Calon siswa dan 
 
 Naskah sekolah sudah diterima (`WEBSITE.docx`, 6 halaman) dan ditranskrip ke `docs/KONTEN-SEKOLAH.md`: sejarah, visi-misi, kurikulum, sambutan kepala sekolah, bagan organisasi, **13 pendidik + 3 tenaga kependidikan**, dan 7 ekstrakurikuler.
 
-Naskah itu **tidak selengkap yang dikira**. Empat bagian — Prestasi Siswa, Tata Tertib, Organisasi Siswa, dan E-Learning — hanya berupa judul kosong. Data kontak, NPSN, akreditasi, dan seluruh foto juga belum ada. Jadi hambatan proyek ini dua: waktu membangun **dan** naskah yang masih ditunggu. Yang kedua harus ditagih ke sekolah di hari pertama, bukan hari terakhir.
+Naskah itu **tidak selengkap yang dikira**. Tiga bagian — Prestasi Siswa, Tata Tertib, dan Organisasi Siswa — hanya berupa judul kosong. Data kontak, NPSN, akreditasi, dan seluruh foto juga belum ada. Jadi hambatan proyek ini dua: waktu membangun **dan** naskah yang masih ditunggu. Yang kedua harus ditagih ke sekolah di hari pertama, bukan hari terakhir.
 
 ## 2. Rumusan Masalah
 
@@ -35,7 +35,7 @@ Naskah itu **tidak selengkap yang dikira**. Empat bagian — Prestasi Siswa, Tat
 
 ## 4. Non-Goals — di luar scope, JANGAN dikerjakan
 
-- **Sistem** e-learning: materi pelajaran, kelas daring, unggah tugas, login siswa
+- Sistem pembelajaran daring (LMS): materi pelajaran, kelas daring, unggah tugas, login siswa
 - Presensi siswa atau guru
 - Ujian atau kuis online
 - PPDB online dengan pembayaran
@@ -46,7 +46,9 @@ Naskah itu **tidak selengkap yang dikira**. Empat bagian — Prestasi Siswa, Tat
 
 Arsitektur tidak perlu menyiapkan jalan untuk hal-hal ini, tapi juga tidak boleh sengaja menghalanginya.
 
-**Catatan E-Learning.** Sekolah mencantumkan "E-Learning" di daftar AKADEMIK mereka. Yang dibangun hanyalah **halaman informasi statis** yang menjelaskan rencana atau layanan e-learning sekolah. Bukan sistem. Tidak ada login siswa, tidak ada materi, tidak ada unggahan tugas, tidak ada tautan aktif ke platform mana pun sampai sekolah menentukannya. Perbedaan ini ditulis eksplisit supaya tidak ada yang menafsirkan keberadaan halaman itu sebagai izin membangun LMS.
+Fitur pembelajaran daring ditunda di luar scope. Tidak ada halaman informasi,
+route, menu, atau kebutuhan naskah untuk fitur tersebut sampai sekolah
+menyepakati kebutuhan dan tata kelolanya.
 
 ## 5. Pengguna
 
@@ -78,7 +80,6 @@ Mengikuti pengelompokan yang dipakai sekolah di `WEBSITE.docx`.
 | Profil | `/profil/struktur-organisasi` | Bagan organisasi | ✅ |
 | Akademik | `/kurikulum` | Kurikulum dan program pembelajaran | ✅ |
 | Akademik | `/guru` | Pendidik dan tenaga kependidikan | ✅ |
-| Akademik | `/e-learning` | Halaman informasi statis | ⚠️ belum ada |
 | Kesiswaan | `/ekstrakurikuler` | Tujuh ekstrakurikuler | ✅ (pembina & jadwal belum) |
 | Kesiswaan | `/prestasi` | Prestasi siswa | ⚠️ belum ada |
 | Kesiswaan | `/tata-tertib` | Tata tertib sekolah | ⚠️ belum ada |
@@ -135,7 +136,6 @@ Urutan ini **dikunci**. Tim desain bebas menentukan tampilan tiap section, tapi 
 | P1-5 | Peta lokasi tersemat di halaman kontak |
 | P1-6 | Pencarian atau filter berita |
 | P1-7 | Halaman Organisasi Siswa (OSIS) |
-| P1-8 | Halaman E-Learning — informasi statis, bukan sistem |
 
 ### P2 — JANGAN dibangun, tapi jangan dihalangi arsitekturnya
 
@@ -221,7 +221,7 @@ Tanpa kecuali: **tidak ada kolom NUPTK, NIK, atau identitas kependudukan lain** 
 | `pengaturan_situs` | nama_sekolah, alamat, telepon, whatsapp, email, koordinat_peta, sosial |
 | `users` | nama, email, password — bawaan Laravel, tidak pernah dibaca publik |
 
-**`konten_halaman`** menopang semua halaman berbasis prosa lewat kunci: `sejarah`, `visi_misi`, `sambutan_kepsek`, `kurikulum`, `prestasi`, `tata_tertib`, `organisasi_siswa`, `e_learning`. Kolom `terbit` inilah yang menyembunyikan halaman dari navigasi selama naskahnya belum datang. Prosa panjang tidak ditaruh di `pengaturan_situs`, dan **tidak pernah** ditulis keras di Blade.
+**`konten_halaman`** menopang semua halaman berbasis prosa lewat kunci: `sejarah`, `visi_misi`, `sambutan_kepsek`, `kurikulum`, `prestasi`, `tata_tertib`, `organisasi_siswa`. Kolom `terbit` inilah yang menyembunyikan halaman dari navigasi selama naskahnya belum datang. Prosa panjang tidak ditaruh di `pengaturan_situs`, dan **tidak pernah** ditulis keras di Blade.
 
 **`struktur_organisasi`** memisahkan bentuk bagan dari daftar kepegawaian (alasannya di ADR-7). `tipe` menentukan cara render: `orang` mengambil nama dari relasi `guru`, `kelompok` adalah simpul tanpa nama (Wali Kelas, Guru Mapel, Siswa-Siswi), `penasihat` digambar di samping induknya alih-alih di bawah (Komite Sekolah). Nama pegawai tetap punya satu sumber kebenaran di `guru`.
 
@@ -235,7 +235,7 @@ Prosedurnya **jangan ditulis ulang** — pakai `PP_ahlulirfan/docs/DESIGN_SWAP_P
 
 ## 13. Fase Pengerjaan
 
-**Hari 0 — sebelum menulis kode apa pun:** tagih ke sekolah naskah Prestasi, Tata Tertib, Organisasi Siswa, E-Learning, data kontak, NPSN, akreditasi, logo, dan foto. Konfirmasi juga dua konflik nama di `docs/KONTEN-SEKOLAH.md`. Semua ini punya waktu tunggu di luar kendali kita, jadi ditagih paling awal — bukan saat halaman siap diisi.
+**Hari 0 — sebelum menulis kode apa pun:** tagih ke sekolah naskah Prestasi, Tata Tertib, dan Organisasi Siswa, data kontak, NPSN, akreditasi, logo, dan foto. Konfirmasi juga dua konflik nama di `docs/KONTEN-SEKOLAH.md`. Semua ini punya waktu tunggu di luar kendali kita, jadi ditagih paling awal — bukan saat halaman siap diisi.
 
 | Hari | Target |
 |---|---|
@@ -264,7 +264,7 @@ Dipakai dari atas ke bawah, tanpa diskusi ulang:
 
 1. Editor rich text → sementara textarea polos
 2. Lightbox galeri
-3. Halaman Organisasi Siswa dan E-Learning (P1, naskahnya memang belum ada)
+3. Halaman Organisasi Siswa (P1, naskahnya memang belum ada)
 4. Bagan organisasi → sementara daftar bertingkat tanpa garis penghubung
 5. Admin galeri/album → konten lewat seeder
 6. Admin guru, ekstrakurikuler, prestasi, tata tertib → konten lewat seeder
@@ -284,17 +284,16 @@ Kalau keenam korban dipakai, 3 hari tercapai dengan admin yang hanya mengelola b
 ## 15. Pertanyaan Terbuka
 
 1. **Konflik nama di naskah sekolah.** Bagan organisasi menulis Wakil Kepala Sekolah "**Fathur** Rochman Hidayat", tabel Data Guru menulis "**Nur** Rochman Hidayat". Kepala TU "Rofiatun" vs "Rofiyatun". Ini nama orang — harus dikonfirmasi ke sekolah, tidak boleh dipilih sepihak.
-2. **Empat naskah yang belum ada:** Prestasi Siswa (P0), Tata Tertib (P0), Organisasi Siswa (P1), E-Learning (P1). Ditambah pembina dan jadwal tiap ekstrakurikuler.
-3. **Data kontak dan identitas:** alamat lengkap, telepon, WhatsApp, email, koordinat peta, NPSN, status akreditasi.
+2. **Tiga naskah yang belum ada:** Prestasi Siswa (P0), Tata Tertib (P0), dan Organisasi Siswa (P1). Ditambah pembina dan jadwal tiap ekstrakurikuler.
+3. **Data kontak dan identitas:** telepon, WhatsApp, email, koordinat peta, NPSN, status akreditasi. Alamat lengkap sudah diterima dan dicatat di `docs/KONTEN-SEKOLAH.md`.
 4. **Aset:** logo sekolah, foto guru, foto gedung dan kegiatan, minimal satu berita untuk mengisi halaman Berita saat rilis.
-5. Platform e-learning apa yang sebenarnya dipakai atau direncanakan sekolah?
-6. Nasib situs pesantren — tetap di Vercel + Supabase, atau menyusul ke Laravel? **Harus diputuskan sebelum serah terima.**
-7. Domain final `.sch.id` — apakah SK pendirian (`421/1334/463.41.6/2003`) dan surat permohonan kepala sekolah sudah siap untuk verifikasi PANDI?
-8. Siapa dua orang di pihak sekolah yang akan memegang akun admin?
-9. **Terjawab.** Izin publikasi foto siswa dikonfirmasi sudah diperoleh oleh pemilik proyek
+5. Nasib situs pesantren — tetap di Vercel + Supabase, atau menyusul ke Laravel? **Harus diputuskan sebelum serah terima.**
+6. Domain final `.sch.id` — apakah SK pendirian (`421/1334/463.41.6/2003`) dan surat permohonan kepala sekolah sudah siap untuk verifikasi PANDI?
+7. Siapa dua orang di pihak sekolah yang akan memegang akun admin?
+8. **Terjawab.** Izin publikasi foto siswa dikonfirmasi sudah diperoleh oleh pemilik proyek
    pada 20 Agustus 2026. Bukti persetujuannya tetap disimpan bersama dokumen
    serah-terima sekolah.
-10. Siapa yang membayar perpanjangan domain dan hosting tahun kedua?
+9. Siapa yang membayar perpanjangan domain dan hosting tahun kedua?
 
 ## 16. Risiko
 
