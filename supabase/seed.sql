@@ -36,6 +36,9 @@ create policy "Allow seeder insert to album" on public.album for all using (true
 drop policy if exists "Allow seeder insert to berita" on public.berita;
 create policy "Allow seeder insert to berita" on public.berita for all using (true) with check (true);
 
+drop policy if exists "Allow seeder insert to struktur_organisasi" on public.struktur_organisasi;
+create policy "Allow seeder insert to struktur_organisasi" on public.struktur_organisasi for all using (true) with check (true);
+
 -- 3. Pengaturan Situs
 delete from public.pengaturan_situs;
 insert into public.pengaturan_situs (
@@ -187,3 +190,74 @@ on conflict (slug) do update set
   status = excluded.status,
   diterbitkan_pada = excluded.diterbitkan_pada,
   image_url = excluded.image_url;
+
+-- 9. Struktur Organisasi
+delete from public.struktur_organisasi;
+with kepsek as (
+  insert into public.struktur_organisasi (label, guru_id, atasan_id, tipe, baris, urutan)
+  select 'Kepala Sekolah', id, null, 'orang', 1, 0
+  from public.guru where nama = 'Fathur Rohman, S.P' limit 1
+  returning id
+),
+komite as (
+  insert into public.struktur_organisasi (label, nama_luar, atasan_id, tipe, baris, urutan)
+  select 'Komite Sekolah', 'Asmiatul Hosani, A. Akun.', id, 'penasihat', 1, 0
+  from kepsek
+),
+wakil as (
+  insert into public.struktur_organisasi (label, guru_id, atasan_id, tipe, baris, urutan)
+  select 'Wakil Kepala Sekolah', id, (select id from kepsek), 'orang', 1, 1
+  from public.guru where nama = 'Nur Rochman Hidayat, S.Pd.' limit 1
+  returning id
+),
+tu as (
+  insert into public.struktur_organisasi (label, guru_id, atasan_id, tipe, baris, urutan)
+  select 'Kepala TU', id, (select id from kepsek), 'orang', 1, 2
+  from public.guru where nama = 'Rofiyatun' limit 1
+  returning id
+),
+operator as (
+  insert into public.struktur_organisasi (label, guru_id, atasan_id, tipe, baris, urutan)
+  select 'Operator Sekolah', id, (select id from tu), 'orang', 1, 0
+  from public.guru where nama = 'Ahmad Saini, S.Pd., Gr' limit 1
+),
+waka1 as (
+  insert into public.struktur_organisasi (label, guru_id, atasan_id, tipe, baris, urutan)
+  select 'Waka Kurikulum', id, (select id from wakil), 'orang', 1, 0
+  from public.guru where nama = 'Hilmi Fathiyatul Baroroh, S.Pd., Gr' limit 1
+),
+waka2 as (
+  insert into public.struktur_organisasi (label, guru_id, atasan_id, tipe, baris, urutan)
+  select 'Waka Kesiswaan', id, (select id from wakil), 'orang', 1, 1
+  from public.guru where nama = 'Yeni Sri Astutik, S.Pd., Gr' limit 1
+),
+waka3 as (
+  insert into public.struktur_organisasi (label, guru_id, atasan_id, tipe, baris, urutan)
+  select 'Waka Sarpras', id, (select id from wakil), 'orang', 1, 2
+  from public.guru where nama = 'Anis Novi Rahayu, S.Pd., Gr' limit 1
+),
+bendahara as (
+  insert into public.struktur_organisasi (label, guru_id, atasan_id, tipe, baris, urutan)
+  select 'Bendahara', id, (select id from wakil), 'orang', 1, 3
+  from public.guru where nama = 'Noviani, S.Pd., Gr' limit 1
+),
+bk as (
+  insert into public.struktur_organisasi (label, guru_id, atasan_id, tipe, baris, urutan)
+  select 'BK (Bimbingan Konseling)', id, (select id from wakil), 'orang', 2, 0
+  from public.guru where nama = 'Sofiatul Lailiyah, S.Pd., Gr' limit 1
+),
+wali_kelas as (
+  insert into public.struktur_organisasi (label, atasan_id, tipe, baris, urutan)
+  select 'Wali Kelas', id, 'kelompok', 2, 1
+  from wakil
+  returning id
+),
+guru_mapel as (
+  insert into public.struktur_organisasi (label, atasan_id, tipe, baris, urutan)
+  select 'Guru Mapel', id, 'kelompok', 2, 2
+  from wakil
+)
+insert into public.struktur_organisasi (label, atasan_id, tipe, baris, urutan)
+select 'Siswa - Siswi', id, 'kelompok', 1, 0
+from wali_kelas;
+
