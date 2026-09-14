@@ -48,8 +48,8 @@ function KartuGuru({ guru }: { guru: any }) {
   return (
     <div className="surface-card p-4">
       <div className="aspect-[3/4] w-full overflow-hidden rounded bg-paper-sunken">
-        {guru.foto_url ? (
-          <img src={guru.foto_url} alt={guru.nama} className="h-full w-full object-cover" loading="lazy" />
+        {guru.image_url ? (
+          <img src={guru.image_url} alt={guru.nama} className="h-full w-full object-cover" loading="lazy" />
         ) : (
           <div className="grid h-full place-items-center text-ink-muted">FOTO</div>
         )}
