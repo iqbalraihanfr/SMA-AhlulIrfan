@@ -1,5 +1,17 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'SMA Ahlul Irfan Bangsalsari',
+    description: 'Situs resmi SMA Ahlul Irfan Bangsalsari',
+    url: '/',
+    locale: 'id_ID',
+    type: 'website',
+  },
+}
 
 function EmptyState({
   judul = 'Belum ada isi',
@@ -478,4 +490,3 @@ export default async function Beranda() {
     </>
   )
 }
-

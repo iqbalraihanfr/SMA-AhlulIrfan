@@ -1,5 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Berita',
+  description: 'Kabar, kegiatan, dan pengumuman SMA Ahlul Irfan Bangsalsari.',
+  alternates: { canonical: '/berita' },
+  openGraph: {
+    title: 'Berita SMA Ahlul Irfan Bangsalsari',
+    description: 'Kabar, kegiatan, dan pengumuman SMA Ahlul Irfan Bangsalsari.',
+    url: '/berita',
+    locale: 'id_ID',
+    type: 'website',
+  },
+}
 
 function PageHero({ judul, keterangan }: { judul: string, keterangan: string }) {
   return (

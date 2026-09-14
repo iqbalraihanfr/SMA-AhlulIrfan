@@ -4,6 +4,7 @@ import './globals.css'
 import { Navbar } from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { createClient } from '@/lib/supabase/server'
+import { siteUrl } from '@/lib/site-url'
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -18,8 +19,18 @@ const newsreader = Newsreader({
 })
 
 export const metadata: Metadata = {
-  title: 'SMA Ahlul Irfan Bangsalsari',
+  metadataBase: siteUrl,
+  title: {
+    default: 'SMA Ahlul Irfan Bangsalsari',
+    template: '%s | SMA Ahlul Irfan Bangsalsari',
+  },
   description: 'Situs resmi SMA Ahlul Irfan Bangsalsari',
+  openGraph: {
+    title: 'SMA Ahlul Irfan Bangsalsari',
+    description: 'Situs resmi SMA Ahlul Irfan Bangsalsari',
+    locale: 'id_ID',
+    type: 'website',
+  },
 }
 
 export default async function RootLayout({
@@ -55,4 +66,3 @@ export default async function RootLayout({
     </html>
   )
 }
-

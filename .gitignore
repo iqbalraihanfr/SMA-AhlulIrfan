@@ -24,13 +24,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
+**/.playwright-cli/
+**/.playwright-mcp/
 
 # local env files
-.env*.local
 .env
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 
 # vercel
 .vercel
@@ -40,6 +41,6 @@ pnpm-debug.log*
 next-env.d.ts
 
 # Laravel Archive Environment
-laravel-archive/.env
 laravel-archive/vendor/
 laravel-archive/node_modules/
+/supabase/.temp/

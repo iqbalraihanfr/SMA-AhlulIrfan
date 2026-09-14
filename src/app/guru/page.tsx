@@ -1,5 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Guru dan Tenaga Kependidikan',
+  description: 'Kenali pendidik dan tenaga kependidikan SMA Ahlul Irfan Bangsalsari.',
+  alternates: { canonical: '/guru' },
+  openGraph: {
+    title: 'Guru dan Tenaga Kependidikan SMA Ahlul Irfan Bangsalsari',
+    description: 'Kenali pendidik dan tenaga kependidikan SMA Ahlul Irfan Bangsalsari.',
+    url: '/guru',
+    locale: 'id_ID',
+    type: 'website',
+  },
+}
 
 function SectionHeading({ kicker, judul, keterangan }: { kicker: string, judul: string, keterangan: string }) {
   return (
