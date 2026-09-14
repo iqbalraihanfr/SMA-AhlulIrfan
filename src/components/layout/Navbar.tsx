@@ -49,8 +49,6 @@ export function Navbar({
     { label: 'Kontak', href: '/kontak' },
   ].filter((item) => !item.anak || item.anak.length > 0)
 
-  const kontakRingkas = Boolean(situs?.telepon || situs?.email)
-
   const tautanAktif = (href: string): boolean => {
     if (href === '/') return pathname === '/'
     return pathname.startsWith(href)
@@ -84,26 +82,6 @@ export function Navbar({
 
   return (
     <header className="site-nav sticky top-0 z-40">
-      {kontakRingkas && (
-        <div className="site-utility hidden sm:block">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2 text-xs sm:px-6">
-            <span>{situs?.nama_yayasan || 'Situs resmi sekolah'}</span>
-            <div className="flex items-center gap-4">
-              {situs?.telepon && (
-                <a href={`tel:${situs.telepon.replace(/\D/g, '')}`} className="hover:underline">
-                  {situs.telepon}
-                </a>
-              )}
-              {situs?.email && (
-                <a href={`mailto:${situs.email}`} className="hover:underline">
-                  {situs.email}
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6" aria-label="Navigasi utama">
         <Link href="/" className="site-nav__brand flex min-w-0 items-center gap-3 rounded-md">
           {situs?.logo_url ? (
