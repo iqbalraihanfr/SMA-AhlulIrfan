@@ -146,8 +146,7 @@ export default async function Beranda() {
     supabase.from('guru').select('*').eq('jabatan', 'Kepala Sekolah').limit(1).single(),
   ])
 
-  const hero =
-    'https://vsfmwdjpcjhgulntvhal.supabase.co/storage/v1/object/public/images/galeri/suasana-mengaji-santri-putri.webp'
+  const hero = 'https://vsfmwdjpcjhgulntvhal.supabase.co/storage/v1/object/public/images/galeri/ruang-laboratorium.webp'
   const sambutan = sambutanRes
   const kurikulum = kurikulumRes
   const kepalaSekolah = kepalaSekolahRes || (pendidik || []).find((g: any) => g.jabatan === 'Kepala Sekolah')
