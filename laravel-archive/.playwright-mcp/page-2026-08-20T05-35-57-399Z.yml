@@ -1,0 +1,113 @@
+- generic [active] [ref=f11e1]:
+  - link "Lompat ke konten utama" [ref=f11e2] [cursor=pointer]:
+    - /url: "#konten"
+  - banner [ref=f11e3]:
+    - navigation "Navigasi utama" [ref=f11e4]:
+      - link "Logo SMA Ahlul Irfan Bangsalsari SMA Ahlul Irfan Bangsalsari" [ref=f11e5] [cursor=pointer]:
+        - /url: http://localhost:8000
+        - img "Logo SMA Ahlul Irfan Bangsalsari" [ref=f11e6]
+        - generic [ref=f11e7]: SMA Ahlul Irfan Bangsalsari
+      - button "Buka menu" [ref=f11e8]
+  - main [ref=f11e12]:
+    - generic [ref=f11e14]:
+      - paragraph [ref=f11e15]: Situs resmi sekolah
+      - heading "Struktur Organisasi" [level=1] [ref=f11e16]
+    - generic [ref=f11e17]:
+      - region "Bagan struktur organisasi; geser secara mendatar bila bagan melebihi lebar layar" [ref=f11e18]:
+        - figure "Bagan struktur organisasi SMA Ahlul Irfan Bangsalsari" [ref=f11e19]:
+          - list [ref=f11e21]:
+            - listitem [ref=f11e22]:
+              - generic [ref=f11e23]:
+                - generic [ref=f11e24]:
+                  - paragraph [ref=f11e25]: Kepala Sekolah
+                  - paragraph [ref=f11e26]: Fathur Rohman, S.P
+                - generic [ref=f11e27]:
+                  - paragraph [ref=f11e28]: Komite Sekolah
+                  - paragraph [ref=f11e29]: Asmiatul Hosani, A. Akun.
+              - list [ref=f11e30]:
+                - listitem [ref=f11e31]:
+                  - generic [ref=f11e33]:
+                    - paragraph [ref=f11e34]: Wakil Kepala Sekolah
+                    - paragraph [ref=f11e35]: Nur Rochman Hidayat, S.Pd.
+                  - list [ref=f11e36]:
+                    - listitem [ref=f11e37]:
+                      - generic [ref=f11e39]:
+                        - paragraph [ref=f11e40]: Waka Kurikulum
+                        - paragraph [ref=f11e41]: Hilmi Fathiyatul Baroroh, S.Pd., Gr
+                    - listitem [ref=f11e42]:
+                      - generic [ref=f11e44]:
+                        - paragraph [ref=f11e45]: Waka Kesiswaan
+                        - paragraph [ref=f11e46]: Yeni Sri Astutik, S.Pd., Gr
+                    - listitem [ref=f11e47]:
+                      - generic [ref=f11e49]:
+                        - paragraph [ref=f11e50]: Waka Sarpras
+                        - paragraph [ref=f11e51]: Anis Novi Rahayu, S.Pd., Gr
+                    - listitem [ref=f11e52]:
+                      - generic [ref=f11e54]:
+                        - paragraph [ref=f11e55]: Bendahara
+                        - paragraph [ref=f11e56]: Noviani, S.Pd., Gr
+                  - list [ref=f11e57]:
+                    - listitem [ref=f11e58]:
+                      - generic [ref=f11e60]:
+                        - paragraph [ref=f11e61]: BK (Bimbingan Konseling)
+                        - paragraph [ref=f11e62]: Sofiatul Lailiyah, S.Pd., Gr
+                    - listitem [ref=f11e63]:
+                      - paragraph [ref=f11e66]: Wali Kelas
+                      - list [ref=f11e67]:
+                        - listitem [ref=f11e68]:
+                          - paragraph [ref=f11e71]: Siswa - Siswi
+                    - listitem [ref=f11e72]:
+                      - paragraph [ref=f11e75]: Guru Mapel
+                - listitem [ref=f11e76]:
+                  - generic [ref=f11e78]:
+                    - paragraph [ref=f11e79]: Kepala TU
+                    - paragraph [ref=f11e80]: Rofiyatun
+                  - list [ref=f11e81]:
+                    - listitem [ref=f11e82]:
+                      - generic [ref=f11e84]:
+                        - paragraph [ref=f11e85]: Operator Sekolah
+                        - paragraph [ref=f11e86]: Ahmad Saini, S.Pd., Gr
+      - paragraph [ref=f11e87]:
+        - text: Data nama diambil dari daftar
+        - link "guru dan tenaga kependidikan" [ref=f11e88] [cursor=pointer]:
+          - /url: http://localhost:8000/guru
+        - text: ", sehingga bagan ini ikut diperbarui setiap ada perubahan personel."
+  - contentinfo [ref=f11e89]:
+    - generic [ref=f11e90]:
+      - generic [ref=f11e91]:
+        - paragraph [ref=f11e92]: SMA Ahlul Irfan Bangsalsari
+        - paragraph [ref=f11e93]: Di bawah naungan Yayasan Ahlul Irfan Al-Kholily.
+        - paragraph [ref=f11e94]: “Berilmu, Berakhlak Mulia, Berprestasi, dan Berdaya Saing Global”
+      - generic [ref=f11e95]:
+        - paragraph [ref=f11e96]: Kontak
+        - paragraph [ref=f11e97]: Desa Langkap, Kecamatan Bangsalsari, Kabupaten Jember, Jawa Timur
+      - generic [ref=f11e98]:
+        - paragraph [ref=f11e99]: Jelajahi
+        - link "Profil Sekolah" [ref=f11e100] [cursor=pointer]:
+          - /url: http://localhost:8000/profil
+        - link "Guru & Tendik" [ref=f11e101] [cursor=pointer]:
+          - /url: http://localhost:8000/guru
+        - link "Galeri Kegiatan" [ref=f11e102] [cursor=pointer]:
+          - /url: http://localhost:8000/galeri
+        - link "Berita Sekolah" [ref=f11e103] [cursor=pointer]:
+          - /url: http://localhost:8000/berita
+    - generic [ref=f11e105]:
+      - generic [ref=f11e106]: © 2026 SMA Ahlul Irfan Bangsalsari
+      - generic [ref=f11e107]: Situs resmi sekolah
+  - generic [ref=f11e110]:
+    - generic [ref=f11e111] [cursor=pointer]
+    - generic [ref=f11e112]:
+      - generic [ref=f11e113] [cursor=pointer]
+      - generic [ref=f11e115] [cursor=pointer]
+      - generic [ref=f11e117] [cursor=pointer]: "17"
+      - generic [ref=f11e120] [cursor=pointer]: "14"
+      - generic [ref=f11e123] [cursor=pointer]: "25"
+    - generic [ref=f11e126]:
+      - generic [ref=f11e127] [cursor=pointer]
+      - generic [ref=f11e128] [cursor=pointer]
+      - generic [ref=f11e129] [cursor=pointer]
+      - generic [ref=f11e131] [cursor=pointer]
+      - generic [ref=f11e132]: GET /profil/struktur-organisasi
+      - generic [ref=f11e135] [cursor=pointer]: 311ms
+      - generic [ref=f11e137] [cursor=pointer]: 28MB
+      - generic [ref=f11e139] [cursor=pointer]: 13.x

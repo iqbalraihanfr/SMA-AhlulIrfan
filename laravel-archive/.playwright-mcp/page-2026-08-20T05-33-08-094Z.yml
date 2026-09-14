@@ -1,0 +1,163 @@
+- generic [ref=f4e1]:
+  - generic [ref=f4e3]:
+    - complementary [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - generic [ref=f4e6]: AI
+        - generic [ref=f4e7]: Panel Admin
+      - navigation "Navigasi admin" [ref=f4e8]:
+        - link "Dasbor" [ref=f4e9] [cursor=pointer]:
+          - /url: http://localhost:8000/admin
+        - link "Berita" [ref=f4e15] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/berita
+        - link "Halaman" [ref=f4e18] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/halaman
+        - link "Guru & Tendik" [ref=f4e22] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/guru
+        - link "Struktur Organisasi" [ref=f4e26] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/struktur
+        - link "Ekstrakurikuler" [ref=f4e32] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/ekstrakurikuler
+        - link "Galeri" [ref=f4e39] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/galeri
+        - link "Pengaturan Situs" [ref=f4e44] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/pengaturan
+        - link "Akun Pengguna" [ref=f4e48] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/pengguna
+      - generic [ref=f4e53]:
+        - link "Lihat situs" [ref=f4e54] [cursor=pointer]:
+          - /url: http://localhost:8000
+        - button "Keluar" [ref=f4e59]
+    - generic [ref=f4e63]:
+      - banner [ref=f4e64]:
+        - generic [ref=f4e65]:
+          - paragraph [ref=f4e66]: Selamat datang kembali,
+          - paragraph [ref=f4e67]: Iqbal Raihan
+        - generic [ref=f4e68]: Super Admin
+      - main [ref=f4e69]:
+        - generic [ref=f4e70]:
+          - generic [ref=f4e72]:
+            - heading "Ubah Berita" [level=1] [ref=f4e73]
+            - paragraph [ref=f4e74]: Susun isi di area utama, lalu atur publikasi dan gambar sampul di panel sebelah kanan.
+          - paragraph [ref=f4e75]:
+            - link "← Kembali ke daftar berita" [ref=f4e76] [cursor=pointer]:
+              - /url: http://localhost:8000/admin/berita
+          - generic [ref=f4e77]:
+            - generic [ref=f4e78]:
+              - generic [ref=f4e79]:
+                - generic [ref=f4e80]:
+                  - heading "Konten utama" [level=2] [ref=f4e81]
+                  - paragraph [ref=f4e82]: Judul dan ringkasan membantu pembaca memahami berita sebelum membukanya.
+                - generic [ref=f4e83]:
+                  - generic [ref=f4e84]: Judul
+                  - textbox "Judul" [ref=f4e85]: Uji Editor Gambar
+                - generic [ref=f4e86]:
+                  - generic [ref=f4e87]: Ringkasan (opsional)
+                  - textbox "Ringkasan (opsional)" [ref=f4e88]: Berita uji untuk memverifikasi alur gambar dan caption.
+                  - paragraph [ref=f4e89]: Tampil di kartu berita dan hasil pencarian. Maksimal 300 karakter.
+              - generic [ref=f4e90]:
+                - generic [ref=f4e91]:
+                  - heading "Isi berita" [level=2] [ref=f4e92]
+                  - paragraph [ref=f4e93]: Gunakan subjudul dan daftar agar artikel panjang tetap mudah dipindai.
+                - generic [ref=f4e94]: Isi Berita
+                - generic [ref=f4e95]:
+                  - toolbar "Pemformatan isi berita" [ref=f4e96]:
+                    - button "Tebal" [ref=f4e97]:
+                      - strong [ref=f4e99]: B
+                    - button "Miring" [ref=f4e100]:
+                      - emphasis [ref=f4e102]: I
+                    - button "Sub-judul" [ref=f4e103]:
+                      - generic [ref=f4e104]: H
+                    - button "Daftar berpoin" [ref=f4e105]:
+                      - generic [ref=f4e106]: •
+                    - button "Daftar bernomor" [ref=f4e107]:
+                      - generic [ref=f4e108]: "1."
+                    - button "Kutipan" [ref=f4e109]:
+                      - generic [ref=f4e110]: ❝
+                    - button "Tambah tautan" [ref=f4e111]:
+                      - generic [ref=f4e112]: 🔗
+                    - button "Sisipkan gambar" [ref=f4e113]
+                    - button "Urungkan" [disabled] [ref=f4e120]:
+                      - generic [ref=f4e121]: ↶
+                    - button "Ulangi" [disabled] [ref=f4e122]:
+                      - generic [ref=f4e123]: ↷
+                  - generic [active] [ref=f4e125]:
+                    - figure "Suasana kegiatan sekolah" [ref=f4e126]:
+                      - img "Ilustrasi kegiatan belajar di SMA Ahlul Irfan" [ref=f4e127]
+                    - paragraph [ref=f4e129]: Pembuka berita sebelum gambar.
+                  - paragraph [ref=f4e130]: Seret atau tempel gambar ke area tulisan. Caption akan tetap menempel saat gambar dipindahkan.
+                  - paragraph
+            - complementary "Metadata dan publikasi berita" [ref=f4e131]:
+              - generic [ref=f4e132]:
+                - heading "Publikasi" [level=2] [ref=f4e133]
+                - generic [ref=f4e134]:
+                  - generic [ref=f4e135]: Status
+                  - combobox "Status" [ref=f4e136]:
+                    - option "Draf" [selected]
+                    - option "Terbit"
+                - generic [ref=f4e137]:
+                  - generic [ref=f4e138]: Tanggal terbit
+                  - generic [ref=f4e139]:
+                    - generic [ref=f4e140]:
+                      - textbox "Tanggal terbit" [ref=f4e142]
+                      - generic [ref=f4e143]:
+                        - generic [ref=f4e144]: Jam terbit
+                        - textbox "Jam terbit" [disabled] [ref=f4e145]
+                    - button "Sekarang" [ref=f4e147]
+                    - paragraph [ref=f4e152]: Waktu Indonesia Barat (WIB). Tanggal mendatang menjadwalkan berita.
+                - generic [ref=f4e153]:
+                  - button "Simpan Perubahan" [ref=f4e154]
+                  - link "Batal" [ref=f4e155] [cursor=pointer]:
+                    - /url: http://localhost:8000/admin/berita
+              - generic [ref=f4e156]:
+                - heading "Gambar sampul" [level=2] [ref=f4e157]
+                - generic [ref=f4e158]:
+                  - generic [ref=f4e159]: Berkas gambar
+                  - button "Berkas gambar" [ref=f4e160]
+                  - paragraph [ref=f4e161]: Maksimal 5 MB. Idealnya minimal 1600 piksel.
+                - generic [ref=f4e162]:
+                  - generic [ref=f4e163]: Teks alternatif
+                  - textbox "Teks alternatif" [ref=f4e164]
+                  - paragraph [ref=f4e165]: Jelaskan isi gambar dalam satu kalimat untuk pembaca layar.
+              - generic [ref=f4e166]:
+                - heading "Alamat berita" [level=2] [ref=f4e167]
+                - generic [ref=f4e168]:
+                  - generic [ref=f4e169]: Slug (opsional)
+                  - textbox "Slug (opsional)" [ref=f4e170]:
+                    - /placeholder: dibuat-otomatis-dari-judul
+                    - text: uji-editor-gambar
+                  - paragraph [ref=f4e171]: Kosongkan bila ragu; sistem membuatnya dari judul.
+  - generic [ref=f4e174]:
+    - generic [ref=f4e175] [cursor=pointer]
+    - generic [ref=f4e176]:
+      - generic [ref=f4e177] [cursor=pointer]: Request
+      - generic [ref=f4e178] [cursor=pointer]: Timeline
+      - generic [ref=f4e179] [cursor=pointer]:
+        - generic: Views
+        - generic [ref=f4e180]: "1"
+      - generic [ref=f4e181] [cursor=pointer]:
+        - generic: Queries
+        - generic [ref=f4e182]: "8"
+      - generic [ref=f4e183] [cursor=pointer]:
+        - generic: Models
+        - generic [ref=f4e184]: "4"
+      - generic [ref=f4e185] [cursor=pointer]:
+        - generic: Inertia
+        - generic [ref=f4e186]: "1"
+      - generic [ref=f4e187] [cursor=pointer]:
+        - generic: Gate
+        - generic [ref=f4e188]: "9"
+      - generic [ref=f4e189] [cursor=pointer]:
+        - generic: Cache
+        - generic [ref=f4e190]: "1"
+      - generic [ref=f4e191] [cursor=pointer]:
+        - generic: Http client
+        - generic [ref=f4e192]: "1"
+    - generic [ref=f4e193]:
+      - generic [ref=f4e194] [cursor=pointer]
+      - generic [ref=f4e195] [cursor=pointer]
+      - generic [ref=f4e196] [cursor=pointer]
+      - generic [ref=f4e198] [cursor=pointer]
+      - generic [ref=f4e199]: GET /admin/berita/uji-editor-gambar/edit
+      - generic [ref=f4e202] [cursor=pointer]: 1.02s
+      - generic [ref=f4e204] [cursor=pointer]: 32MB
+      - generic [ref=f4e206] [cursor=pointer]: 13.x

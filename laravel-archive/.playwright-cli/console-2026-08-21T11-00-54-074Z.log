@@ -1,0 +1,12 @@
+[    1790ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/_debugbar/assets?type=css&mtime=1785738196:0
+[    1790ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://[::1]:5173/resources/css/app.css:0
+[    1792ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/storage/12/logo-sma.webp:0
+[    1809ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://[::1]:5173/@vite/client:0
+[    1820ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://[::1]:5173/resources/js/app.js:0
+[    1820ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/_debugbar/assets?type=js&mtime=1785738196:0
+[    2577ms] ReferenceError: PhpDebugBar is not defined
+    at HTMLDocument.renderDebugbar (http://127.0.0.1:8765/:416:21)
+[    2576ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/storage/37/conversions/fathur-rohman-portrait.webp:0
+[    2581ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/storage/37/conversions/fathur-rohman-card.webp:0
+[   12038ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/storage/38/conversions/nur-rochman-hidayat-card.webp:0
+[   12082ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/storage/39/conversions/yeni-sri-astutik-card.webp:0

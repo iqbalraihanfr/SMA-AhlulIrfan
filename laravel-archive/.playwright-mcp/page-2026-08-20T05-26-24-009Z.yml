@@ -1,0 +1,48 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link "AI SMA Ahlul Irfan Bangsalsari" [ref=e3] [cursor=pointer]:
+      - /url: http://localhost:8000
+      - generic [ref=e4]: AI
+      - generic [ref=e5]: SMA Ahlul Irfan Bangsalsari
+    - generic [ref=e6]:
+      - heading "Masuk Panel Admin" [level=1] [ref=e7]
+      - paragraph [ref=e8]: Khusus pengelola situs sekolah.
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]: Email
+          - textbox "Email" [active] [ref=e12]
+        - generic [ref=e13]:
+          - generic [ref=e14]: Kata Sandi
+          - textbox "Kata Sandi" [ref=e15]
+        - generic [ref=e16]:
+          - checkbox "Ingat saya" [ref=e17]
+          - generic [ref=e18]: Ingat saya
+        - generic [ref=e19]:
+          - link "Lupa kata sandi?" [ref=e20] [cursor=pointer]:
+            - /url: http://localhost:8000/lupa-password
+          - button "Masuk" [ref=e21]
+    - paragraph [ref=e22]:
+      - link "← Kembali ke situs" [ref=e23] [cursor=pointer]:
+        - /url: http://localhost:8000
+  - generic [ref=e26]:
+    - generic [ref=e27] [cursor=pointer]
+    - generic [ref=e28]:
+      - generic [ref=e29] [cursor=pointer]: Request
+      - generic [ref=e30] [cursor=pointer]: Timeline
+      - generic [ref=e31] [cursor=pointer]:
+        - generic: Views
+        - generic [ref=e32]: "10"
+      - generic [ref=e33] [cursor=pointer]:
+        - generic: Queries
+        - generic [ref=e34]: "2"
+    - generic [ref=e35]:
+      - generic [ref=e36] [cursor=pointer]
+      - generic [ref=e37] [cursor=pointer]
+      - generic [ref=e38] [cursor=pointer]
+      - generic [ref=e40] [cursor=pointer]
+      - generic [ref=e42] [cursor=pointer]:
+        - generic [ref=e43]: "2"
+        - generic [ref=e44]: GET /login
+      - generic [ref=e45] [cursor=pointer]: 437ms
+      - generic [ref=e47] [cursor=pointer]: 26MB
+      - generic [ref=e49] [cursor=pointer]: 13.x

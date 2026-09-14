@@ -1,37 +1,38 @@
 {
-    "$schema": "https://www.schemastore.org/package.json",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "build": "vite build",
-        "dev": "vite",
-        "test:js": "node --test tests/js/*.test.ts"
-    },
-    "devDependencies": {
-        "@tailwindcss/forms": "^0.5.11",
-        "@tailwindcss/vite": "^4.0.0",
-        "@types/react": "^19.2.18",
-        "@types/react-dom": "^19.2.4",
-        "@vitejs/plugin-react": "^6.0.5",
-        "alpinejs": "^3.4.2",
-        "concurrently": "^10.0.3",
-        "laravel-vite-plugin": "^3.1",
-        "tailwindcss": "^4.3.3",
-        "typescript": "^7.0.2",
-        "vite": "^8.0.0"
-    },
-    "optionalDependencies": {
-        "@laravel/multiplex": "^0.4.1"
-    },
-    "dependencies": {
-        "@inertiajs/react": "^3.6.1",
-        "@tiptap/extension-placeholder": "^3.30.1",
-        "@tiptap/pm": "^3.30.1",
-        "@tiptap/react": "^3.30.1",
-        "@tiptap/starter-kit": "^3.30.1",
-        "lucide-react": "^1.31.0",
-        "react": "^19.2.8",
-        "react-dom": "^19.2.8",
-        "ziggy-js": "^2.6.3"
-    }
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.116.0",
+    "@tiptap/extension-placeholder": "^3.31.3",
+    "@tiptap/pm": "^3.31.3",
+    "@tiptap/react": "^3.31.3",
+    "@tiptap/starter-kit": "^3.31.3",
+    "browser-image-compression": "^2.0.2",
+    "lucide-react": "^1.46.0",
+    "next": "16.3.5",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sanitize-html": "^2.17.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/sanitize-html": "^2.16.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5"
+  }
 }

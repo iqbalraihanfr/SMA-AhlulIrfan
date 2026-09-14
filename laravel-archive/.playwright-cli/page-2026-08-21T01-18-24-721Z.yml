@@ -1,0 +1,205 @@
+- generic [active] [ref=f4e1]:
+  - link "Lompat ke konten utama" [ref=f4e2] [cursor=pointer]:
+    - /url: "#konten"
+  - banner [ref=f4e3]:
+    - navigation "Navigasi utama" [ref=f4e4]:
+      - link "Logo SMA Ahlul Irfan Bangsalsari SMA Ahlul Irfan Bangsalsari" [ref=f4e5] [cursor=pointer]:
+        - /url: http://localhost:8000
+        - img "Logo SMA Ahlul Irfan Bangsalsari" [ref=f4e6]
+        - generic [ref=f4e7]: SMA Ahlul Irfan Bangsalsari
+      - list [ref=f4e8]:
+        - listitem [ref=f4e9]:
+          - link "Beranda" [ref=f4e10] [cursor=pointer]:
+            - /url: http://localhost:8000
+        - listitem [ref=f4e11]:
+          - button "Profil" [ref=f4e12] [cursor=pointer]
+        - listitem [ref=f4e15]:
+          - button "Akademik" [ref=f4e16] [cursor=pointer]
+        - listitem [ref=f4e19]:
+          - link "Berita" [ref=f4e20] [cursor=pointer]:
+            - /url: http://localhost:8000/berita
+        - listitem [ref=f4e21]:
+          - link "Kontak" [ref=f4e22] [cursor=pointer]:
+            - /url: http://localhost:8000/kontak
+  - main [ref=f4e23]:
+    - generic [ref=f4e26]:
+      - paragraph [ref=f4e27]: Yayasan Ahlul Irfan Al-Kholily
+      - heading "SMA Ahlul Irfan Bangsalsari" [level=1] [ref=f4e28]
+      - paragraph [ref=f4e29]: Berilmu, Berakhlak Mulia, Berprestasi, dan Berdaya Saing Global
+      - generic [ref=f4e30]:
+        - link "Kenali sekolah kami" [ref=f4e31] [cursor=pointer]:
+          - /url: http://localhost:8000/profil
+          - text: Kenali sekolah kami
+          - generic [ref=f4e32]: →
+        - link "Hubungi sekolah" [ref=f4e33] [cursor=pointer]:
+          - /url: http://localhost:8000/kontak
+    - generic [ref=f4e35]:
+      - generic [ref=f4e37]:
+        - paragraph [ref=f4e38]: Dari sekolah
+        - heading "Sambutan Kepala Sekolah" [level=2] [ref=f4e39]
+        - paragraph [ref=f4e40]: Membangun ruang belajar yang berilmu, berkarakter, dan berakar pada nilai keislaman.
+      - figure "Fathur Rohman, S.P Kepala Sekolah" [ref=f4e41]:
+        - img "Foto Fathur Rohman, S.P" [ref=f4e42]
+        - generic [ref=f4e43]:
+          - generic [ref=f4e44]: Fathur Rohman, S.P
+          - generic [ref=f4e45]: Kepala Sekolah
+      - generic [ref=f4e46]:
+        - generic [ref=f4e47]:
+          - paragraph [ref=f4e48]: بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
+          - paragraph [ref=f4e49]: Assalamu'alaikum Warahmatullahi Wabarakatuh
+        - paragraph [ref=f4e50]: Alhamdulillahirabbil 'alamin, segala puji bagi Allah SWT atas limpahan rahmat, taufik, dan hidayah-Nya sehingga Website Resmi SMA Ahlul Irfan Bangsalsari dapat menjadi media informasi, komunikasi, dan pelayanan bagi seluruh warga sekolah serta masyarakat luas. Selamat datang di Website SMA Ahlul Irfan Bangsalsari. Di era digital saat ini, kehadiran website s...
+        - link "Baca sambutan lengkap" [ref=f4e51] [cursor=pointer]:
+          - /url: http://localhost:8000/profil#sambutan
+          - text: Baca sambutan lengkap
+          - generic [ref=f4e52]: →
+    - generic [ref=f4e54]:
+      - generic [ref=f4e55]:
+        - paragraph [ref=f4e56]: Akademik
+        - heading "Kurikulum" [level=2] [ref=f4e57]
+        - paragraph [ref=f4e58]: Pembelajaran yang aktif, kreatif, dan terhubung dengan penguatan karakter Islami.
+      - generic [ref=f4e59]:
+        - paragraph [ref=f4e60]: Kurikulum Berbasis Merdeka dan Nilai-Nilai Keislaman SMA Ahlul Irfan Bangsalsari menerapkan Kurikulum Merdeka sebagai dasar penyelenggaraan pendidikan yang dipadukan dengan pendidikan karakter Islami. Kurikulum ini dirancang untuk membentuk peserta didik yang memiliki kompetensi akademik, berakhlakul karimah, berwawasan kebangsaan, serta mampu menghadapi tantangan perkembangan ilmu pengetahuan dan teknologi. Proses p...
+        - link "Lihat kurikulum lengkap" [ref=f4e61] [cursor=pointer]:
+          - /url: http://localhost:8000/kurikulum
+          - text: Lihat kurikulum lengkap
+          - generic [ref=f4e62]: →
+    - generic [ref=f4e64]:
+      - generic [ref=f4e65]:
+        - paragraph [ref=f4e66]: Kesiswaan
+        - heading "Ruang untuk bertumbuh" [level=2] [ref=f4e67]
+        - paragraph [ref=f4e68]: Kegiatan ekstrakurikuler menjadi ruang bagi peserta didik untuk mengembangkan minat, bakat, dan kepemimpinan.
+      - list [ref=f4e69]:
+        - listitem [ref=f4e70]:
+          - text: Pramuka
+          - generic [ref=f4e71]: Kegiatan siswa
+        - listitem [ref=f4e72]:
+          - text: Paskibra
+          - generic [ref=f4e73]: Kegiatan siswa
+        - listitem [ref=f4e74]:
+          - text: Hadrah
+          - generic [ref=f4e75]: Kegiatan siswa
+        - listitem [ref=f4e76]:
+          - text: Futsal
+          - generic [ref=f4e77]: Kegiatan siswa
+        - listitem [ref=f4e78]:
+          - text: Voli
+          - generic [ref=f4e79]: Kegiatan siswa
+        - listitem [ref=f4e80]:
+          - text: Tata Boga
+          - generic [ref=f4e81]: Kegiatan siswa
+        - listitem [ref=f4e82]:
+          - text: Tata Rias
+          - generic [ref=f4e83]: Kegiatan siswa
+      - link "Jelajahi semua kegiatan" [ref=f4e84] [cursor=pointer]:
+        - /url: http://localhost:8000/ekstrakurikuler
+        - text: Jelajahi semua kegiatan
+        - generic [ref=f4e85]: →
+    - generic [ref=f4e87]:
+      - generic [ref=f4e88]:
+        - generic [ref=f4e89]:
+          - paragraph [ref=f4e90]: Pendidik
+          - heading "Orang-orang di balik pembelajaran" [level=2] [ref=f4e91]
+        - link "Lihat seluruh guru" [ref=f4e92] [cursor=pointer]:
+          - /url: http://localhost:8000/guru
+          - text: Lihat seluruh guru →
+      - generic [ref=f4e93]:
+        - article [ref=f4e94]:
+          - img "Foto Fathur Rohman, S.P" [ref=f4e95]
+          - heading "Fathur Rohman, S.P" [level=3] [ref=f4e96]
+          - paragraph [ref=f4e97]: Kepala Sekolah
+        - article [ref=f4e98]:
+          - img "Foto Nur Rochman Hidayat, S.Pd." [ref=f4e99]
+          - heading "Nur Rochman Hidayat, S.Pd." [level=3] [ref=f4e100]
+          - paragraph [ref=f4e101]: Wakil Kepala Sekolah · Guru Sejarah
+        - article [ref=f4e102]:
+          - img "Foto Yeni Sri Astutik, S.Pd., Gr" [ref=f4e103]
+          - heading "Yeni Sri Astutik, S.Pd., Gr" [level=3] [ref=f4e104]
+          - paragraph [ref=f4e105]: Waka Kesiswaan · Guru Biologi
+        - article [ref=f4e106]:
+          - img "Foto Noviani, S.Pd., Gr" [ref=f4e107]
+          - heading "Noviani, S.Pd., Gr" [level=3] [ref=f4e108]
+          - paragraph [ref=f4e109]: Bendahara · Guru Bahasa Inggris
+    - generic [ref=f4e111]:
+      - generic [ref=f4e112]:
+        - generic [ref=f4e113]:
+          - paragraph [ref=f4e114]: Kabar sekolah
+          - heading "Berita terbaru" [level=2] [ref=f4e115]
+        - link "Semua berita" [ref=f4e116] [cursor=pointer]:
+          - /url: http://localhost:8000/berita
+          - text: Semua berita →
+      - generic [ref=f4e117]:
+        - paragraph [ref=f4e118]: Belum ada berita
+        - paragraph [ref=f4e119]: Kegiatan dan pengumuman sekolah akan tampil di sini.
+    - generic [ref=f4e121]:
+      - generic [ref=f4e122]:
+        - generic [ref=f4e123]:
+          - paragraph [ref=f4e124]: Dokumentasi
+          - heading "Momen di sekolah" [level=2] [ref=f4e125]
+          - paragraph [ref=f4e126]: Lihat kembali kegiatan dan suasana belajar di SMA Ahlul Irfan Bangsalsari.
+        - link "Buka galeri" [ref=f4e127] [cursor=pointer]:
+          - /url: http://localhost:8000/galeri
+          - text: Buka galeri →
+      - generic [ref=f4e128]:
+        - link [ref=f4e129] [cursor=pointer]:
+          - /url: http://localhost:8000/galeri/lingkungan-dan-fasilitas-yayasan
+          - img "Gedung dua lantai di lingkungan Yayasan Ahlul Irfan Al-Kholily" [ref=f4e131]
+          - generic [ref=f4e132]:
+            - heading "Lingkungan dan Fasilitas Yayasan" [level=3] [ref=f4e133]
+            - paragraph [ref=f4e134]: 3 foto
+        - link [ref=f4e135] [cursor=pointer]:
+          - /url: http://localhost:8000/galeri/pembinaan-keagamaan-di-lingkungan-yayasan
+          - img "Santri putra membaca kitab bersama di lingkungan yayasan" [ref=f4e137]
+          - generic [ref=f4e138]:
+            - heading "Pembinaan Keagamaan di Lingkungan Yayasan" [level=3] [ref=f4e139]
+            - paragraph [ref=f4e140]: 7 foto
+    - generic [ref=f4e142]:
+      - paragraph [ref=f4e143]: Langkah berikutnya
+      - heading "Mari mengenal SMA Ahlul Irfan Bangsalsari lebih dekat." [level=2] [ref=f4e144]
+      - paragraph [ref=f4e145]: Hubungi sekolah untuk informasi pendaftaran, kunjungan, dan pertanyaan lainnya.
+      - link "Lihat informasi kontak" [ref=f4e147] [cursor=pointer]:
+        - /url: http://localhost:8000/kontak
+  - contentinfo [ref=f4e148]:
+    - generic [ref=f4e149]:
+      - generic [ref=f4e150]:
+        - paragraph [ref=f4e151]: SMA Ahlul Irfan Bangsalsari
+        - paragraph [ref=f4e152]: Di bawah naungan Yayasan Ahlul Irfan Al-Kholily.
+        - paragraph [ref=f4e153]: “Berilmu, Berakhlak Mulia, Berprestasi, dan Berdaya Saing Global”
+      - generic [ref=f4e154]:
+        - paragraph [ref=f4e155]: Kontak
+        - paragraph [ref=f4e156]: Desa Langkap, Kecamatan Bangsalsari, Kabupaten Jember, Jawa Timur
+      - generic [ref=f4e157]:
+        - paragraph [ref=f4e158]: Jelajahi
+        - link "Profil Sekolah" [ref=f4e159] [cursor=pointer]:
+          - /url: http://localhost:8000/profil
+        - link "Guru & Tendik" [ref=f4e160] [cursor=pointer]:
+          - /url: http://localhost:8000/guru
+        - link "Galeri Kegiatan" [ref=f4e161] [cursor=pointer]:
+          - /url: http://localhost:8000/galeri
+        - link "Berita Sekolah" [ref=f4e162] [cursor=pointer]:
+          - /url: http://localhost:8000/berita
+    - generic [ref=f4e164]:
+      - generic [ref=f4e165]: © 2026 SMA Ahlul Irfan Bangsalsari
+      - generic [ref=f4e166]: Situs resmi sekolah
+  - generic [ref=f4e169]:
+    - generic [ref=f4e170] [cursor=pointer]
+    - generic [ref=f4e171]:
+      - generic [ref=f4e172] [cursor=pointer]: Request
+      - generic [ref=f4e173] [cursor=pointer]: Timeline
+      - generic [ref=f4e174] [cursor=pointer]:
+        - generic: Views
+        - generic [ref=f4e175]: "15"
+      - generic [ref=f4e176] [cursor=pointer]:
+        - generic: Queries
+        - generic [ref=f4e177]: "13"
+      - generic [ref=f4e178] [cursor=pointer]:
+        - generic: Models
+        - generic [ref=f4e179]: "47"
+    - generic [ref=f4e180]:
+      - generic [ref=f4e181] [cursor=pointer]
+      - generic [ref=f4e182] [cursor=pointer]
+      - generic [ref=f4e183] [cursor=pointer]
+      - generic [ref=f4e185] [cursor=pointer]
+      - generic [ref=f4e186]: GET /
+      - generic [ref=f4e189] [cursor=pointer]: 459ms
+      - generic [ref=f4e191] [cursor=pointer]: 28MB
+      - generic [ref=f4e193] [cursor=pointer]: 13.x

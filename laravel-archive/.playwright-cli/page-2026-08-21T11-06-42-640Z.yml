@@ -1,0 +1,30 @@
+- generic [active] [ref=f4e1]:
+  - main [ref=f4e2]:
+    - generic [ref=f4e4]:
+      - paragraph [ref=f4e6]: "404"
+      - generic [ref=f4e7]:
+        - paragraph [ref=f4e8]: SMA Ahlul Irfan Bangsalsari
+        - heading "Halaman tidak ditemukan" [level=1] [ref=f4e9]
+        - paragraph [ref=f4e10]: Halaman yang Anda cari belum tersedia, telah dipindahkan, atau alamatnya tidak tepat.
+        - generic [ref=f4e11]:
+          - link "Kembali ke beranda" [ref=f4e12] [cursor=pointer]:
+            - /url: http://localhost:8000
+          - link "Hubungi sekolah" [ref=f4e13] [cursor=pointer]:
+            - /url: http://localhost:8000/kontak
+  - generic [ref=f4e16]:
+    - generic [ref=f4e17] [cursor=pointer]
+    - generic [ref=f4e18]:
+      - generic [ref=f4e19] [cursor=pointer]: "404"
+      - generic [ref=f4e22] [cursor=pointer]: "1"
+      - generic [ref=f4e25] [cursor=pointer]
+      - generic [ref=f4e27] [cursor=pointer]: "2"
+      - generic [ref=f4e30] [cursor=pointer]: "0"
+    - generic [ref=f4e33]:
+      - generic [ref=f4e34] [cursor=pointer]
+      - generic [ref=f4e35] [cursor=pointer]
+      - generic [ref=f4e36] [cursor=pointer]
+      - generic [ref=f4e38] [cursor=pointer]
+      - generic [ref=f4e39]: GET /e-learning
+      - generic [ref=f4e42] [cursor=pointer]: 1.69s
+      - generic [ref=f4e44] [cursor=pointer]: 24MB
+      - generic [ref=f4e46] [cursor=pointer]: 13.x
