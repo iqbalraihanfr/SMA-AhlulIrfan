@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Select, Tombol } from '@/components/Ui';
 import { savePengguna } from '../actions';
 
@@ -28,6 +29,8 @@ export default function PenggunaFormClient({ pengguna, pilihanPeran, pilihanGuru
     const [guruId, setGuruId] = useState(pengguna?.guru_id?.toString() ?? '');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
 
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -161,27 +164,57 @@ export default function PenggunaFormClient({ pengguna, pilihanPeran, pilihanGuru
 
                     <div>
                         <Label htmlFor="password">Kata sandi{baru ? '' : ' baru'}</Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required={baru}
-                            autoComplete="new-password"
-                        />
+                        <div className="relative mt-1">
+                            <Input
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required={baru}
+                                autoComplete="new-password"
+                                className="!mt-0 pr-10"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-ink-muted hover:text-ink focus:outline-none"
+                                aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+                            >
+                                {showPassword ? (
+                                    <EyeOff className="h-4 w-4" aria-hidden="true" />
+                                ) : (
+                                    <Eye className="h-4 w-4" aria-hidden="true" />
+                                )}
+                            </button>
+                        </div>
                         <Galat pesan={errors.password} />
                     </div>
 
                     <div>
                         <Label htmlFor="password_confirmation">Ulangi kata sandi</Label>
-                        <Input
-                            id="password_confirmation"
-                            type="password"
-                            value={passwordConfirmation}
-                            onChange={(e) => setPasswordConfirmation(e.target.value)}
-                            required={baru || Boolean(password)}
-                            autoComplete="new-password"
-                        />
+                        <div className="relative mt-1">
+                            <Input
+                                id="password_confirmation"
+                                type={showPasswordConfirmation ? 'text' : 'password'}
+                                value={passwordConfirmation}
+                                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                                required={baru || Boolean(password)}
+                                autoComplete="new-password"
+                                className="!mt-0 pr-10"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPasswordConfirmation((prev) => !prev)}
+                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-ink-muted hover:text-ink focus:outline-none"
+                                aria-label={showPasswordConfirmation ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+                            >
+                                {showPasswordConfirmation ? (
+                                    <EyeOff className="h-4 w-4" aria-hidden="true" />
+                                ) : (
+                                    <Eye className="h-4 w-4" aria-hidden="true" />
+                                )}
+                            </button>
+                        </div>
                         <Galat pesan={errors.password_confirmation} />
                     </div>
                 </Kartu>
