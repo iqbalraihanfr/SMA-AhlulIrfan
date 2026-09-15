@@ -65,10 +65,13 @@ function KakiSidebar({ urlPublik, onLogout }: { urlPublik: string; onLogout: () 
 }
 
 function LogoPanel({ logoUrl, logoAlt }: { logoUrl: string | null; logoAlt: string | null }) {
-    if (logoUrl) {
+    const defaultLogo = 'https://vsfmwdjpcjhgulntvhal.supabase.co/storage/v1/object/public/images/logo-sma.webp';
+    const effectiveLogo = logoUrl || defaultLogo;
+
+    if (effectiveLogo) {
         return (
             <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-on-brand p-1 shadow-card">
-                <img src={logoUrl} alt={logoAlt ?? 'Logo SMA Ahlul Irfan'} width={44} height={44} className="size-full object-contain" />
+                <img src={effectiveLogo} alt={logoAlt ?? 'Logo SMA Ahlul Irfan'} width={44} height={44} className="size-full object-contain" />
             </span>
         );
     }
@@ -165,7 +168,7 @@ export function AdminLayoutClient({
                     </div>
 
                     <span className="ml-auto rounded-full bg-paper-sunken px-3 py-1 text-xs font-medium text-ink-muted">
-                        {user.peran === 'super-admin' ? 'Super Admin' : 'Admin Sekolah'}
+                        {user.peran === 'super-admin' ? 'Super Admin' : user.peran === 'guru' ? 'Guru' : 'Admin Sekolah'}
                     </span>
                 </header>
 

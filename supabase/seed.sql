@@ -51,6 +51,18 @@ create policy "Allow seeder insert to siswa" on public.siswa for all using (true
 drop policy if exists "Allow seeder insert to anggota_kelas" on public.anggota_kelas;
 create policy "Allow seeder insert to anggota_kelas" on public.anggota_kelas for all using (true) with check (true);
 
+drop policy if exists "Allow seeder insert to presensi" on public.presensi;
+create policy "Allow seeder insert to presensi" on public.presensi for all using (true) with check (true);
+
+drop policy if exists "Allow seeder insert to kehadiran_siswa" on public.kehadiran_siswa;
+create policy "Allow seeder insert to kehadiran_siswa" on public.kehadiran_siswa for all using (true) with check (true);
+
+drop policy if exists "Allow seeder insert to riwayat_presensi" on public.riwayat_presensi;
+create policy "Allow seeder insert to riwayat_presensi" on public.riwayat_presensi for all using (true) with check (true);
+
+drop policy if exists "Users can read own profile" on public.users;
+create policy "Users can read own profile" on public.users for select to authenticated using (auth.uid() = id);
+
 -- 3. Pengaturan Situs
 delete from public.pengaturan_situs;
 insert into public.pengaturan_situs (
@@ -78,6 +90,17 @@ insert into public.pengaturan_situs (
 );
 
 -- 4. Guru & Tenaga Kependidikan
+-- Bersihkan data absensi, kelas, dan tahun ajaran sebelum menghapus guru
+-- untuk menghindari error 23503 foreign key constraint (kelas_wali_kelas_id_fkey)
+delete from public.riwayat_presensi;
+delete from public.kehadiran_siswa;
+delete from public.presensi;
+delete from public.anggota_kelas;
+delete from public.kelas;
+delete from public.tahun_ajaran;
+delete from public.struktur_organisasi;
+update public.users set guru_id = null;
+
 delete from public.guru;
 insert into public.guru (nama, kategori, jenis_kelamin, jabatan, mata_pelajaran, urutan, aktif, image_url) values
 ('Fathur Rohman, S.P', 'pendidik', 'L', 'Kepala Sekolah', null, 1, true, 'https://vsfmwdjpcjhgulntvhal.supabase.co/storage/v1/object/public/images/guru/fathur-rohman.webp'),

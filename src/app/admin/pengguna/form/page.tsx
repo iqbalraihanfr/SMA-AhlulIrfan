@@ -15,6 +15,16 @@ export default async function PenggunaFormPage(props: { searchParams: Promise<{ 
         redirect('/login');
     }
 
+    const { data: profile } = await supabase
+        .from('users')
+        .select('peran')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    if (profile?.peran !== 'super-admin') {
+        redirect('/admin');
+    }
+
     let pengguna = null;
 
     if (searchParams.id) {
@@ -46,6 +56,11 @@ export default async function PenggunaFormPage(props: { searchParams: Promise<{ 
             value: 'admin',
             label: 'Admin Sekolah',
             keterangan: 'Mengelola konten sekolah (berita, guru, galeri, ekstrakurikuler, bagan, dan halaman).',
+        },
+        {
+            value: 'guru',
+            label: 'Guru / Wali Kelas',
+            keterangan: 'Hanya dapat mengisi presensi harian dan melihat rekap presensi kelasnya.',
         },
     ];
 

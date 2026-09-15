@@ -328,6 +328,9 @@ create policy "Admins can do everything on pengaturan_situs" on public.pengatura
 drop policy if exists "Admins can do everything on users" on public.users;
 create policy "Admins can do everything on users" on public.users to authenticated using (public.is_admin()) with check (public.is_admin());
 
+drop policy if exists "Users can read own profile" on public.users;
+create policy "Users can read own profile" on public.users for select to authenticated using (auth.uid() = id);
+
 -- Absensi: tahun_ajaran policies
 drop policy if exists "Admins can do everything on tahun_ajaran" on public.tahun_ajaran;
 create policy "Admins can do everything on tahun_ajaran" on public.tahun_ajaran

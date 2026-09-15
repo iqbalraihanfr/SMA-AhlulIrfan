@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 export type Izin = 
+    | 'dasbor.lihat'
     | 'berita.kelola'
     | 'halaman.kelola'
     | 'guru.kelola'
@@ -24,7 +25,8 @@ export type Izin =
     | 'pengaturan.kelola'
     | 'pengguna.kelola'
     | 'presensi.isi'
-    | 'presensi.kelola';
+    | 'presensi.kelola'
+    | 'presensi.rekap';
 
 export type ItemNav = {
     label: string;
@@ -34,10 +36,10 @@ export type ItemNav = {
 };
 
 export const NAV_ADMIN: readonly ItemNav[] = [
-    { label: 'Dasbor', href: '/admin', icon: LayoutDashboard, izin: null },
-    { label: 'Data Akademik', href: '/admin/akademik', icon: School, izin: null },
-    { label: 'Presensi Harian', href: '/admin/presensi', icon: CalendarCheck, izin: null },
-    { label: 'Rekap Presensi', href: '/admin/rekap', icon: ClipboardList, izin: null },
+    { label: 'Dasbor', href: '/admin', icon: LayoutDashboard, izin: 'dasbor.lihat' },
+    { label: 'Data Akademik', href: '/admin/akademik', icon: School, izin: 'presensi.kelola' },
+    { label: 'Presensi Harian', href: '/admin/presensi', icon: CalendarCheck, izin: 'presensi.isi' },
+    { label: 'Rekap Presensi', href: '/admin/rekap', icon: ClipboardList, izin: 'presensi.rekap' },
     { label: 'Berita', href: '/admin/berita', icon: BookOpenText, izin: 'berita.kelola' },
     { label: 'Halaman', href: '/admin/halaman', icon: CheckSquare2, izin: 'halaman.kelola' },
     { label: 'Guru & Tendik', href: '/admin/guru', icon: GraduationCap, izin: 'guru.kelola' },
@@ -48,6 +50,33 @@ export const NAV_ADMIN: readonly ItemNav[] = [
     { label: 'Akun Pengguna', href: '/admin/pengguna', icon: UsersRound, izin: 'pengguna.kelola' },
 ];
 
+/**
+ * Menghasilkan objek boolean flags izin berdasarkan peran pengguna ('super-admin', 'admin', 'guru').
+ * - super-admin: melihat semua menu
+ * - admin: melihat semua menu kecuali akun pengguna
+ * - guru: hanya melihat presensi dan rekap
+ */
+export function hitungIzin(peran: string | null | undefined): Record<Izin, boolean> {
+    const isSuperAdmin = peran === 'super-admin';
+    const isAdmin = peran === 'admin';
+    const isGuru = peran === 'guru';
+
+    return {
+        'dasbor.lihat': isSuperAdmin || isAdmin,
+        'presensi.kelola': isSuperAdmin || isAdmin,
+        'presensi.isi': isSuperAdmin || isAdmin || isGuru,
+        'presensi.rekap': isSuperAdmin || isAdmin || isGuru,
+        'berita.kelola': isSuperAdmin || isAdmin,
+        'halaman.kelola': isSuperAdmin || isAdmin,
+        'guru.kelola': isSuperAdmin || isAdmin,
+        'struktur.kelola': isSuperAdmin || isAdmin,
+        'ekstrakurikuler.kelola': isSuperAdmin || isAdmin,
+        'galeri.kelola': isSuperAdmin || isAdmin,
+        'pengaturan.kelola': isSuperAdmin || isAdmin,
+        'pengguna.kelola': isSuperAdmin,
+    };
+}
+
 export function navTampil(izin: Partial<Record<Izin, boolean>> | null | undefined): ItemNav[] {
-    return NAV_ADMIN.filter((item) => item.izin === null || (izin && izin[item.izin]));
+    return NAV_ADMIN.filter((item) => item.izin === null || (izin && Boolean(izin[item.izin])));
 }

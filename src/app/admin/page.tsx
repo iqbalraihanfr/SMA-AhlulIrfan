@@ -20,6 +20,16 @@ export default async function Dasbor() {
         redirect('/login');
     }
 
+    const { data: profile } = await supabase
+        .from('users')
+        .select('peran')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    if (profile?.peran === 'guru') {
+        redirect('/admin/presensi');
+    }
+
     // Fetch counts and readiness data from Supabase
     const [
         { count: countBerita },

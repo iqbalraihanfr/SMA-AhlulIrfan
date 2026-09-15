@@ -17,6 +17,16 @@ export default async function PenggunaIndex() {
         redirect('/login');
     }
 
+    const { data: profile } = await supabase
+        .from('users')
+        .select('peran')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    if (profile?.peran !== 'super-admin') {
+        redirect('/admin');
+    }
+
     const { data: userList, error } = await supabase
         .from('users')
         .select(`
@@ -37,7 +47,7 @@ export default async function PenggunaIndex() {
         nama: u.nama,
         email: u.email,
         peran: u.peran,
-        peranLabel: u.peran === 'super-admin' ? 'Super Admin' : 'Admin Sekolah',
+        peranLabel: u.peran === 'super-admin' ? 'Super Admin' : u.peran === 'guru' ? 'Guru' : 'Admin Sekolah',
         guruNama: u.guru?.nama || null,
         diriSendiri: u.id === user.id,
         urlUbah: `/admin/pengguna/form?id=${u.id}`,
