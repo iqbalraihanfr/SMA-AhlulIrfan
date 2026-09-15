@@ -39,6 +39,18 @@ create policy "Allow seeder insert to berita" on public.berita for all using (tr
 drop policy if exists "Allow seeder insert to struktur_organisasi" on public.struktur_organisasi;
 create policy "Allow seeder insert to struktur_organisasi" on public.struktur_organisasi for all using (true) with check (true);
 
+drop policy if exists "Allow seeder insert to tahun_ajaran" on public.tahun_ajaran;
+create policy "Allow seeder insert to tahun_ajaran" on public.tahun_ajaran for all using (true) with check (true);
+
+drop policy if exists "Allow seeder insert to kelas" on public.kelas;
+create policy "Allow seeder insert to kelas" on public.kelas for all using (true) with check (true);
+
+drop policy if exists "Allow seeder insert to siswa" on public.siswa;
+create policy "Allow seeder insert to siswa" on public.siswa for all using (true) with check (true);
+
+drop policy if exists "Allow seeder insert to anggota_kelas" on public.anggota_kelas;
+create policy "Allow seeder insert to anggota_kelas" on public.anggota_kelas for all using (true) with check (true);
+
 -- 3. Pengaturan Situs
 delete from public.pengaturan_situs;
 insert into public.pengaturan_situs (
@@ -260,4 +272,102 @@ guru_mapel as (
 insert into public.struktur_organisasi (label, atasan_id, tipe, baris, urutan)
 select 'Siswa - Siswi', id, 'kelompok', 1, 0
 from wali_kelas;
+
+-- ==============================================================================
+-- 10. Data Akademik & Absensi (Tahun Ajaran, Kelas, Siswa, Anggota Kelas)
+-- ==============================================================================
+
+-- 10.1. Tahun Ajaran
+insert into public.tahun_ajaran (id, nama, semester, mulai_pada, selesai_pada, aktif)
+values (1, '2026/2027', 'ganjil', '2026-07-15', '2026-12-20', true)
+on conflict (nama, semester) do update set
+  mulai_pada = excluded.mulai_pada,
+  selesai_pada = excluded.selesai_pada,
+  aktif = excluded.aktif;
+
+-- 10.2. Kelas
+insert into public.kelas (id, tahun_ajaran_id, nama, tingkat, wali_kelas_id, aktif)
+select 1, 1, 'X-A', 10, (select id from public.guru where nama = 'Nur Rochman Hidayat, S.Pd.' limit 1), true
+on conflict (tahun_ajaran_id, nama) do update set
+  tingkat = excluded.tingkat,
+  wali_kelas_id = excluded.wali_kelas_id,
+  aktif = excluded.aktif;
+
+insert into public.kelas (id, tahun_ajaran_id, nama, tingkat, wali_kelas_id, aktif)
+select 2, 1, 'X-B', 10, (select id from public.guru where nama = 'Yeni Sri Astutik, S.Pd., Gr' limit 1), true
+on conflict (tahun_ajaran_id, nama) do update set
+  tingkat = excluded.tingkat,
+  wali_kelas_id = excluded.wali_kelas_id,
+  aktif = excluded.aktif;
+
+insert into public.kelas (id, tahun_ajaran_id, nama, tingkat, wali_kelas_id, aktif)
+select 3, 1, 'XI-IPA', 11, (select id from public.guru where nama = 'Hilmi Fathiyatul Baroroh, S.Pd., Gr' limit 1), true
+on conflict (tahun_ajaran_id, nama) do update set
+  tingkat = excluded.tingkat,
+  wali_kelas_id = excluded.wali_kelas_id,
+  aktif = excluded.aktif;
+
+insert into public.kelas (id, tahun_ajaran_id, nama, tingkat, wali_kelas_id, aktif)
+select 4, 1, 'XI-IPS', 11, (select id from public.guru where nama = 'Ahmad Saini, S.Pd., Gr' limit 1), true
+on conflict (tahun_ajaran_id, nama) do update set
+  tingkat = excluded.tingkat,
+  wali_kelas_id = excluded.wali_kelas_id,
+  aktif = excluded.aktif;
+
+insert into public.kelas (id, tahun_ajaran_id, nama, tingkat, wali_kelas_id, aktif)
+select 5, 1, 'XII-IPA', 12, (select id from public.guru where nama = 'Siti Habibah, S.Pd.' limit 1), true
+on conflict (tahun_ajaran_id, nama) do update set
+  tingkat = excluded.tingkat,
+  wali_kelas_id = excluded.wali_kelas_id,
+  aktif = excluded.aktif;
+
+insert into public.kelas (id, tahun_ajaran_id, nama, tingkat, wali_kelas_id, aktif)
+select 6, 1, 'XII-IPS', 12, (select id from public.guru where nama = 'Wiwindari Uswatul J, S.Pd., Gr' limit 1), true
+on conflict (tahun_ajaran_id, nama) do update set
+  tingkat = excluded.tingkat,
+  wali_kelas_id = excluded.wali_kelas_id,
+  aktif = excluded.aktif;
+
+-- 10.3. Siswa (Data Fiktif untuk Pengujian Roster Absensi)
+insert into public.siswa (id, kode_siswa, nama, jenis_kelamin, aktif) values
+(1, 'AI-2026-001', 'Ahmad Fadilah', 'L', true),
+(2, 'AI-2026-002', 'Aisyah Putri Maharani', 'P', true),
+(3, 'AI-2026-003', 'Bagus Prasetyo', 'L', true),
+(4, 'AI-2026-004', 'Dewi Lestari', 'P', true),
+(5, 'AI-2026-005', 'Dimas Arya Pamungkas', 'L', true),
+(6, 'AI-2026-006', 'Fatimah Zahra', 'P', true),
+(7, 'AI-2026-007', 'Hafizh Maulana', 'L', true),
+(8, 'AI-2026-008', 'Intan Permata Sari', 'P', true),
+(9, 'AI-2026-009', 'Muhammad Rizky Ramadhan', 'L', true),
+(10, 'AI-2026-010', 'Nabila Syakirah', 'P', true),
+(11, 'AI-2026-011', 'Rian Hidayat', 'L', true),
+(12, 'AI-2026-012', 'Siti Nur Aini', 'P', true)
+on conflict (kode_siswa) do update set
+  nama = excluded.nama,
+  jenis_kelamin = excluded.jenis_kelamin,
+  aktif = excluded.aktif;
+
+-- 10.4. Anggota Kelas (Daftarkan siswa ke kelas X-A dan X-B)
+insert into public.anggota_kelas (kelas_id, siswa_id, mulai_pada, selesai_pada)
+select 1, id, '2026-07-15'::date, null
+from public.siswa
+where id between 1 and 6
+and not exists (
+  select 1 from public.anggota_kelas ak where ak.kelas_id = 1 and ak.siswa_id = public.siswa.id
+);
+
+insert into public.anggota_kelas (kelas_id, siswa_id, mulai_pada, selesai_pada)
+select 2, id, '2026-07-15'::date, null
+from public.siswa
+where id between 7 and 12
+and not exists (
+  select 1 from public.anggota_kelas ak where ak.kelas_id = 2 and ak.siswa_id = public.siswa.id
+);
+
+-- Reset sequence generator untuk ID autoincrement
+select setval(pg_get_serial_sequence('public.tahun_ajaran', 'id'), coalesce((select max(id) from public.tahun_ajaran), 1));
+select setval(pg_get_serial_sequence('public.kelas', 'id'), coalesce((select max(id) from public.kelas), 1));
+select setval(pg_get_serial_sequence('public.siswa', 'id'), coalesce((select max(id) from public.siswa), 1));
+select setval(pg_get_serial_sequence('public.anggota_kelas', 'id'), coalesce((select max(id) from public.anggota_kelas), 1));
+
 
