@@ -9,14 +9,7 @@ export default function Footer({ situs }: { situs: any }) {
     { nama: 'YouTube', url: situs?.youtube },
   ].filter((item) => Boolean(item.url))
 
-  const cleanPhone = situs?.telepon ? situs.telepon.replace(/\D/g, '') : null
 
-  let tautanWa: string | null = null
-  if (situs?.whatsapp) {
-    const rawWa = situs.whatsapp.replace(/\D/g, '')
-    const waNormalized = rawWa.startsWith('0') ? '62' + rawWa.slice(1) : rawWa
-    tautanWa = `https://wa.me/${waNormalized}`
-  }
 
   const namaSekolah = situs?.nama_sekolah || 'SMA Ahlul Irfan Bangsalsari'
 
@@ -40,19 +33,9 @@ export default function Footer({ situs }: { situs: any }) {
         <div className="space-y-3 text-sm">
           <p className="text-xs font-bold uppercase tracking-widest text-highlight">Kontak</p>
           {situs?.alamat && <p className="leading-relaxed text-ink-muted">{situs.alamat}</p>}
-          {situs?.telepon && (
-            <a className="block text-ink-muted hover:text-brand hover:underline" href={`tel:${cleanPhone}`}>
-              {situs.telepon}
-            </a>
-          )}
           {situs?.email && (
             <a className="block break-words text-ink-muted hover:text-brand hover:underline" href={`mailto:${situs.email}`}>
               {situs.email}
-            </a>
-          )}
-          {tautanWa && (
-            <a className="block text-ink-muted hover:text-brand hover:underline" href={tautanWa} target="_blank" rel="noopener">
-              WhatsApp
             </a>
           )}
         </div>

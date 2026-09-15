@@ -45,9 +45,9 @@ export default function LoginFormClient() {
               Kata Sandi
             </label>
             <a
-              href="https://wa.me/6287714005848?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20saya%20di%20web%20SMA."
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#" onClick={(e) => { e.preventDefault(); alert("Silakan hubungi Administrator secara langsung."); }}
+              
+              
               className="text-xs font-medium text-ink-muted hover:text-brand hover:underline underline-offset-4 transition-colors"
             >
               Lupa Kata Sandi?

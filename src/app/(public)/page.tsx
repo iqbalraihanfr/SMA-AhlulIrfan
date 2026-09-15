@@ -160,17 +160,7 @@ export default async function Beranda() {
     .sort((a: any, b: any) => (b.image_url ? 1 : 0) - (a.image_url ? 1 : 0))
     .slice(0, 4)
 
-  let tautanWa: string | null = null
-  if (situs?.whatsapp) {
-    const rawWa = situs.whatsapp.replace(/\D/g, '')
-    const waNormalized = rawWa.startsWith('0') ? '62' + rawWa.slice(1) : rawWa
-    const pesan = encodeURIComponent(
-      `Assalamu'alaikum, saya ingin bertanya tentang ${situs?.nama_sekolah || 'SMA Ahlul Irfan Bangsalsari'}`
-    )
-    tautanWa = `https://wa.me/${waNormalized}?text=${pesan}`
-  }
-
-  return (
+    return (
     <>
       <section className="site-hero" style={{ '--hero-image': `url('${hero}')` } as React.CSSProperties}>
         <div className="section-shell site-hero__inner">

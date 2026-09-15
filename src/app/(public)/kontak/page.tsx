@@ -27,19 +27,7 @@ export default async function KontakPage() {
 
   const namaSekolah = situs?.nama_sekolah || 'SMA Ahlul Irfan Bangsalsari'
 
-  let tautanWa: string | null = null
-  if (situs?.whatsapp) {
-    const rawWa = situs.whatsapp.replace(/\D/g, '')
-    const waNormalized = rawWa.startsWith('0') ? '62' + rawWa.slice(1) : rawWa
-    const pesan = encodeURIComponent(
-      `Assalamu'alaikum, saya ingin bertanya tentang ${namaSekolah}`
-    )
-    tautanWa = `https://wa.me/${waNormalized}?text=${pesan}`
-  }
-
-  const cleanTelepon = situs?.telepon ? situs.telepon.replace(/\D/g, '') : null
-
-  return (
+      return (
     <>
       <PageHero
         judul="Kontak"
@@ -56,23 +44,7 @@ export default async function KontakPage() {
               </dd>
             </div>
 
-            <div>
-              <dt className="text-sm font-semibold text-ink">Telepon</dt>
-              <dd className="mt-1 text-ink-muted">
-                {situs?.telepon ? (
-                  <a
-                    href={`tel:${cleanTelepon}`}
-                    className="underline underline-offset-2 hover:text-brand"
-                  >
-                    {situs.telepon}
-                  </a>
-                ) : (
-                  'Belum tersedia.'
-                )}
-              </dd>
-            </div>
-
-            <div>
+                        <div>
               <dt className="text-sm font-semibold text-ink">Email</dt>
               <dd className="mt-1 text-ink-muted">
                 {situs?.email ? (
@@ -103,41 +75,19 @@ export default async function KontakPage() {
             )}
           </dl>
 
-          {tautanWa && (
-            <div className="pt-2">
-              <a
-                href={tautanWa}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="button-highlight inline-flex"
-              >
-                Chat WhatsApp
-              </a>
-            </div>
-          )}
-        </div>
+                  </div>
 
         <div className="surface-card overflow-hidden p-2">
-          {situs?.peta_lat && situs?.peta_lng ? (
-            <iframe
-              title={`Peta lokasi ${namaSekolah}`}
-              className="aspect-[4/3] w-full rounded-lg border border-line"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${
-                Number(situs.peta_lng) - 0.01
-              },${Number(situs.peta_lat) - 0.01},${Number(situs.peta_lng) + 0.01},${
-                Number(situs.peta_lat) + 0.01
-              }&layer=mapnik&marker=${situs.peta_lat},${situs.peta_lng}`}
-            />
-          ) : (
-            <EmptyState
-              judul="Peta lokasi belum tersedia"
-              pesan="Titik koordinat sekolah sedang kami lengkapi."
-            />
-          )}
+          <iframe
+            title={`Peta lokasi ${namaSekolah}`}
+            className="aspect-[4/3] w-full rounded-lg border border-line"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src="https://maps.google.com/maps?q=SMA+Ahlul+Irfan+Bangsalsari&t=&z=15&ie=UTF8&iwloc=&output=embed"
+          />
         </div>
       </div>
     </>
+
   )
 }
