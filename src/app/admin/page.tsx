@@ -20,14 +20,21 @@ export default async function Dasbor() {
         redirect('/login');
     }
 
-    // Fetch counts from Supabase
-    // We assume these tables exist in Supabase matching the Laravel names
-    const [{ count: countBerita }, { count: countBeritaTerbit }, { count: countGuru }, { count: countEkstrakurikuler }, { count: countAlbum }] = await Promise.all([
+    // Fetch counts and readiness data from Supabase
+    const [
+        { count: countBerita },
+        { count: countBeritaTerbit },
+        { count: countGuru },
+        { count: countEkstrakurikuler },
+        { count: countAlbum },
+        { data: halamanList },
+    ] = await Promise.all([
         supabase.from('berita').select('*', { count: 'exact', head: true }),
-        supabase.from('berita').select('*', { count: 'exact', head: true }).eq('status', 'terbit'), // Example status check
+        supabase.from('berita').select('*', { count: 'exact', head: true }).eq('status', 'terbit'),
         supabase.from('guru').select('*', { count: 'exact', head: true }),
         supabase.from('ekstrakurikuler').select('*', { count: 'exact', head: true }),
-        supabase.from('galeri').select('*', { count: 'exact', head: true }),
+        supabase.from('album').select('*', { count: 'exact', head: true }),
+        supabase.from('konten_halaman').select('kunci, terbit, isi'),
     ]);
 
     const jumlah = {
@@ -38,14 +45,40 @@ export default async function Dasbor() {
         album: countAlbum ?? 0,
     };
 
-    // This data would ideally be computed or stored somewhere
-    // For migration purposes, mocking the structure
+    const mapHalaman = new Map((halamanList ?? []).map((h) => [h.kunci, h]));
+    const cekHalaman = (kunci: string) => {
+        const row = mapHalaman.get(kunci);
+        if (!row) return false;
+        const text = (row.isi || '').replace(/<[^>]*>/g, '').trim();
+        return Boolean(row.terbit && text.length > 0);
+    };
+
     const kesiapan: Kesiapan[] = [
-        { label: 'Sambutan Kepala Sekolah', siap: true, catatan: '' },
-        { label: 'Sejarah Singkat', siap: true, catatan: '' },
-        { label: 'Visi Misi', siap: true, catatan: '' },
-        { label: 'Fasilitas Utama', siap: true, catatan: '' },
-        { label: 'Minimal 3 Berita', siap: jumlah.beritaTerbit >= 3, catatan: 'Kurang ' + Math.max(0, 3 - jumlah.beritaTerbit) + ' berita lagi.' },
+        {
+            label: 'Sambutan Kepala Sekolah',
+            siap: cekHalaman('sambutan_kepsek'),
+            catatan: 'Belum diterbitkan di menu Halaman.',
+        },
+        {
+            label: 'Sejarah Singkat',
+            siap: cekHalaman('sejarah'),
+            catatan: 'Belum diterbitkan di menu Halaman.',
+        },
+        {
+            label: 'Visi dan Misi',
+            siap: cekHalaman('visi_misi'),
+            catatan: 'Belum diterbitkan di menu Halaman.',
+        },
+        {
+            label: 'Kurikulum Sekolah',
+            siap: cekHalaman('kurikulum'),
+            catatan: 'Belum diterbitkan di menu Halaman.',
+        },
+        {
+            label: 'Minimal 3 Berita Terbit',
+            siap: jumlah.beritaTerbit >= 3,
+            catatan: `Baru ada ${jumlah.beritaTerbit} berita terbit (kurang ${Math.max(0, 3 - jumlah.beritaTerbit)} lagi).`,
+        },
     ];
 
     const kartu = [

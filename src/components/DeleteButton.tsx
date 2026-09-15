@@ -2,27 +2,53 @@
 
 import { Tombol } from '@/components/Ui';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-export function DeleteButton({ id, judul }: { id: number; judul: string }) {
+export function DeleteButton({
+    id,
+    judul,
+    pesan,
+    endpoint,
+    onDelete,
+}: {
+    id?: number | string;
+    judul?: string;
+    pesan?: string;
+    endpoint?: string;
+    onDelete?: () => Promise<void>;
+}) {
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
     const hapus = async () => {
-        if (!confirm(`Hapus berita "${judul}"? Tindakan ini tidak bisa dibatalkan.`)) return;
+        const konfirmasi =
+            pesan ||
+            (judul
+                ? `Hapus "${judul}"? Tindakan ini tidak bisa dibatalkan.`
+                : 'Hapus data ini? Tindakan ini tidak bisa dibatalkan.');
 
-        const res = await fetch(`/api/admin/berita/${id}`, {
-            method: 'DELETE',
-        });
+        if (!confirm(konfirmasi)) return;
 
-        if (res.ok) {
+        setLoading(true);
+        try {
+            if (onDelete) {
+                await onDelete();
+            } else {
+                const url = endpoint || `/api/admin/berita/${id}`;
+                const res = await fetch(url, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Gagal menghapus data.');
+            }
             router.refresh();
-        } else {
-            alert('Gagal menghapus berita.');
+        } catch (err: any) {
+            alert(err.message || 'Gagal menghapus.');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <Tombol type="button" variasi="bahaya" onClick={hapus}>
-            Hapus
+        <Tombol type="button" variasi="bahaya" onClick={hapus} disabled={loading}>
+            {loading ? 'Menghapus...' : 'Hapus'}
         </Tombol>
     );
 }
