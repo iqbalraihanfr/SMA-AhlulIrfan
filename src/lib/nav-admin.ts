@@ -1,10 +1,13 @@
 import {
     BookOpenText,
     CheckSquare2,
+    CalendarCheck,
+    ClipboardList,
     GraduationCap,
     ImageIcon,
     LayoutDashboard,
     Network,
+    School,
     Settings,
     Trophy,
     UsersRound,
@@ -19,7 +22,9 @@ export type Izin =
     | 'ekstrakurikuler.kelola'
     | 'galeri.kelola'
     | 'pengaturan.kelola'
-    | 'pengguna.kelola';
+    | 'pengguna.kelola'
+    | 'presensi.isi'
+    | 'presensi.kelola';
 
 export type ItemNav = {
     label: string;
@@ -30,6 +35,9 @@ export type ItemNav = {
 
 export const NAV_ADMIN: readonly ItemNav[] = [
     { label: 'Dasbor', href: '/admin', icon: LayoutDashboard, izin: null },
+    { label: 'Data Akademik', href: '/admin/akademik', icon: School, izin: null },
+    { label: 'Presensi Harian', href: '/admin/presensi', icon: CalendarCheck, izin: null },
+    { label: 'Rekap Presensi', href: '/admin/rekap', icon: ClipboardList, izin: null },
     { label: 'Berita', href: '/admin/berita', icon: BookOpenText, izin: 'berita.kelola' },
     { label: 'Halaman', href: '/admin/halaman', icon: CheckSquare2, izin: 'halaman.kelola' },
     { label: 'Guru & Tendik', href: '/admin/guru', icon: GraduationCap, izin: 'guru.kelola' },

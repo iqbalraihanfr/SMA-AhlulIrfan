@@ -62,6 +62,13 @@ export type PresensiState = {
   data?: any;
 };
 
+export type ActionFormState = {
+  error?: string;
+  success?: boolean;
+  fieldErrors?: Record<string, string>;
+  message?: string;
+};
+
 export interface SimpanPresensiPayload {
   kelasId: number;
   tanggal: string;
