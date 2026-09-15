@@ -388,7 +388,7 @@ insert into public.siswa (id, kode_siswa, nama, jenis_kelamin, aktif) values
 (31, '0104308707', 'MUHAMMAD ROYYAN', 'L', true),
 (32, '0108611017', 'Muhammad Royyan Walidi', 'L', true),
 (33, '0103086803', 'MUHAMMAD USAID FARELA', 'L', true),
-(34, '0108718111', 'MUHAMMAD WILDAN MAULANA JUNAIDI', 'L', true)
+(34, '0108718111', 'MUHAMMAD WILDAN MAULANA JUNAIDI', 'L', true),
 -- KELAS X B (X-B - Putri)
 (35, '0114520351', 'ADELIYA NURIL JANNAH', 'P', true),
 (36, '0118623856', 'AISAH ROMANIA', 'P', true),
@@ -413,7 +413,7 @@ insert into public.siswa (id, kode_siswa, nama, jenis_kelamin, aktif) values
 (55, '0105361918', 'SELA SAFITRI', 'P', true),
 (56, '0106311943', 'Siti Hafizatul A', 'P', true),
 (57, '3117139608', 'VIVIN QURROTUL AINI', 'P', true),
-(58, '0106962696', 'WIDA DASSOLEHA', 'P', true)
+(58, '0106962696', 'WIDA DASSOLEHA', 'P', true),
 -- KELAS XI A (XI-IPA - Putra)
 (59, '3102748437', 'ACHMAD IRFAN', 'L', true),
 (60, '0089685505', 'Achmad Said Surya Rachman', 'L', true),
@@ -446,7 +446,7 @@ insert into public.siswa (id, kode_siswa, nama, jenis_kelamin, aktif) values
 (87, '0091187229', 'MUHAMMAD SAIFUL RIZAL', 'L', true),
 (88, '0062951940', 'Muhammad Wildan Chanif', 'L', true),
 (89, '0096635287', 'MUHIBBIN', 'L', true),
-(90, '0053200173', 'ZAINUL ABIDIN', 'L', true)
+(90, '0053200173', 'ZAINUL ABIDIN', 'L', true),
 -- KELAS XI B (XI-IPS - Putri)
 (91, '0108981737', 'AMILIYAWATI', 'P', true),
 (92, '0082260448', 'Ayu Andira', 'P', true),
@@ -462,7 +462,7 @@ insert into public.siswa (id, kode_siswa, nama, jenis_kelamin, aktif) values
 (102, '0106949073', 'SYAILUR ROHMAH', 'P', true),
 (103, '0091617606', 'ULFATUS SA''ADAH', 'P', true),
 (104, '0095081874', 'UMI AYNI DAROJATUR ROHMAH', 'P', true),
-(105, '0091009655', 'UTIYA WAHYU NINGSIH', 'P', true)
+(105, '0091009655', 'UTIYA WAHYU NINGSIH', 'P', true),
 -- KELAS XII A (XII-IPA - Putra)
 (106, '0091775331', 'ABDUL MANAP', 'L', true),
 (107, '0096316690', 'Ahmad Habibi', 'L', true),
@@ -486,7 +486,7 @@ insert into public.siswa (id, kode_siswa, nama, jenis_kelamin, aktif) values
 (125, '0087912625', 'NASIHUL WAFA', 'L', true),
 (126, '0082347526', 'NUR ISMAIL', 'L', true),
 (127, '0084757612', 'RENDI', 'L', true),
-(128, '0098478307', 'WENDY ADI PURNOMO', 'L', true)
+(128, '0098478307', 'WENDY ADI PURNOMO', 'L', true),
 -- KELAS XII B (XII-IPS - Putri)
 (129, '0098072107', 'Alfia Alwiati', 'P', true),
 (130, '0085683339', 'ALMA', 'P', true),
