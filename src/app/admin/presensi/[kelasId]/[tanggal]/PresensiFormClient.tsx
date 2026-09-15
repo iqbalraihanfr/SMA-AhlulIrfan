@@ -2,10 +2,10 @@
 
 import {
   useState,
+  useEffect,
   useOptimistic,
   useTransition,
   useActionState,
-  useId,
 } from 'react';
 import Link from 'next/link';
 import {
@@ -20,8 +20,6 @@ import {
   AlertCircle,
   ShieldAlert,
   Info,
-  ChevronDown,
-  ChevronUp,
 } from 'lucide-react';
 import { Tombol, Kartu, Label, Textarea } from '@/components/Ui';
 import { simpanPresensiAction } from '@/lib/presensi/actions';
@@ -91,6 +89,18 @@ export function PresensiFormClient({
   const [clientError, setClientError] = useState<string | null>(null);
   const [activeNoteSiswaId, setActiveNoteSiswaId] = useState<number | null>(null);
   const [showConfirmSelesai, setShowConfirmSelesai] = useState<boolean>(false);
+
+  // Tangani tombol Escape untuk menutup dialog konfirmasi modal
+  useEffect(() => {
+    if (!showConfirmSelesai) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowConfirmSelesai(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [showConfirmSelesai]);
 
   // Transisi untuk update optimis & saving
   const [isSaving, startSaveTransition] = useTransition();
@@ -321,7 +331,7 @@ export function PresensiFormClient({
 
       {/* Banner Notifikasi Konflik Versi (Optimistic Lock Conflict 409) */}
       {state.status === 'conflict' && (
-        <div className="mb-6 flex items-start justify-between gap-4 rounded-xl border border-danger/30 bg-paper p-5 shadow-lift">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border border-danger/30 bg-paper p-5 shadow-lift">
           <div className="flex items-start gap-3">
             <ShieldAlert className="size-6 text-danger shrink-0 mt-0.5" />
             <div>
@@ -337,7 +347,7 @@ export function PresensiFormClient({
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-danger px-3 py-2 text-xs font-semibold text-on-brand transition hover:opacity-90 shadow-card"
+            className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-lg bg-danger px-4 py-2 text-xs font-semibold text-on-brand transition hover:opacity-90 shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger"
           >
             <RotateCcw className="size-3.5" />
             Muat Ulang Halaman
@@ -397,29 +407,29 @@ export function PresensiFormClient({
       <div className="mb-6 grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3">
         <div className="rounded-lg border border-brand/30 bg-brand-soft p-2.5 text-center">
           <span className="block text-xl font-bold text-brand">{counts.hadir}</span>
-          <span className="text-[11px] font-semibold text-ink-muted">Hadir (H)</span>
+          <span className="block truncate text-[11px] font-semibold text-ink-muted">Hadir (H)</span>
         </div>
         <div className="rounded-lg border border-line bg-paper p-2.5 text-center shadow-card">
           <span className="block text-xl font-bold text-ink">{counts.sakit}</span>
-          <span className="text-[11px] font-semibold text-ink-muted">Sakit (S)</span>
+          <span className="block truncate text-[11px] font-semibold text-ink-muted">Sakit (S)</span>
         </div>
         <div className="rounded-lg border border-line bg-paper p-2.5 text-center shadow-card">
           <span className="block text-xl font-bold text-highlight">{counts.izin}</span>
-          <span className="text-[11px] font-semibold text-ink-muted">Izin (I)</span>
+          <span className="block truncate text-[11px] font-semibold text-ink-muted">Izin (I)</span>
         </div>
         <div className="rounded-lg border border-danger/20 bg-paper p-2.5 text-center shadow-card">
           <span className="block text-xl font-bold text-danger">{counts.alpa}</span>
-          <span className="text-[11px] font-semibold text-ink-muted">Alpa (A)</span>
+          <span className="block truncate text-[11px] font-semibold text-ink-muted">Alpa (A)</span>
         </div>
         <div className="rounded-lg border border-line bg-paper p-2.5 text-center shadow-card">
           <span className="block text-xl font-bold text-highlight">{counts.terlambat}</span>
-          <span className="text-[11px] font-semibold text-ink-muted">Terlambat (T)</span>
+          <span className="block truncate text-[11px] font-semibold text-ink-muted">Telat (T)</span>
         </div>
         <div className={`rounded-lg border p-2.5 text-center ${counts.belum_diisi > 0 ? 'border-line-strong bg-paper-sunken' : 'border-line bg-paper'}`}>
           <span className={`block text-xl font-bold ${counts.belum_diisi > 0 ? 'text-danger' : 'text-ink-muted'}`}>
             {counts.belum_diisi}
           </span>
-          <span className="text-[11px] font-semibold text-ink-muted">Belum Diisi</span>
+          <span className="block truncate text-[11px] font-semibold text-ink-muted">Belum Diisi</span>
         </div>
       </div>
 
@@ -484,7 +494,7 @@ export function PresensiFormClient({
                       disabled={isReadOnly || sedangProses}
                       aria-pressed={siswa.status === 'hadir'}
                       aria-label={`Tandai ${siswa.nama} Hadir`}
-                      className={`min-h-[2.5rem] flex-1 sm:flex-none rounded-lg px-3 py-1.5 text-xs font-bold transition shadow-card ${
+                      className={`min-h-[44px] flex-1 sm:flex-none rounded-lg px-2.5 sm:px-3.5 py-2 text-xs font-bold transition shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
                         siswa.status === 'hadir'
                           ? 'bg-brand text-on-brand'
                           : 'border border-line bg-paper text-ink hover:bg-paper-sunken'
@@ -500,7 +510,7 @@ export function PresensiFormClient({
                       disabled={isReadOnly || sedangProses}
                       aria-pressed={siswa.status === 'sakit'}
                       aria-label={`Tandai ${siswa.nama} Sakit`}
-                      className={`min-h-[2.5rem] flex-1 sm:flex-none rounded-lg px-3 py-1.5 text-xs font-bold transition shadow-card ${
+                      className={`min-h-[44px] flex-1 sm:flex-none rounded-lg px-2.5 sm:px-3.5 py-2 text-xs font-bold transition shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
                         siswa.status === 'sakit'
                           ? 'bg-paper-raised text-ink border border-line-strong ring-2 ring-line-strong'
                           : 'border border-line bg-paper text-ink hover:bg-paper-sunken'
@@ -516,7 +526,7 @@ export function PresensiFormClient({
                       disabled={isReadOnly || sedangProses}
                       aria-pressed={siswa.status === 'izin'}
                       aria-label={`Tandai ${siswa.nama} Izin`}
-                      className={`min-h-[2.5rem] flex-1 sm:flex-none rounded-lg px-3 py-1.5 text-xs font-bold transition shadow-card ${
+                      className={`min-h-[44px] flex-1 sm:flex-none rounded-lg px-2.5 sm:px-3.5 py-2 text-xs font-bold transition shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
                         siswa.status === 'izin'
                           ? 'bg-highlight text-on-highlight'
                           : 'border border-line bg-paper text-ink hover:bg-paper-sunken'
@@ -532,7 +542,7 @@ export function PresensiFormClient({
                       disabled={isReadOnly || sedangProses}
                       aria-pressed={siswa.status === 'alpa'}
                       aria-label={`Tandai ${siswa.nama} Alpa`}
-                      className={`min-h-[2.5rem] flex-1 sm:flex-none rounded-lg px-3 py-1.5 text-xs font-bold transition shadow-card ${
+                      className={`min-h-[44px] flex-1 sm:flex-none rounded-lg px-2.5 sm:px-3.5 py-2 text-xs font-bold transition shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
                         siswa.status === 'alpa'
                           ? 'bg-danger text-on-brand'
                           : 'border border-line bg-paper text-ink hover:bg-paper-sunken'
@@ -548,7 +558,7 @@ export function PresensiFormClient({
                       disabled={isReadOnly || sedangProses}
                       aria-pressed={siswa.status === 'terlambat'}
                       aria-label={`Tandai ${siswa.nama} Terlambat`}
-                      className={`min-h-[2.5rem] flex-1 sm:flex-none rounded-lg px-3 py-1.5 text-xs font-bold transition shadow-card ${
+                      className={`min-h-[44px] flex-1 sm:flex-none rounded-lg px-2.5 sm:px-3.5 py-2 text-xs font-bold transition shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 ${
                         siswa.status === 'terlambat'
                           ? 'bg-amber-700 text-on-brand'
                           : 'border border-line bg-paper text-ink hover:bg-paper-sunken'
@@ -564,7 +574,9 @@ export function PresensiFormClient({
                         setActiveNoteSiswaId(isNoteOpen ? null : siswa.siswa_id)
                       }
                       title="Tambah atau ubah catatan siswa"
-                      className={`flex size-9 items-center justify-center rounded-lg border transition ${
+                      aria-label={`Catatan untuk ${siswa.nama}`}
+                      aria-expanded={isNoteOpen}
+                      className={`flex size-11 min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-lg border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
                         hasCatatan
                           ? 'border-brand bg-brand-soft text-brand'
                           : 'border-line bg-paper text-ink-muted hover:bg-paper-sunken'
@@ -586,12 +598,13 @@ export function PresensiFormClient({
                         onChange={(e) => handleUbahCatatan(siswa.siswa_id, e.target.value)}
                         disabled={isReadOnly || sedangProses}
                         maxLength={255}
-                        className="w-full rounded-md border-line bg-paper-sunken px-3 py-1.5 text-xs text-ink shadow-card focus:border-brand focus:ring-brand"
+                        aria-label={`Catatan untuk ${siswa.nama}`}
+                        className="min-h-[42px] w-full rounded-md border-line bg-paper-sunken px-3 py-2 text-base sm:text-xs text-ink shadow-card focus:border-brand focus:ring-brand"
                       />
                       <button
                         type="button"
                         onClick={() => setActiveNoteSiswaId(null)}
-                        className="rounded-md border border-line bg-paper px-2.5 py-1.5 text-xs font-semibold text-ink-muted hover:bg-paper-sunken"
+                        className="min-h-[42px] shrink-0 rounded-md border border-line bg-paper px-3 py-2 text-xs font-semibold text-ink-muted hover:bg-paper-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
                       >
                         Tutup
                       </button>
@@ -606,11 +619,16 @@ export function PresensiFormClient({
 
       {/* Modal Dialog Konfirmasi Finalisasi Presensi */}
       {showConfirmSelesai && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-deep/60 p-4">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-finalisasi-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink-deep/60 p-4"
+        >
           <div className="w-full max-w-md rounded-xl border border-line bg-paper p-6 shadow-lift">
             <div className="flex items-center gap-3 text-ink">
               <CheckCircle2 className="size-6 text-brand" />
-              <h3 className="font-heading text-lg font-bold">
+              <h3 id="modal-finalisasi-title" className="font-heading text-lg font-bold">
                 Finalisasi Presensi Kelas?
               </h3>
             </div>
@@ -632,6 +650,7 @@ export function PresensiFormClient({
                 type="button"
                 onClick={() => setShowConfirmSelesai(false)}
                 disabled={sedangProses}
+                className="min-h-[44px]"
               >
                 Batal
               </Tombol>
@@ -640,6 +659,7 @@ export function PresensiFormClient({
                 type="button"
                 onClick={() => eksekusiSimpan(true)}
                 disabled={sedangProses}
+                className="min-h-[44px]"
               >
                 {sedangProses ? 'Menyimpan...' : 'Ya, Selesaikan'}
               </Tombol>
@@ -674,7 +694,7 @@ export function PresensiFormClient({
           </div>
 
           {/* Tombol Aksi Utama */}
-          <div className="flex items-center justify-end gap-2">
+          <div className="grid grid-cols-3 gap-1.5 w-full sm:flex sm:w-auto sm:items-center sm:justify-end sm:gap-2">
             {/* Tombol React 19 Optimistic: "Tandai Semua Hadir" */}
             <Tombol
               variasi="garis"
@@ -682,10 +702,10 @@ export function PresensiFormClient({
               onClick={handleTandaiSemuaHadir}
               disabled={isReadOnly || sedangProses}
               title="Tandai semua siswa menjadi Hadir secara instan"
-              className="text-xs sm:text-sm shadow-card"
+              className="min-h-[44px] justify-center px-2 sm:px-4 text-xs sm:text-sm shadow-card"
             >
-              <CheckCheck className="mr-1.5 size-4 text-brand" />
-              Semua Hadir
+              <CheckCheck className="size-4 shrink-0 sm:mr-1.5 text-brand" />
+              <span className="truncate">Semua Hadir</span>
             </Tombol>
 
             {/* Simpan Draf */}
@@ -694,10 +714,18 @@ export function PresensiFormClient({
               type="button"
               onClick={() => eksekusiSimpan(false)}
               disabled={isReadOnly || sedangProses}
-              className="text-xs sm:text-sm"
+              className="min-h-[44px] justify-center px-2 sm:px-4 text-xs sm:text-sm"
             >
-              <Save className="mr-1.5 size-4" />
-              {sedangProses ? 'Menyimpan...' : 'Simpan Draf'}
+              <Save className="size-4 shrink-0 sm:mr-1.5" />
+              <span className="truncate">
+                {sedangProses ? (
+                  'Simpan…'
+                ) : (
+                  <>
+                    <span className="hidden sm:inline">Simpan </span>Draf
+                  </>
+                )}
+              </span>
             </Tombol>
 
             {/* Selesaikan Presensi */}
@@ -706,10 +734,13 @@ export function PresensiFormClient({
               type="button"
               onClick={() => setShowConfirmSelesai(true)}
               disabled={isReadOnly || sedangProses}
-              className="text-xs sm:text-sm shadow-card"
+              className="min-h-[44px] justify-center px-2 sm:px-4 text-xs sm:text-sm shadow-card"
             >
-              <CheckCircle2 className="mr-1.5 size-4" />
-              {isCompleted ? 'Perbarui Selesai' : 'Selesaikan'}
+              <CheckCircle2 className="size-4 shrink-0 sm:mr-1.5" />
+              <span className="truncate">
+                <span className="sm:hidden">{isCompleted ? 'Perbarui' : 'Selesai'}</span>
+                <span className="hidden sm:inline">{isCompleted ? 'Perbarui Selesai' : 'Selesaikan'}</span>
+              </span>
             </Tombol>
           </div>
         </div>

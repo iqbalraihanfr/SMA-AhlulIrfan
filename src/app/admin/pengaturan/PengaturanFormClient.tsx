@@ -42,7 +42,7 @@ export default function PengaturanFormClient({ pengaturan }: { pengaturan: Penga
     const [facebook, setFacebook] = useState(pengaturan.facebook ?? '');
     const [youtube, setYoutube] = useState(pengaturan.youtube ?? '');
     const [logo, setLogo] = useState<File | null>(null);
-    const [logoUrl, setLogoUrl] = useState(pengaturan.logo_url ?? '');
+    const [logoUrl] = useState(pengaturan.logo_url ?? '');
 
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});

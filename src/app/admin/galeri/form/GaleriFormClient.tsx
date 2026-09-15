@@ -25,7 +25,7 @@ export default function GaleriFormClient({ album }: { album: AlbumProp }) {
     const [deskripsi, setDeskripsi] = useState(album?.deskripsi ?? '');
     const [urutan, setUrutan] = useState(album?.urutan?.toString() ?? '0');
     const [foto, setFoto] = useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState(album?.image_url ?? '');
+    const [imageUrl] = useState(album?.image_url ?? '');
 
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
@@ -36,8 +37,18 @@ export default async function PresensiClassDatePage({ params }: Props) {
     redirect('/login');
   }
 
-  const userRole = (user.user_metadata?.peran as string) || 'admin';
-  const userGuruId = user.user_metadata?.guru_id ? Number(user.user_metadata.guru_id) : null;
+  const { data: profile } = await supabase
+    .from('users')
+    .select('peran, guru_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) {
+    throw new Error('Profil akun tidak ditemukan. Hubungi super-admin.');
+  }
+
+  const userRole = profile.peran;
+  const userGuruId = profile.guru_id;
   const isGuru = userRole === 'guru';
 
   // 1. Ambil data kelas beserta wali kelas
@@ -74,12 +85,12 @@ export default async function PresensiClassDatePage({ params }: Props) {
           Anda tidak terdaftar sebagai wali kelas untuk <strong>Kelas {kelas.nama}</strong>. Anda hanya diperbolehkan mengisi presensi untuk kelas yang Anda ampu.
         </p>
         <div className="mt-6">
-          <a
+          <Link
             href="/admin/presensi"
-            className="inline-flex items-center rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand hover:bg-brand-strong"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
             Kembali ke Halaman Presensi
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -108,7 +119,7 @@ export default async function PresensiClassDatePage({ params }: Props) {
     .maybeSingle();
 
   // 3. Ambil baris kehadiran dari database jika sesi sudah dibuat
-  let barisKehadiranMap = new Map<number, { status: StatusKehadiran; catatan?: string }>();
+  const barisKehadiranMap = new Map<number, { status: StatusKehadiran; catatan?: string }>();
   if (session) {
     const { data: existingRows } = await supabase
       .from('kehadiran_siswa')

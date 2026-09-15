@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { PageHeader, Kartu, Tombol, EmptyState } from '@/components/Ui';
+import { Kartu, Tombol, EmptyState } from '@/components/Ui';
 import { PresensiDateFilter } from './components/PresensiDateFilter';
 import {
   CalendarCheck,
@@ -47,9 +47,18 @@ export default async function AdminPresensiDashboardPage({ searchParams }: Props
     redirect('/login');
   }
 
-  // Identifikasi peran dan keterkaitan akun guru
-  const userRole = (user.user_metadata?.peran as string) || 'admin';
-  const userGuruId = user.user_metadata?.guru_id ? Number(user.user_metadata.guru_id) : null;
+  const { data: profile } = await supabase
+    .from('users')
+    .select('peran, guru_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) {
+    throw new Error('Profil akun tidak ditemukan. Hubungi super-admin.');
+  }
+
+  const userRole = profile.peran;
+  const userGuruId = profile.guru_id;
   const isGuru = userRole === 'guru';
 
   const todayWib = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
@@ -194,8 +203,8 @@ export default async function AdminPresensiDashboardPage({ searchParams }: Props
             tanggalDipilih={tanggalDipilih}
             tanggalHariIni={todayWib}
           />
-          <Link href="/admin/rekap">
-            <Tombol variasi="garis" type="button">
+          <Link href="/admin/rekap" className="w-full sm:w-auto">
+            <Tombol variasi="garis" type="button" className="w-full justify-center sm:w-auto min-h-[44px]">
               Rekap Kehadiran
             </Tombol>
           </Link>
@@ -214,8 +223,8 @@ export default async function AdminPresensiDashboardPage({ searchParams }: Props
 
       {/* Khusus Tampilan Guru: Sorotan Kelas Perwalian */}
       {isGuru && (
-        <div className="rounded-xl border border-brand/30 bg-brand-soft p-5 sm:p-6">
-          <div className="flex items-start justify-between gap-4">
+        <div className="rounded-xl border border-brand/30 bg-brand-soft p-4 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
             <div className="space-y-1">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-brand px-2.5 py-0.5 text-xs font-semibold text-on-brand">
                 <Sparkles className="size-3.5" />
@@ -232,7 +241,7 @@ export default async function AdminPresensiDashboardPage({ searchParams }: Props
             </div>
 
             {kelasWaliGuru && (
-              <div className="flex flex-col items-end gap-2">
+              <div className="flex items-center sm:flex-col sm:items-end gap-2 shrink-0">
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-semibold ${
                     kelasWaliGuru.statusPresensi === 'selesai'
@@ -253,15 +262,15 @@ export default async function AdminPresensiDashboardPage({ searchParams }: Props
           </div>
 
           {kelasWaliGuru && (
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-brand/20 pt-4">
+            <div className="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-brand/20 pt-4">
               <p className="text-xs text-ink-muted">
                 {adalahHariIni
                   ? 'Gunakan tombol di samping untuk mulai menandai atau memperbarui absensi siswa hari ini.'
                   : 'Catatan: Wali kelas hanya memiliki wewenang untuk mengisi absensi pada tanggal hari ini (WIB).'}
               </p>
 
-              <Link href={`/admin/presensi/${kelasWaliGuru.id}/${tanggalDipilih}`}>
-                <Tombol variasi="utama" className="gap-2 shadow-card">
+              <Link href={`/admin/presensi/${kelasWaliGuru.id}/${tanggalDipilih}`} className="w-full sm:w-auto shrink-0">
+                <Tombol variasi="utama" className="w-full justify-center sm:w-auto min-h-[44px] gap-2 shadow-card">
                   {kelasWaliGuru.statusPresensi === 'selesai' ? 'Tinjau / Edit Presensi' : 'Isi Presensi Sekarang'}
                   <ArrowRight className="size-4" />
                 </Tombol>
@@ -273,20 +282,20 @@ export default async function AdminPresensiDashboardPage({ searchParams }: Props
 
       {/* Kartu Metrik Ringkasan untuk Admin */}
       {!isGuru && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-          <Kartu className="p-4 sm:p-5">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-4">
+          <Kartu className="p-3.5 sm:p-5">
             <div className="flex items-center justify-between text-ink-muted">
-              <span className="text-xs font-semibold uppercase tracking-wider">Total Kelas</span>
-              <Users className="size-4 text-brand" />
+              <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-normal sm:tracking-wider">Total Kelas</span>
+              <Users className="size-4 text-brand shrink-0" />
             </div>
             <p className="mt-2 text-2xl font-bold text-ink sm:text-3xl">{totalKelas}</p>
             <p className="mt-1 text-xs text-ink-faint">Kelas aktif terdaftar</p>
           </Kartu>
 
-          <Kartu className="p-4 sm:p-5">
+          <Kartu className="p-3.5 sm:p-5">
             <div className="flex items-center justify-between text-success">
-              <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">Sudah Selesai</span>
-              <CheckCircle2 className="size-4" />
+              <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-normal sm:tracking-wider text-ink-muted">Sudah Selesai</span>
+              <CheckCircle2 className="size-4 shrink-0" />
             </div>
             <p className="mt-2 text-2xl font-bold text-success sm:text-3xl">{totalSelesai}</p>
             <p className="mt-1 text-xs text-ink-faint">
@@ -294,22 +303,22 @@ export default async function AdminPresensiDashboardPage({ searchParams }: Props
             </p>
           </Kartu>
 
-          <Kartu className="p-4 sm:p-5">
+          <Kartu className="p-3.5 sm:p-5">
             <div className="flex items-center justify-between text-highlight">
-              <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">Tersimpan Draf</span>
-              <Clock className="size-4" />
+              <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-normal sm:tracking-wider text-ink-muted">Tersimpan Draf</span>
+              <Clock className="size-4 shrink-0" />
             </div>
             <p className="mt-2 text-2xl font-bold text-highlight sm:text-3xl">{totalDraf}</p>
             <p className="mt-1 text-xs text-ink-faint">Belum difinalisasi</p>
           </Kartu>
 
-          <Kartu className="p-4 sm:p-5">
+          <Kartu className="p-3.5 sm:p-5">
             <div className="flex items-center justify-between text-ink-muted">
-              <span className="text-xs font-semibold uppercase tracking-wider">Belum Diisi</span>
-              <AlertCircle className="size-4" />
+              <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-normal sm:tracking-wider">Belum Diisi</span>
+              <AlertCircle className="size-4 shrink-0" />
             </div>
             <p className="mt-2 text-2xl font-bold text-ink sm:text-3xl">{totalBelumDiisi}</p>
-            <p className="mt-1 text-xs text-ink-faint">Perlu tindakan wali kelas</p>
+            <p className="mt-1 text-xs text-ink-faint">Perlu tindakan</p>
           </Kartu>
         </div>
       )}
@@ -431,7 +440,7 @@ export default async function AdminPresensiDashboardPage({ searchParams }: Props
                     >
                       <Tombol
                         variasi={kelas.statusPresensi === 'selesai' ? 'garis' : 'utama'}
-                        className="w-full justify-center"
+                        className="w-full justify-center min-h-[44px]"
                       >
                         <CalendarCheck className="mr-2 size-4" />
                         {kelas.statusPresensi === 'selesai'

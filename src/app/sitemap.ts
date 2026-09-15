@@ -16,7 +16,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/kontak',
   ].map((path) => ({
     url: new URL(path, siteUrl).toString(),
-    lastModified: new Date(),
   }))
 
   const [
@@ -44,17 +43,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((k: any) => routeHalamanMap[k.kunci])
     .map((k: any) => ({
       url: new URL(routeHalamanMap[k.kunci], siteUrl).toString(),
-      lastModified: k.updated_at ? new Date(k.updated_at) : new Date(),
+      lastModified: k.updated_at ? new Date(k.updated_at) : undefined,
     }))
 
   const beritaRoutes = (berita || []).map((b: any) => ({
     url: new URL(`/berita/${b.slug}`, siteUrl).toString(),
-    lastModified: b.updated_at ? new Date(b.updated_at) : new Date(),
+    lastModified: b.updated_at ? new Date(b.updated_at) : undefined,
   }))
 
   const albumRoutes = (album || []).map((a: any) => ({
     url: new URL(`/galeri/${a.slug}`, siteUrl).toString(),
-    lastModified: a.updated_at ? new Date(a.updated_at) : new Date(),
+    lastModified: a.updated_at ? new Date(a.updated_at) : undefined,
   }))
 
   return [...staticRoutes, ...proseRoutes, ...beritaRoutes, ...albumRoutes]

@@ -42,13 +42,13 @@ export function PresensiDateFilter({ tanggalDipilih, tanggalHariIni }: Props) {
           title="Hari sebelumnya"
           aria-label="Hari sebelumnya"
           disabled={isPending}
-          className="p-2 text-ink-muted transition hover:bg-paper-sunken hover:text-ink disabled:opacity-50"
+          className="flex size-11 items-center justify-center text-ink-muted transition hover:bg-paper-sunken hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
         >
           <ChevronLeft className="size-4" />
         </button>
 
-        <div className="flex items-center gap-2 border-x border-line px-3 py-1.5">
-          <Calendar className="size-4 text-brand" />
+        <div className="flex min-h-[44px] items-center gap-2 border-x border-line px-3 py-1.5">
+          <Calendar className="size-4 text-brand shrink-0" />
           <input
             type="date"
             value={tanggalDipilih}
@@ -58,7 +58,7 @@ export function PresensiDateFilter({ tanggalDipilih, tanggalHariIni }: Props) {
               }
             }}
             disabled={isPending}
-            className="border-0 bg-transparent p-0 text-sm font-medium text-ink focus:ring-0"
+            className="border-0 bg-transparent p-0 text-sm font-medium text-ink focus:ring-0 cursor-pointer"
             aria-label="Pilih tanggal presensi"
           />
         </div>
@@ -69,7 +69,7 @@ export function PresensiDateFilter({ tanggalDipilih, tanggalHariIni }: Props) {
           title="Hari berikutnya"
           aria-label="Hari berikutnya"
           disabled={isPending}
-          className="p-2 text-ink-muted transition hover:bg-paper-sunken hover:text-ink disabled:opacity-50"
+          className="flex size-11 items-center justify-center text-ink-muted transition hover:bg-paper-sunken hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
         >
           <ChevronRight className="size-4" />
         </button>
@@ -80,14 +80,14 @@ export function PresensiDateFilter({ tanggalDipilih, tanggalHariIni }: Props) {
           type="button"
           onClick={() => gantiTanggal(tanggalHariIni)}
           disabled={isPending}
-          className="rounded-lg border border-line bg-paper px-3 py-2 text-xs font-semibold text-brand transition hover:bg-brand-soft disabled:opacity-50"
+          className="flex min-h-[44px] items-center rounded-lg border border-line bg-paper px-3 py-2 text-xs font-semibold text-brand transition hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
         >
           Kembali ke Hari Ini
         </button>
       )}
 
       {isPending && (
-        <span className="text-xs text-ink-muted animate-pulse">Memuat...</span>
+        <span className="text-xs text-ink-muted animate-pulse" role="status" aria-live="polite">Memuat...</span>
       )}
     </div>
   );

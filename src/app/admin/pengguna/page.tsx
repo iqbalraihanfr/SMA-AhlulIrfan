@@ -1,9 +1,8 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { PageHeader } from '@/components/Ui';
-import { DeleteButton } from '@/components/DeleteButton';
 import { redirect } from 'next/navigation';
-import { deletePengguna } from './actions';
+import { HapusPenggunaButton } from './HapusPenggunaButton';
 
 export const metadata = {
     title: 'Akun Pengguna | Admin',
@@ -112,15 +111,7 @@ export default async function PenggunaIndex() {
                                     {u.diriSendiri ? (
                                         <span className="text-xs text-ink-faint">—</span>
                                     ) : (
-                                        <DeleteButton
-                                            id={u.id}
-                                            judul={u.nama}
-                                            pesan={`Hapus akun ${u.nama} (${u.email})?`}
-                                            onDelete={async () => {
-                                                'use server';
-                                                await deletePengguna(u.id);
-                                            }}
-                                        />
+                                        <HapusPenggunaButton id={u.id} email={u.email} />
                                     )}
                                 </td>
                             </tr>

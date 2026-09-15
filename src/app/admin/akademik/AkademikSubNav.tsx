@@ -25,7 +25,8 @@ export function AkademikSubNav() {
                         <Link
                             key={tab.href}
                             href={tab.href}
-                            className={`flex items-center gap-2 whitespace-nowrap border-b-2 py-3 px-1 text-sm font-medium transition ${
+                            aria-current={isActive ? 'page' : undefined}
+                            className={`flex min-h-[44px] items-center gap-2 whitespace-nowrap border-b-2 px-1 py-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
                                 isActive
                                     ? 'border-brand text-brand font-semibold'
                                     : 'border-transparent text-ink-muted hover:border-line hover:text-ink'

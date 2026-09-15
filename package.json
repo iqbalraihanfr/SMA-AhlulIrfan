@@ -2,11 +2,15 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint src",
+    "check:db": "node --env-file-if-exists=.env.local check-db.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -30,8 +34,8 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/sanitize-html": "^2.16.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.35",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.3.5",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
     "typescript": "^5",

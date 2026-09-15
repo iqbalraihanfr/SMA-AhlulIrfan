@@ -13,7 +13,7 @@ function isiAktif(pathname: string, href: string): boolean {
 
 function DaftarMenu({ menu, pathname, onPilih }: { menu: ItemNav[]; pathname: string; onPilih?: () => void }) {
     return (
-        <nav className="flex-1 space-y-1 p-3" aria-label="Navigasi admin">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-3" aria-label="Navigasi admin">
             {menu.map((item) => {
                 const aktif = isiAktif(pathname, item.href);
                 const Ikon = item.icon;
@@ -24,9 +24,9 @@ function DaftarMenu({ menu, pathname, onPilih }: { menu: ItemNav[]; pathname: st
                         href={item.href}
                         onClick={onPilih}
                         aria-current={aktif ? 'page' : undefined}
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+                        className={`flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-brand ${
                             aktif
-                                ? 'bg-on-brand/12 text-on-brand'
+                                ? 'bg-on-brand/12 text-on-brand font-medium'
                                 : 'text-on-brand/60 hover:bg-on-brand/8 hover:text-on-brand'
                         }`}
                     >
@@ -46,7 +46,7 @@ function KakiSidebar({ urlPublik, onLogout }: { urlPublik: string; onLogout: () 
                 href={urlPublik}
                 target="_blank"
                 rel="noopener"
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-on-brand/60 transition hover:bg-on-brand/8 hover:text-on-brand"
+                className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-on-brand/60 transition hover:bg-on-brand/8 hover:text-on-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-brand"
             >
                 <ExternalLink className="size-4 shrink-0" aria-hidden="true" />
                 Lihat situs
@@ -55,7 +55,7 @@ function KakiSidebar({ urlPublik, onLogout }: { urlPublik: string; onLogout: () 
             <button
                 type="button"
                 onClick={onLogout}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-on-brand/60 transition hover:bg-on-brand/8 hover:text-on-brand"
+                className="flex min-h-[44px] w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-on-brand/60 transition hover:bg-on-brand/8 hover:text-on-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-brand"
             >
                 <LogOut className="size-4 shrink-0" aria-hidden="true" />
                 Keluar
@@ -71,7 +71,15 @@ function LogoPanel({ logoUrl, logoAlt }: { logoUrl: string | null; logoAlt: stri
     if (effectiveLogo) {
         return (
             <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-on-brand p-1 shadow-card">
-                <img src={effectiveLogo} alt={logoAlt ?? 'Logo SMA Ahlul Irfan'} width={44} height={44} className="size-full object-contain" />
+                <img
+                    src={effectiveLogo}
+                    alt={logoAlt ?? 'Logo SMA Ahlul Irfan'}
+                    width={44}
+                    height={44}
+                    loading="eager"
+                    decoding="async"
+                    className="size-full object-contain"
+                />
             </span>
         );
     }
@@ -111,6 +119,26 @@ export function AdminLayoutClient({
         setNavMobile(false);
     }, [pathname]);
 
+    // Kunci scroll halaman belakang dan tangani tombol Escape saat drawer mobile dibuka
+    useEffect(() => {
+        if (!navMobile) return;
+
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setNavMobile(false);
+            }
+        };
+
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        window.addEventListener('keydown', onKeyDown);
+
+        return () => {
+            document.body.style.overflow = originalOverflow;
+            window.removeEventListener('keydown', onKeyDown);
+        };
+    }, [navMobile]);
+
     const handleLogout = async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
         router.push('/login');
@@ -128,17 +156,27 @@ export function AdminLayoutClient({
             </aside>
 
             {navMobile && (
-                <div className="fixed inset-0 z-50 lg:hidden">
+                <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Navigasi admin"
+                    className="fixed inset-0 z-50 lg:hidden"
+                >
                     <button
                         type="button"
-                        aria-label="Tutup menu"
+                        aria-label="Tutup menu navigasi"
                         onClick={() => setNavMobile(false)}
-                        className="absolute inset-0 bg-ink-deep/50"
+                        className="absolute inset-0 bg-ink-deep/50 transition-opacity"
                     />
-                    <aside className="relative flex h-full w-64 flex-col bg-brand-strong">
+                    <aside className="relative flex h-full w-64 max-w-[80vw] flex-col bg-brand-strong shadow-lift">
                         <div className="flex items-center justify-between gap-3 border-b border-on-brand/10 p-4">
                             <IdentitasPanel logoUrl={situs.logoUrl} logoAlt={situs.logoAlt} />
-                            <button type="button" onClick={() => setNavMobile(false)} className="text-on-brand/70 hover:text-on-brand">
+                            <button
+                                type="button"
+                                onClick={() => setNavMobile(false)}
+                                aria-label="Tutup menu navigasi"
+                                className="flex size-11 items-center justify-center rounded-lg text-on-brand/70 hover:bg-on-brand/10 hover:text-on-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-brand"
+                            >
                                 <X className="size-5" aria-hidden="true" />
                                 <span className="sr-only">Tutup menu</span>
                             </button>
@@ -156,18 +194,19 @@ export function AdminLayoutClient({
                         type="button"
                         onClick={() => setNavMobile(true)}
                         aria-expanded={navMobile}
-                        className="rounded-md p-2 text-ink-muted hover:bg-paper-sunken lg:hidden"
+                        aria-label="Buka menu navigasi"
+                        className="flex size-11 items-center justify-center rounded-lg text-ink-muted hover:bg-paper-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand lg:hidden"
                     >
                         <Menu className="size-5" aria-hidden="true" />
                         <span className="sr-only">Buka menu</span>
                     </button>
 
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                         <p className="text-xs text-ink-muted">Selamat datang kembali,</p>
                         <p className="truncate text-sm font-semibold text-ink">{user.nama}</p>
                     </div>
 
-                    <span className="ml-auto rounded-full bg-paper-sunken px-3 py-1 text-xs font-medium text-ink-muted">
+                    <span className="ml-auto shrink-0 rounded-full bg-paper-sunken px-3 py-1 text-xs font-medium text-ink-muted">
                         {user.peran === 'super-admin' ? 'Super Admin' : user.peran === 'guru' ? 'Guru' : 'Admin Sekolah'}
                     </span>
                 </header>

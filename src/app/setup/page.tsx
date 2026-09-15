@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function SetupPage() {
   const supabase = await createClient()
-  const { count, error } = await supabase
+  const { count } = await supabase
     .from('users')
     .select('*', { count: 'exact', head: true })
     

@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   );
   
   // Ping the database
-  const { data, error } = await supabase.from('pengaturan_situs').select('id').limit(1);
+  const { error } = await supabase.from('pengaturan_situs').select('id').limit(1);
   
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

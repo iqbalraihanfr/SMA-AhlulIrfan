@@ -37,7 +37,7 @@ export default function GuruFormClient({
     const [urutan, setUrutan] = useState(guru?.urutan?.toString() ?? '0');
     const [aktif, setAktif] = useState(guru?.aktif ?? true);
     const [foto, setFoto] = useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState(guru?.image_url ?? '');
+    const [imageUrl] = useState(guru?.image_url ?? '');
 
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});

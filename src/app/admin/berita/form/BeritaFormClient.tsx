@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Select, Textarea, Tombol } from '@/components/Ui';
 import EditorTeks from '@/components/EditorTeks';
 import PemilihJadwal from '@/components/PemilihJadwal';
@@ -30,8 +29,6 @@ export default function BeritaFormClient({
     pilihanStatus: { value: string; label: string }[];
 }) {
     const baru = !berita?.id;
-    const router = useRouter();
-
     const [judul, setJudul] = useState(berita?.judul ?? '');
     const [slug, setSlug] = useState(berita?.slug ?? '');
     const [ringkasan, setRingkasan] = useState(berita?.ringkasan ?? '');
@@ -40,7 +37,7 @@ export default function BeritaFormClient({
     const [diterbitkanPada, setDiterbitkanPada] = useState(berita?.diterbitkanPada ?? '');
     const [sampulAlt, setSampulAlt] = useState(berita?.sampulAlt ?? '');
     const [sampul, setSampul] = useState<File | null>(null);
-    const [sampulUrl, setSampulUrl] = useState(berita?.sampulUrl ?? '');
+    const [sampulUrl] = useState(berita?.sampulUrl ?? '');
 
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -115,14 +112,14 @@ export default function BeritaFormClient({
     if (processing) labelSimpan = 'Menyimpan...';
 
     return (
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <div className="mx-auto max-w-7xl">
             <PageHeader
                 judul={baru ? 'Tulis Berita' : 'Ubah Berita'}
                 keterangan="Susun isi di area utama, lalu atur publikasi dan gambar sampul di panel sebelah kanan."
             />
 
             <p className="mb-5 text-sm">
-                <Link href="/admin/berita" className="text-ink-muted underline underline-offset-4">
+                <Link href="/admin/berita" className="inline-flex min-h-[44px] items-center text-ink-muted underline underline-offset-4">
                     ← Kembali ke daftar berita
                 </Link>
             </p>
@@ -203,7 +200,7 @@ export default function BeritaFormClient({
 
                         <div className="border-t border-line pt-5">
                             {errors._general && <Galat pesan={errors._general} />}
-                            <Tombol disabled={processing} className="w-full justify-center mt-2">
+                            <Tombol disabled={processing} className="w-full justify-center mt-2 min-h-[44px]">
                                 {labelSimpan}
                             </Tombol>
                         </div>

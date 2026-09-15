@@ -73,7 +73,7 @@ export default function PenggunaFormClient({ pengguna, pilihanPeran, pilihanGuru
             <PageHeader judul={baru ? 'Tambah Akun' : 'Ubah Akun'} />
 
             <p className="mb-4 text-sm">
-                <Link href="/admin/pengguna" className="text-ink-muted underline underline-offset-4">
+                <Link href="/admin/pengguna" className="inline-flex min-h-[44px] items-center text-ink-muted underline underline-offset-4">
                     ← Kembali ke daftar akun
                 </Link>
             </p>
@@ -102,52 +102,49 @@ export default function PenggunaFormClient({ pengguna, pilihanPeran, pilihanGuru
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            autoComplete="off"
                         />
-                        <Petunjuk>Dipakai untuk masuk ke panel admin.</Petunjuk>
                         <Galat pesan={errors.email} />
                     </div>
 
-                    <fieldset className="space-y-3">
-                        <legend className="text-sm font-medium text-ink">Peran</legend>
-
-                        {pilihanPeran.map((p) => (
-                            <label key={p.value} className="flex items-start gap-3">
-                                <input
-                                    type="radio"
-                                    name="peran"
-                                    value={p.value}
-                                    checked={peran === p.value}
-                                    onChange={(e) => setPeran(e.target.value)}
-                                    className="mt-0.5 border-line text-brand focus:ring-brand"
-                                />
-                                <span>
-                                    <span className="text-sm font-medium text-ink">{p.label}</span>
-                                    <span className="block text-sm text-ink-muted">{p.keterangan}</span>
-                                </span>
-                            </label>
-                        ))}
-
-                        <Galat pesan={errors.peran} />
-                    </fieldset>
-
                     <div>
-                        <Label htmlFor="guru_id">Tautan ke Data Guru / Tendik (Opsional)</Label>
+                        <Label htmlFor="peran">Peran</Label>
                         <Select
-                            id="guru_id"
-                            value={guruId}
-                            onChange={(e) => setGuruId(e.target.value)}
+                            id="peran"
+                            value={peran}
+                            onChange={(e) => setPeran(e.target.value)}
                         >
-                            <option value="">Tidak ditautkan</option>
-                            {pilihanGuru.map((guru) => (
-                                <option key={guru.id} value={guru.id}>
-                                    {guru.nama}
+                            {pilihanPeran.map((p) => (
+                                <option key={p.value} value={p.value}>
+                                    {p.label}
                                 </option>
                             ))}
                         </Select>
-                        <Petunjuk>Hubungkan akun ini dengan profil pendidik atau tenaga kependidikan.</Petunjuk>
-                        <Galat pesan={errors.guru_id} />
+                        <Petunjuk>
+                            {pilihanPeran.find((p) => p.value === peran)?.keterangan}
+                        </Petunjuk>
                     </div>
+
+                    {peran === 'guru' && (
+                        <div>
+                            <Label htmlFor="guru_id">Tautkan ke Data Guru</Label>
+                            <Select
+                                id="guru_id"
+                                value={guruId}
+                                onChange={(e) => setGuruId(e.target.value)}
+                                required
+                            >
+                                <option value="">-- Pilih Profil Guru --</option>
+                                {pilihanGuru.map((g) => (
+                                    <option key={g.id} value={g.id}>
+                                        {g.nama}
+                                    </option>
+                                ))}
+                            </Select>
+                            <Petunjuk>
+                                Akun ini akan mengenali perwalian kelas dan absensi sesuai guru yang ditautkan.
+                            </Petunjuk>
+                        </div>
+                    )}
                 </Kartu>
 
                 <Kartu className="space-y-5">
@@ -172,12 +169,12 @@ export default function PenggunaFormClient({ pengguna, pilihanPeran, pilihanGuru
                                 onChange={(e) => setPassword(e.target.value)}
                                 required={baru}
                                 autoComplete="new-password"
-                                className="!mt-0 pr-10"
+                                className="!mt-0 pr-12"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword((prev) => !prev)}
-                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-ink-muted hover:text-ink focus:outline-none"
+                                className="absolute inset-y-0 right-0 flex min-w-[44px] items-center justify-center text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-r-md"
                                 aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
                             >
                                 {showPassword ? (
@@ -200,12 +197,12 @@ export default function PenggunaFormClient({ pengguna, pilihanPeran, pilihanGuru
                                 onChange={(e) => setPasswordConfirmation(e.target.value)}
                                 required={baru || Boolean(password)}
                                 autoComplete="new-password"
-                                className="!mt-0 pr-10"
+                                className="!mt-0 pr-12"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPasswordConfirmation((prev) => !prev)}
-                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-ink-muted hover:text-ink focus:outline-none"
+                                className="absolute inset-y-0 right-0 flex min-w-[44px] items-center justify-center text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-r-md"
                                 aria-label={showPasswordConfirmation ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
                             >
                                 {showPasswordConfirmation ? (
@@ -220,10 +217,10 @@ export default function PenggunaFormClient({ pengguna, pilihanPeran, pilihanGuru
                 </Kartu>
 
                 <div className="flex items-center gap-3">
-                    <Tombol disabled={processing}>
+                    <Tombol disabled={processing} className="min-h-[44px]">
                         {processing ? 'Menyimpan…' : baru ? 'Buat Akun' : 'Simpan Perubahan'}
                     </Tombol>
-                    <Link href="/admin/pengguna" className="text-sm text-ink-muted underline underline-offset-4">
+                    <Link href="/admin/pengguna" className="inline-flex min-h-[44px] items-center px-2 text-sm text-ink-muted underline underline-offset-4">
                         Batal
                     </Link>
                 </div>

@@ -29,8 +29,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             .maybeSingle(),
     ]);
 
-    const userRole = profile?.peran || user.user_metadata?.peran || 'admin';
-    const userName = profile?.nama || user.user_metadata?.nama || user.email || 'Admin';
+    if (!profile) {
+        throw new Error('Profil akun tidak ditemukan. Hubungi super-admin.');
+    }
+
+    const userRole = profile.peran;
+    const userName = profile.nama;
 
     // Berdasarkan peran ('super-admin', 'admin', 'guru'), atur boolean flags izin yang sesuai
     const userIzin = hitungIzin(userRole);

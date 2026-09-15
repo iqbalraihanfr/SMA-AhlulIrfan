@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react';
 import Link from 'next/link';
-import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Select, Tombol } from '@/components/Ui';
+import { Input, Kartu, Label, PageHeader, Petunjuk, Select, Tombol } from '@/components/Ui';
 import { saveTahunAjaran } from '../actions';
 import type { TahunAjaran, ActionFormState } from '@/types/absensi';
 
@@ -20,7 +20,7 @@ export default function TahunAjaranFormClient({
             <PageHeader judul={baru ? 'Tambah Tahun Ajaran' : 'Ubah Tahun Ajaran'} />
 
             <p className="mb-4 text-sm">
-                <Link href="/admin/akademik/tahun-ajaran" className="text-ink-muted underline underline-offset-4">
+                <Link href="/admin/akademik/tahun-ajaran" className="inline-flex min-h-[44px] items-center text-ink-muted underline underline-offset-4">
                     ← Kembali ke daftar tahun ajaran
                 </Link>
             </p>
@@ -88,13 +88,13 @@ export default function TahunAjaranFormClient({
                         </div>
                     </div>
 
-                    <label className="flex items-start gap-3 pt-2">
+                    <label className="flex items-start gap-3 pt-2 cursor-pointer">
                         <input
                             type="checkbox"
                             name="aktif"
                             value="true"
                             defaultChecked={tahunAjaran?.aktif ?? false}
-                            className="mt-0.5 rounded border-line text-brand shadow-card focus:ring-brand"
+                            className="mt-0.5 size-5 rounded border-line text-brand shadow-card focus:ring-brand"
                         />
                         <span>
                             <span className="text-sm font-medium text-ink">Jadikan Periode Aktif</span>
@@ -106,12 +106,12 @@ export default function TahunAjaranFormClient({
                 </Kartu>
 
                 <div className="flex items-center gap-3">
-                    <Tombol disabled={isPending}>
+                    <Tombol disabled={isPending} className="min-h-[44px]">
                         {isPending ? 'Menyimpan…' : baru ? 'Simpan Tahun Ajaran' : 'Simpan Perubahan'}
                     </Tombol>
                     <Link
                         href="/admin/akademik/tahun-ajaran"
-                        className="text-sm text-ink-muted underline underline-offset-4"
+                        className="inline-flex min-h-[44px] items-center px-2 text-sm text-ink-muted underline underline-offset-4"
                     >
                         Batal
                     </Link>

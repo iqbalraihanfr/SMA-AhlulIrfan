@@ -20,7 +20,7 @@ export default function SiswaFormClient({
             <PageHeader judul={baru ? 'Tambah Siswa' : 'Ubah Data Siswa'} />
 
             <p className="mb-4 text-sm">
-                <Link href="/admin/akademik/siswa" className="text-ink-muted underline underline-offset-4">
+                <Link href="/admin/akademik/siswa" className="inline-flex min-h-[44px] items-center text-ink-muted underline underline-offset-4">
                     ← Kembali ke data siswa
                 </Link>
             </p>
@@ -75,13 +75,13 @@ export default function SiswaFormClient({
                         </Select>
                     </div>
 
-                    <label className="flex items-start gap-3 pt-2">
+                    <label className="flex items-start gap-3 pt-2 cursor-pointer">
                         <input
                             type="checkbox"
                             name="aktif"
                             value="true"
                             defaultChecked={siswa?.aktif ?? true}
-                            className="mt-0.5 rounded border-line text-brand shadow-card focus:ring-brand"
+                            className="mt-0.5 size-5 rounded border-line text-brand shadow-card focus:ring-brand"
                         />
                         <span>
                             <span className="text-sm font-medium text-ink">Status Aktif</span>
@@ -93,10 +93,10 @@ export default function SiswaFormClient({
                 </Kartu>
 
                 <div className="flex items-center gap-3">
-                    <Tombol disabled={isPending}>
+                    <Tombol disabled={isPending} className="min-h-[44px]">
                         {isPending ? 'Menyimpan…' : baru ? 'Simpan Siswa' : 'Simpan Perubahan'}
                     </Tombol>
-                    <Link href="/admin/akademik/siswa" className="text-sm text-ink-muted underline underline-offset-4">
+                    <Link href="/admin/akademik/siswa" className="inline-flex min-h-[44px] items-center px-2 text-sm text-ink-muted underline underline-offset-4">
                         Batal
                     </Link>
                 </div>

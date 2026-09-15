@@ -53,7 +53,7 @@ export default function RosterFormClient({
             <p className="mb-4 text-sm">
                 <Link
                     href={`/admin/akademik/roster${selectedKelas ? `?kelas_id=${selectedKelas}` : ''}`}
-                    className="text-ink-muted underline underline-offset-4"
+                    className="inline-flex min-h-[44px] items-center text-ink-muted underline underline-offset-4"
                 >
                     ← Kembali ke daftar roster
                 </Link>
@@ -139,12 +139,12 @@ export default function RosterFormClient({
                 </Kartu>
 
                 <div className="flex items-center gap-3">
-                    <Tombol disabled={isPending}>
+                    <Tombol disabled={isPending} className="min-h-[44px]">
                         {isPending ? 'Menyimpan…' : baru ? 'Simpan ke Roster' : 'Simpan Perubahan'}
                     </Tombol>
                     <Link
                         href={`/admin/akademik/roster${selectedKelas ? `?kelas_id=${selectedKelas}` : ''}`}
-                        className="text-sm text-ink-muted underline underline-offset-4"
+                        className="inline-flex min-h-[44px] items-center px-2 text-sm text-ink-muted underline underline-offset-4"
                     >
                         Batal
                     </Link>

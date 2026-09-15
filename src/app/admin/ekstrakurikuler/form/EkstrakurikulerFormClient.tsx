@@ -29,7 +29,7 @@ export default function EkstrakurikulerFormClient({ ekskul }: { ekskul: EkskulPr
     const [jadwal, setJadwal] = useState(ekskul?.jadwal ?? '');
     const [urutan, setUrutan] = useState(ekskul?.urutan?.toString() ?? '0');
     const [gambar, setGambar] = useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState(ekskul?.image_url ?? '');
+    const [imageUrl] = useState(ekskul?.image_url ?? '');
 
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});

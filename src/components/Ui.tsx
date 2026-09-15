@@ -32,7 +32,7 @@ export function PageHeader({ judul, keterangan, aksi }: { judul: string; keteran
 }
 
 export function Kartu({ children, className = '' }: { children: ReactNode; className?: string }) {
-    return <div className={`rounded-lg border border-line bg-paper p-6 shadow-card ${className}`}>{children}</div>;
+    return <div className={`rounded-lg border border-line bg-paper p-4 sm:p-6 shadow-card ${className}`}>{children}</div>;
 }
 
 export function Label({ children, className = '', ...props }: LabelHTMLAttributes<HTMLLabelElement>) {
@@ -44,7 +44,7 @@ export function Label({ children, className = '', ...props }: LabelHTMLAttribute
 }
 
 const kelasKolom =
-    'mt-1 block w-full rounded-md border-line bg-paper text-ink shadow-card placeholder:text-ink-faint focus:border-brand focus:ring-brand disabled:opacity-50';
+    'mt-1 block w-full rounded-md border-line bg-paper text-ink shadow-card placeholder:text-ink-faint focus:border-brand focus:ring-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50 text-base sm:text-sm min-h-[42px] sm:min-h-[38px]';
 
 export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
     return <input {...props} className={`${kelasKolom} ${props.className ?? ''}`} />;
@@ -83,7 +83,7 @@ export function Tombol({
         <button
             type="submit"
             {...props}
-            className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-semibold transition disabled:opacity-50 ${gaya} ${props.className ?? ''}`}
+            className={`inline-flex min-h-[40px] sm:min-h-[38px] items-center justify-center rounded-md px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:opacity-50 ${gaya} ${props.className ?? ''}`}
         >
             {children}
         </button>
