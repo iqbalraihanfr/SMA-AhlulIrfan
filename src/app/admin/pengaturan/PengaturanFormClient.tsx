@@ -86,9 +86,15 @@ export default function PengaturanFormClient({ pengaturan }: { pengaturan: Penga
         if (!file) return;
 
         if (file.size > 2 * 1024 * 1024) {
-            alert('Ukuran logo maksimal 2 MB.');
+            setErrors((prev) => ({ ...prev, logo: 'Ukuran logo maksimal 2 MB.' }));
+            e.target.value = '';
             return;
         }
+        setErrors((prev) => {
+            const next = { ...prev };
+            delete next.logo;
+            return next;
+        });
         setLogo(file);
     };
 

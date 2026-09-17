@@ -17,6 +17,13 @@ export const metadata: Metadata = {
   },
 }
 
+function inisial(nama: string): string {
+  const parts = nama.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return '?'
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
 function KartuGuru({ guru }: { guru: any }) {
   return (
     <div className="surface-card p-4">
@@ -29,7 +36,11 @@ function KartuGuru({ guru }: { guru: any }) {
             loading="lazy"
           />
         ) : (
-          <div className="grid h-full place-items-center text-ink-muted">FOTO</div>
+          <div className="grid h-full place-items-center bg-brand-soft/60 text-brand">
+            <span aria-hidden="true" className="font-heading text-3xl font-semibold">
+              {inisial(guru.nama)}
+            </span>
+          </div>
         )}
       </div>
       <h3 className="mt-3 font-heading font-semibold text-ink-deep">{guru.nama}</h3>

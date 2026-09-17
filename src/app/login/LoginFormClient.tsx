@@ -9,6 +9,7 @@ const initialState: LoginFormState = { error: '' }
 export default function LoginFormClient() {
   const [state, formAction, isPending] = useActionState(loginUser, initialState)
   const [showPassword, setShowPassword] = useState(false)
+  const [showLupaSandi, setShowLupaSandi] = useState(false)
 
   return (
     <form className="mt-8 space-y-6" action={formAction}>
@@ -20,6 +21,19 @@ export default function LoginFormClient() {
           {state.error}
         </div>
       ) : null}
+
+      {showLupaSandi && (
+        <div
+          role="region"
+          aria-label="Petunjuk pemulihan kata sandi"
+          className="rounded-md border border-brand/30 bg-brand-soft p-3.5 text-xs text-ink space-y-1"
+        >
+          <p className="font-semibold text-brand">Informasi Lupa Kata Sandi</p>
+          <p className="text-ink-muted leading-relaxed">
+            Untuk menjaga keamanan data sekolah, pemulihan akun dilakukan langsung melalui Super Admin sekolah. Silakan hubungi bagian tata usaha / pengelola sistem.
+          </p>
+        </div>
+      )}
 
       <div className="space-y-4">
         <div>
@@ -44,14 +58,14 @@ export default function LoginFormClient() {
             <label htmlFor="password" className="block text-sm font-medium text-ink">
               Kata Sandi
             </label>
-            <a
-              href="#" onClick={(e) => { e.preventDefault(); alert("Silakan hubungi Administrator secara langsung."); }}
-              
-              
-              className="text-xs font-medium text-ink-muted hover:text-brand hover:underline underline-offset-4 transition-colors"
+            <button
+              type="button"
+              onClick={() => setShowLupaSandi((prev) => !prev)}
+              aria-expanded={showLupaSandi}
+              className="rounded text-xs font-medium text-ink-muted hover:text-brand hover:underline underline-offset-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             >
               Lupa Kata Sandi?
-            </a>
+            </button>
           </div>
           <div className="relative mt-1">
             <input

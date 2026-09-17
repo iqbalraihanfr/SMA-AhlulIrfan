@@ -76,7 +76,7 @@ export default async function BeritaIndex(props: { searchParams: Promise<{ cari?
     ];
 
     return (
-        <>
+        <div className="max-w-5xl space-y-6">
             <PageHeader
                 judul="Berita"
                 keterangan="Kabar, kegiatan, dan pengumuman sekolah."
@@ -90,8 +90,7 @@ export default async function BeritaIndex(props: { searchParams: Promise<{ cari?
                 }
             />
 
-            <div className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6">
-                <form className="flex flex-wrap items-end gap-3" method="GET">
+            <form className="flex flex-wrap items-end gap-3" method="GET">
                     <Input
                         type="search"
                         name="cari"
@@ -183,7 +182,6 @@ export default async function BeritaIndex(props: { searchParams: Promise<{ cari?
                         )}
                     </>
                 )}
-            </div>
-        </>
+        </div>
     );
 }

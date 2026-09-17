@@ -469,11 +469,6 @@ export default async function Beranda() {
             <Link href="/kontak" className="button-secondary">
               Lihat informasi kontak
             </Link>
-            {tautanWa && (
-              <a href={tautanWa} target="_blank" rel="noopener" className="button-highlight">
-                Chat WhatsApp
-              </a>
-            )}
           </div>
         </div>
       </section>

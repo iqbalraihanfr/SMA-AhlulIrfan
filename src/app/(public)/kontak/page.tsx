@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { PageHero } from '@/components/ui/PageHero'
-import { EmptyState } from '@/components/ui/EmptyState'
 
 export const metadata: Metadata = {
   title: 'Kontak',
@@ -27,7 +26,7 @@ export default async function KontakPage() {
 
   const namaSekolah = situs?.nama_sekolah || 'SMA Ahlul Irfan Bangsalsari'
 
-      return (
+  return (
     <>
       <PageHero
         judul="Kontak"

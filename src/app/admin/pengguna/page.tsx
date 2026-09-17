@@ -72,8 +72,8 @@ export default async function PenggunaIndex() {
                 Buka akunnya, isi kata sandi baru, lalu sampaikan langsung kepada staf yang bersangkutan.
             </p>
 
-            <div className="max-w-3xl overflow-hidden rounded-lg border border-line bg-paper shadow-card">
-                <table className="w-full text-left text-sm">
+            <div className="max-w-3xl overflow-x-auto rounded-lg border border-line bg-paper shadow-card">
+                <table className="w-full min-w-[550px] text-left text-sm">
                     <thead className="border-b border-line text-xs uppercase tracking-wide text-ink-muted">
                         <tr>
                             <th scope="col" className="px-4 py-3">Nama</th>
