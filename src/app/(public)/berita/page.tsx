@@ -1,3 +1,4 @@
+import { schoolOpenGraph } from '@/lib/seo'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { PageHero } from '@/components/ui/PageHero'
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
   description: 'Kabar, kegiatan, dan pengumuman SMA Ahlul Irfan Bangsalsari.',
   alternates: { canonical: '/berita' },
   openGraph: {
+      ...schoolOpenGraph,
     title: 'Berita | SMA Ahlul Irfan Bangsalsari',
     description: 'Kabar, kegiatan, dan pengumuman SMA Ahlul Irfan Bangsalsari.',
     url: '/berita',
@@ -20,12 +22,14 @@ export const metadata: Metadata = {
 export default async function BeritaPage() {
   const supabase = await createClient()
 
-  const { data: daftar } = await supabase
+  const { data: daftar, error } = await supabase
     .from('berita')
     .select('*')
     .eq('status', 'terbit')
     .lte('diterbitkan_pada', new Date().toISOString())
     .order('diterbitkan_pada', { ascending: false })
+
+  if (error) throw new Error('Berita belum bisa dimuat. Silakan coba lagi.')
 
   return (
     <>

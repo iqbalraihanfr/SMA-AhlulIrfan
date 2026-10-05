@@ -27,18 +27,12 @@ export default function GlobalError({
         </div>
 
         <h1 className="mt-4 font-heading text-2xl font-bold tracking-tight text-ink-deep sm:text-3xl">
-          Terjadi Kendala Teknis
+          Halaman belum bisa dimuat
         </h1>
 
         <p className="mt-3 text-sm text-ink-muted leading-relaxed">
-          Mohon maaf atas ketidaknyamanannya. Halaman ini mengalami kendala yang tidak terduga saat memuat data.
+          Maaf, ada kendala saat membuka halaman ini. Periksa koneksi Anda, lalu coba muat ulang.
         </p>
-
-        {error?.digest && (
-          <p className="mt-2 font-mono text-xs text-ink-faint">
-            Kode Galat: {error.digest}
-          </p>
-        )}
 
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <button

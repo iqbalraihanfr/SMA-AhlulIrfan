@@ -31,7 +31,7 @@ function getSupabaseAdmin() {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
-        throw new Error('Supabase admin credentials (NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY) belum dikonfigurasi di file environment.');
+        throw new Error('Pengelolaan akun belum siap. Hubungi pengelola website untuk mengaktifkan fitur ini.');
     }
 
     return createClient(supabaseUrl, serviceRoleKey, {

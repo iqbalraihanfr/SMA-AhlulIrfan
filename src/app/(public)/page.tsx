@@ -1,12 +1,16 @@
+import { jsonLd, schoolDescription, schoolName, schoolOpenGraph } from '@/lib/seo'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { KartuBerita } from '@/components/ui/KartuBerita'
+import { siteUrl } from '@/lib/site-url'
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
   openGraph: {
+      ...schoolOpenGraph,
     title: 'SMA Ahlul Irfan Bangsalsari',
-    description: 'Situs resmi SMA Ahlul Irfan Bangsalsari',
+    description: schoolDescription,
     url: '/',
     locale: 'id_ID',
     type: 'website',
@@ -110,19 +114,6 @@ function peran(guru: any): string {
     .join(' · ')
 }
 
-function formatTanggal(isoDate?: string): string {
-  if (!isoDate) return ''
-  try {
-    return new Date(isoDate).toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
-  } catch {
-    return isoDate
-  }
-}
-
 export default async function Beranda() {
   const supabase = await createClient()
 
@@ -162,6 +153,17 @@ export default async function Beranda() {
 
     return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({
+        '@context': 'https://schema.org',
+        '@graph': [
+          { '@type': 'WebSite', '@id': new URL('/#website', siteUrl).href,
+            name: schoolName, url: siteUrl.href, inLanguage: 'id-ID' },
+          { '@type': 'School', '@id': new URL('/#school', siteUrl).href,
+            name: situs?.nama_sekolah || schoolName, url: siteUrl.href,
+            logo: new URL('/logo-sma.webp', siteUrl).href,
+            address: situs?.alamat || undefined, email: situs?.email || undefined },
+        ],
+      }) }} />
       <section className="site-hero" style={{ '--hero-image': `url('${hero}')` } as React.CSSProperties}>
         <div className="section-shell site-hero__inner">
           <div>
@@ -356,49 +358,7 @@ export default async function Beranda() {
           ) : (
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {beritaTerbaru.map((berita: any) => (
-                <article key={berita.id} className="surface-card group overflow-hidden">
-                  {berita.image_url && (
-                    <Link href={`/berita/${berita.slug}`} className="media-frame block h-full">
-                      <img
-                        src={berita.image_url}
-                        alt={berita.judul}
-                        width={800}
-                        height={500}
-                        loading="lazy"
-                        className="aspect-[8/5] h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-                      />
-                    </Link>
-                  )}
-                  <div className="flex flex-col p-5 sm:p-6">
-                    {berita.diterbitkan_pada && (
-                      <time
-                        dateTime={berita.diterbitkan_pada}
-                        className="text-xs font-bold uppercase tracking-widest text-highlight"
-                      >
-                        {formatTanggal(berita.diterbitkan_pada)}
-                      </time>
-                    )}
-                    <h3 className="mt-3 font-heading text-xl font-semibold leading-tight text-ink-deep">
-                      <Link
-                        href={`/berita/${berita.slug}`}
-                        className="underline-offset-4 decoration-highlight/60 group-hover:underline"
-                      >
-                        {berita.judul}
-                      </Link>
-                    </h3>
-                    {berita.ringkasan && (
-                      <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink-muted">
-                        {berita.ringkasan}
-                      </p>
-                    )}
-                    <Link
-                      href={`/berita/${berita.slug}`}
-                      className="mt-auto pt-5 text-sm font-bold text-brand hover:underline"
-                    >
-                      Baca berita <span aria-hidden="true">&rarr;</span>
-                    </Link>
-                  </div>
-                </article>
+                <KartuBerita key={berita.id} berita={berita} />
               ))}
             </div>
           )}

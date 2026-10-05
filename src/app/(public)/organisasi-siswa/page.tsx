@@ -1,3 +1,4 @@
+import { schoolOpenGraph } from '@/lib/seo'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
@@ -21,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: `Organisasi siswa di SMA Ahlul Irfan Bangsalsari.`,
     alternates: { canonical: '/organisasi-siswa' },
     openGraph: {
+      ...schoolOpenGraph,
       title: `${halaman.judul} | SMA Ahlul Irfan Bangsalsari`,
       description: `Organisasi siswa di SMA Ahlul Irfan Bangsalsari.`,
       url: '/organisasi-siswa',

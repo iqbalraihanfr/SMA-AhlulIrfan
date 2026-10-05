@@ -1,6 +1,6 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { Tombol } from '@/components/Ui';
 import { deletePengguna } from './actions';
 
@@ -11,23 +11,25 @@ interface HapusPenggunaButtonProps {
 
 export function HapusPenggunaButton({ id, email }: HapusPenggunaButtonProps) {
     const [isPending, startTransition] = useTransition();
+    const [error, setError] = useState('');
 
     const handleHapus = () => {
-        const input = window.prompt('Ketik email pengguna (contoh: ' + email + ') untuk menghapus:');
-        if (!input || input.trim() !== email) {
-            return;
-        }
+        setError('');
+        const input = window.prompt(`Hapus akun ${email}? Akun tidak bisa dipulihkan. Ketik ${email} untuk melanjutkan.`);
+        if (input === null) return;
+        if (input.trim() !== email) { setError('Email belum cocok. Akun tidak dihapus.'); return; }
 
         startTransition(async () => {
             try {
                 await deletePengguna(id, input);
             } catch (err: unknown) {
-                alert(err instanceof Error ? err.message : 'Gagal menghapus akun pengguna.');
+                setError(err instanceof Error ? err.message : 'Akun belum berhasil dihapus. Silakan coba lagi.');
             }
         });
     };
 
     return (
+        <div>
         <Tombol
             type="button"
             variasi="bahaya"
@@ -36,5 +38,7 @@ export function HapusPenggunaButton({ id, email }: HapusPenggunaButtonProps) {
         >
             {isPending ? 'Menghapus...' : 'Hapus'}
         </Tombol>
+        {error && <p role="alert" className="mt-2 max-w-xs text-sm text-danger">{error}</p>}
+        </div>
     );
 }

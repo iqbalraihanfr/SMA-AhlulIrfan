@@ -1,67 +1,13 @@
 -- ==============================================================================
 -- SEED DATA UNTUK SMA AHLUL IRFAN BANGSALSARI
--- Jalankan skrip ini di Supabase SQL Editor (https://supabase.com/dashboard/project/vsfmwdjpcjhgulntvhal/sql)
+-- Untuk database lokal kosong saja. Jangan dijalankan ulang pada production.
 -- ==============================================================================
 
--- 1. Pastikan Storage Bucket 'images' ada dan bisa diunggah
-insert into storage.buckets (id, name, public) 
+-- Data awal untuk database lokal kosong sesudah schema.sql.
+-- SQL Editor sudah memakai role privileged; seeder tidak perlu membuka policies RLS.
+insert into storage.buckets (id, name, public)
 values ('images', 'images', true)
-on conflict (id) do update set public = true;
-
-drop policy if exists "Anyone can read images" on storage.objects;
-create policy "Anyone can read images" on storage.objects for select using (bucket_id = 'images');
-
-drop policy if exists "Allow upload to images" on storage.objects;
-create policy "Allow upload to images" on storage.objects for insert with check (bucket_id = 'images');
-
-drop policy if exists "Allow update to images" on storage.objects;
-create policy "Allow update to images" on storage.objects for update using (bucket_id = 'images');
-
--- 2. Kebijakan RLS agar seeder / admin bisa mengisi data
-drop policy if exists "Allow seeder insert to pengaturan_situs" on public.pengaturan_situs;
-create policy "Allow seeder insert to pengaturan_situs" on public.pengaturan_situs for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to guru" on public.guru;
-create policy "Allow seeder insert to guru" on public.guru for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to konten_halaman" on public.konten_halaman;
-create policy "Allow seeder insert to konten_halaman" on public.konten_halaman for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to ekstrakurikuler" on public.ekstrakurikuler;
-create policy "Allow seeder insert to ekstrakurikuler" on public.ekstrakurikuler for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to album" on public.album;
-create policy "Allow seeder insert to album" on public.album for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to berita" on public.berita;
-create policy "Allow seeder insert to berita" on public.berita for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to struktur_organisasi" on public.struktur_organisasi;
-create policy "Allow seeder insert to struktur_organisasi" on public.struktur_organisasi for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to tahun_ajaran" on public.tahun_ajaran;
-create policy "Allow seeder insert to tahun_ajaran" on public.tahun_ajaran for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to kelas" on public.kelas;
-create policy "Allow seeder insert to kelas" on public.kelas for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to siswa" on public.siswa;
-create policy "Allow seeder insert to siswa" on public.siswa for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to anggota_kelas" on public.anggota_kelas;
-create policy "Allow seeder insert to anggota_kelas" on public.anggota_kelas for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to presensi" on public.presensi;
-create policy "Allow seeder insert to presensi" on public.presensi for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to kehadiran_siswa" on public.kehadiran_siswa;
-create policy "Allow seeder insert to kehadiran_siswa" on public.kehadiran_siswa for all using (true) with check (true);
-
-drop policy if exists "Allow seeder insert to riwayat_presensi" on public.riwayat_presensi;
-create policy "Allow seeder insert to riwayat_presensi" on public.riwayat_presensi for all using (true) with check (true);
-
-drop policy if exists "Users can read own profile" on public.users;
-create policy "Users can read own profile" on public.users for select to authenticated using (auth.uid() = id);
+on conflict (id) do nothing;
 
 -- 3. Pengaturan Situs
 delete from public.pengaturan_situs;
@@ -82,9 +28,9 @@ insert into public.pengaturan_situs (
   'Yayasan Ahlul Irfan Al-Kholily',
   'Berilmu, Berakhlak Mulia, Berprestasi, dan Berdaya Saing Global',
   'Jl. Mawar Gg. Al-Kholily, Langkap, Bangsalsari, Jember, Jawa Timur 68154',
-  '081234567890',
-  '081234567890',
-  'sma.ahlulirfan@gmail.com',
+  null,
+  null,
+  null,
   true,
   'https://vsfmwdjpcjhgulntvhal.supabase.co/storage/v1/object/public/images/logo-sma.webp'
 );
@@ -197,8 +143,8 @@ insert into public.berita (judul, slug, ringkasan, isi, status, diterbitkan_pada
   'ppdb-sma-ahlul-irfan-2026-2027',
   'Pendaftaran peserta didik baru SMA Ahlul Irfan Bangsalsari tahun ajaran 2026/2027 telah resmi dibuka.',
   '<p>SMA Ahlul Irfan Bangsalsari membuka pendaftaran peserta didik baru untuk tahun ajaran 2026/2027 dengan program unggulan keterpaduan sains dan kurikulum pesantren.</p>',
-  'terbit',
-  now() - interval '2 days',
+  'draft',
+  null,
   'https://vsfmwdjpcjhgulntvhal.supabase.co/storage/v1/object/public/images/galeri/gedung-yayasan.webp'
 ),
 (
@@ -206,8 +152,8 @@ insert into public.berita (judul, slug, ringkasan, isi, status, diterbitkan_pada
   'pembinaan-karakter-santri-dan-siswa',
   'Kegiatan pembinaan rutin untuk menanamkan kedisiplinan, adab, dan kepemimpinan Islami.',
   '<p>Pembinaan karakter dilaksanakan terpadu antara kegiatan sekolah menengah atas dengan asrama pondok pesantren.</p>',
-  'terbit',
-  now() - interval '5 days',
+  'draft',
+  null,
   'https://vsfmwdjpcjhgulntvhal.supabase.co/storage/v1/object/public/images/galeri/pembinaan-santri-putra.webp'
 ),
 (
@@ -215,8 +161,8 @@ insert into public.berita (judul, slug, ringkasan, isi, status, diterbitkan_pada
   'praktikum-sains-laboratorium-terpadu',
   'Meningkatkan pemahaman peserta didik melalui eksperimen langsung di ruang laboratorium yang lengkap.',
   '<p>Pembelajaran sains diperkuat dengan praktikum aktif agar siswa memahami konsep secara mendalam dan aplikatif.</p>',
-  'terbit',
-  now() - interval '10 days',
+  'draft',
+  null,
   'https://vsfmwdjpcjhgulntvhal.supabase.co/storage/v1/object/public/images/galeri/ruang-laboratorium.webp'
 )
 on conflict (slug) do update set

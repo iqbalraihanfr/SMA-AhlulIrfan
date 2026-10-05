@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { test } from 'node:test'
 
 // Node 24 strips TypeScript; resolve the same local paths used by Next.js.
@@ -10,7 +10,7 @@ registerHooks({ resolve(specifier, context, nextResolve) {
   return nextResolve(path && existsSync(path) ? path.href : specifier, context)
 } })
 
-const { tanggalSchema, beritaSchema, albumSchema, cleanHtml, buatSlug, jadwalPublikasi, nomorWhatsApp } = await import('../src/lib/konten.ts')
+const { tanggalSchema, beritaSchema, albumSchema, cleanHtml, ringkasanBerita, buatSlug, jadwalPublikasi, nomorWhatsApp } = await import('../src/lib/konten.ts')
 const { rekapFilterSchema, buatCsv } = await import('../src/lib/rekap-format.ts')
 const { optimalkanGambar, hitungUkuranTarget } = await import('../src/lib/optimalkanGambar.ts')
 
@@ -30,6 +30,12 @@ test('school publishing and export preserve content while rejecting invalid inpu
   const html = cleanHtml('<script>alert(1)</script><figure><img src="https://example.org/photo.jpg" onerror="alert(1)"><figcaption>Kegiatan siswa</figcaption></figure><a href="javascript:alert(1)">klik</a>')
   assert.match(html, /<figcaption>Kegiatan siswa<\/figcaption>/)
   assert.doesNotMatch(html, /script|onerror|javascript/)
+  assert.equal(ringkasanBerita(' Ringkasan resmi ', '<p>Isi</p>'), 'Ringkasan resmi')
+  assert.equal(ringkasanBerita('', '<script>danger()</script><p>Sains &amp; agama</p><p>Kegiatan siswa</p>'), 'Sains & agama Kegiatan siswa')
+  assert.equal(ringkasanBerita(null, null), '')
+  const seed = readFileSync(new URL('../supabase/seed.sql', import.meta.url), 'utf8')
+  assert.doesNotMatch(seed, /create policy|081234567890|sma\.ahlulirfan@gmail\.com/i, 'Seed must not reopen RLS or restore placeholder contacts')
+  assert.doesNotMatch(seed.split('-- 8. Berita')[1].split('-- 9.')[0], /'terbit'/, 'Sample news must remain draft')
   const album = { judul: 'Kegiatan', urutan: '0', foto_urls: ['https://example.org/a.jpg', 'https://example.org/b.jpg'] }
   assert.equal(albumSchema.safeParse(album).success, true)
   assert.equal(albumSchema.safeParse({ ...album, foto_urls: Array(51).fill(album.foto_urls[0]) }).success, false)

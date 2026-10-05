@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST() {
     const supabase = await createClient();
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    if (error) return NextResponse.json({ error: 'Belum berhasil keluar. Silakan coba lagi.' }, { status: 500 });
     return NextResponse.json({ success: true });
 }

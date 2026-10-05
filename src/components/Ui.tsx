@@ -65,7 +65,7 @@ export function Petunjuk({ children }: { children: ReactNode }) {
 export function Galat({ pesan }: { pesan?: string }) {
     if (!pesan) return null;
 
-    return <p className="mt-2 text-sm text-danger">{pesan}</p>;
+    return <p role="alert" className="mt-2 text-sm text-danger">{pesan}</p>;
 }
 
 export function Tombol({

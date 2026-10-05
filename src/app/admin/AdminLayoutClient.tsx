@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { ExternalLink, LogOut, Menu, X } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { navTampil, type ItemNav } from '@/lib/nav-admin';
@@ -110,8 +110,8 @@ export function AdminLayoutClient({
     situs: { logoUrl: string | null; logoAlt: string | null; urlPublik: string };
 }) {
     const pathname = usePathname();
-    const router = useRouter();
     const [navMobile, setNavMobile] = useState(false);
+    const [logoutError, setLogoutError] = useState('');
 
     const menu = navTampil(user.izin);
 
@@ -140,8 +140,14 @@ export function AdminLayoutClient({
     }, [navMobile]);
 
     const handleLogout = async () => {
-        await fetch('/api/auth/logout', { method: 'POST' });
-        router.push('/login');
+        setLogoutError('');
+        try {
+            const response = await fetch('/api/auth/logout', { method: 'POST' });
+            if (!response.ok) throw new Error('Logout failed');
+            window.location.replace('/login');
+        } catch {
+            setLogoutError('Belum berhasil keluar. Periksa koneksi Anda, lalu coba lagi.');
+        }
     };
 
     return (
@@ -211,7 +217,10 @@ export function AdminLayoutClient({
                     </span>
                 </header>
 
-                <main className="p-4 md:p-7">{children}</main>
+                <main className="p-4 md:p-7">
+                    {logoutError && <p role="alert" className="mb-4 rounded-md bg-danger/10 p-3 text-sm text-danger">{logoutError}</p>}
+                    {children}
+                </main>
             </div>
         </div>
     );

@@ -1,3 +1,4 @@
+import { schoolOpenGraph } from '@/lib/seo'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
   description: 'Struktur organisasi SMA Ahlul Irfan Bangsalsari.',
   alternates: { canonical: '/profil/struktur-organisasi' },
   openGraph: {
+      ...schoolOpenGraph,
     title: 'Struktur Organisasi | SMA Ahlul Irfan Bangsalsari',
     description: 'Struktur organisasi SMA Ahlul Irfan Bangsalsari.',
     url: '/profil/struktur-organisasi',

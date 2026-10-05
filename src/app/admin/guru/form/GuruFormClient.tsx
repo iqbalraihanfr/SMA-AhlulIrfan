@@ -71,9 +71,11 @@ export default function GuruFormClient({
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
-            alert('Ukuran foto maksimal 5 MB.');
+            setErrors((current) => ({ ...current, foto: 'Foto terlalu besar. Pilih foto maksimal 5 MB.' }));
+            e.target.value = '';
             return;
         }
+        setErrors((current) => ({ ...current, foto: '' }));
         setFoto(file);
     };
 

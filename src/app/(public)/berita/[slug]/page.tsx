@@ -1,3 +1,4 @@
+import { jsonLd, schoolName, schoolOpenGraph } from '@/lib/seo'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -5,6 +6,8 @@ import { createClient } from '@/lib/supabase/server'
 import { Prosa } from '@/components/ui/Prosa'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { KartuBerita, formatTanggal } from '@/components/ui/KartuBerita'
+import { siteUrl } from '@/lib/site-url'
+import { ringkasanBerita } from '@/lib/konten'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -28,16 +31,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: berita.judul,
-    description: berita.ringkasan || berita.judul,
+    description: ringkasanBerita(berita.ringkasan, berita.isi) || berita.judul,
     alternates: { canonical: `/berita/${slug}` },
     openGraph: {
+      ...schoolOpenGraph,
       title: `${berita.judul} | SMA Ahlul Irfan Bangsalsari`,
-      description: berita.ringkasan || berita.judul,
+      description: ringkasanBerita(berita.ringkasan, berita.isi) || berita.judul,
       url: `/berita/${slug}`,
       locale: 'id_ID',
       type: 'article',
       publishedTime: berita.diterbitkan_pada,
-      images: berita.image_url ? [{ url: berita.image_url, alt: berita.judul }] : undefined,
     },
   }
 }
@@ -69,6 +72,16 @@ export default async function BeritaDetailPage({ params }: Props) {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({
+        '@context': 'https://schema.org', '@type': 'NewsArticle',
+        headline: berita.judul, description: ringkasanBerita(berita.ringkasan, berita.isi) || berita.judul,
+        mainEntityOfPage: new URL(`/berita/${slug}`, siteUrl).href,
+        datePublished: berita.diterbitkan_pada, dateModified: berita.updated_at,
+        image: berita.image_url || new URL('/opengraph-image.png', siteUrl).href,
+        author: { '@type': 'Organization', name: schoolName, url: siteUrl.href },
+        publisher: { '@type': 'School', '@id': new URL('/#school', siteUrl).href,
+          name: schoolName, logo: { '@type': 'ImageObject', url: new URL('/logo-sma.webp', siteUrl).href } },
+      }) }} />
       <article className="section-shell max-w-3xl py-14 sm:py-20">
         <p className="text-sm">
           <Link

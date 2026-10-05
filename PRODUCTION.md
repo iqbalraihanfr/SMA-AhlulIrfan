@@ -18,3 +18,11 @@ Uji SQL tambahan: jalankan `tests/production.sql` dengan `psql` pada database Po
 Status 5 Oktober 2026: kedua migration sudah diterapkan; pemeriksaan akses anonim lulus; akun sekolah dibuat lewat Supabase Auth. Login, upload PNG, draf privat, publikasi berita dengan foto, dan album dua foto sudah diuji melalui production. Konten serta foto uji sudah dibersihkan. Endpoint bootstrap sementara sudah dinonaktifkan. Password tidak disimpan di repository.
 
 Upload berita dan galeri sudah siap digunakan. Pengelolaan akun oleh Super Admin masih memerlukan `SUPABASE_SERVICE_ROLE_KEY` di environment server Vercel; fitur upload sekolah tidak memakai key ini. `CRON_SECRET` sudah terpasang.
+
+Branding dan SEO: favicon multiresolusi, ikon 192 px, Apple touch icon 180 px, serta OG/Twitter 1200×630 memakai logo asli dari pengaturan sekolah. Gambar preview memakai URL dengan hash konten, metadata tiap halaman mempertahankan gambar dan nama situs. Canonical memakai domain `www`, sitemap hanya memuat halaman terbit, halaman admin/login tidak diindeks, dan preview deployment diberi `noindex`. Beranda memuat JSON-LD WebSite dan School; berita memuat NewsArticle.
+
+Berita “tes” dan tiga berita contoh seed dijadikan draf; nomor telepon/WhatsApp placeholder dikosongkan. Seeder tidak lagi membuka policies RLS dan tidak menerbitkan berita contoh. Halaman Berita akan menampilkan pesan kosong sampai sekolah menerbitkan berita asli. Data profil dan foto sekolah tetap tersedia.
+
+Pemeriksaan ulang: `node tests/check-seo.mjs` memeriksa seluruh URL sitemap production, metadata, aset, dan proteksi admin. Melalui Playwright CLI, jalankan `run-code --filename tests/check-news-layout.js` pada halaman berita untuk memeriksa ukuran 1440/768/390 px. Sesudah login akun QA, `run-code --filename tests/check-admin-feedback.js` menguji kegagalan hapus/logout yang disimulasikan, validasi ukuran foto, dan logout sesungguhnya tanpa menghapus data.
+
+Google Search Console dan hasil indeks Google belum diverifikasi. Pengelola dapat mengisi kontak resmi melalui Pengaturan Situs dan menerbitkan draf hanya setelah isinya disahkan sekolah.

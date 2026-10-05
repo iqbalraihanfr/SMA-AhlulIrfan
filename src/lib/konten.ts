@@ -1,6 +1,14 @@
 import sanitizeHtml from 'sanitize-html'
 import { z } from 'zod'
 
+export function ringkasanBerita(ringkasan?: string | null, isi?: string | null): string {
+  if (ringkasan?.trim()) return ringkasan.trim()
+  return cleanHtml(isi).replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ').trim().slice(0, 220)
+}
+
 export function cleanHtml(html?: string | null): string {
   if (!html) return ''
   return sanitizeHtml(html, {

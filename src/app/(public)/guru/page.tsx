@@ -1,3 +1,4 @@
+import { schoolOpenGraph } from '@/lib/seo'
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import { PageHero } from '@/components/ui/PageHero'
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
   description: 'Kenali pendidik dan tenaga kependidikan SMA Ahlul Irfan Bangsalsari.',
   alternates: { canonical: '/guru' },
   openGraph: {
+      ...schoolOpenGraph,
     title: 'Guru dan Tenaga Kependidikan | SMA Ahlul Irfan Bangsalsari',
     description: 'Kenali pendidik dan tenaga kependidikan SMA Ahlul Irfan Bangsalsari.',
     url: '/guru',

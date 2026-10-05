@@ -1,3 +1,4 @@
+import { schoolOpenGraph } from '@/lib/seo'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -28,12 +29,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: album.deskripsi || `Dokumentasi foto ${album.judul} SMA Ahlul Irfan Bangsalsari.`,
     alternates: { canonical: `/galeri/${slug}` },
     openGraph: {
+      ...schoolOpenGraph,
       title: `${album.judul} | SMA Ahlul Irfan Bangsalsari`,
       description: album.deskripsi || `Dokumentasi foto ${album.judul} SMA Ahlul Irfan Bangsalsari.`,
       url: `/galeri/${slug}`,
       locale: 'id_ID',
       type: 'website',
-      images: album.image_url ? [{ url: album.image_url, alt: album.judul }] : undefined,
     },
   }
 }

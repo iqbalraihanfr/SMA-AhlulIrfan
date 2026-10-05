@@ -19,6 +19,7 @@ export function DeleteButton({
 }) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const hapus = async () => {
         const konfirmasi =
@@ -29,6 +30,7 @@ export function DeleteButton({
 
         if (!confirm(konfirmasi)) return;
 
+        setError('');
         setLoading(true);
         try {
             if (onDelete) {
@@ -39,16 +41,19 @@ export function DeleteButton({
                 if (!res.ok) throw new Error('Gagal menghapus data.');
             }
             router.refresh();
-        } catch (err: any) {
-            alert(err.message || 'Gagal menghapus.');
+        } catch {
+            setError('Kami belum dapat memastikan data sudah dihapus. Muat ulang halaman sebelum mencoba lagi.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
+        <div>
         <Tombol type="button" variasi="bahaya" onClick={hapus} disabled={loading}>
             {loading ? 'Menghapus...' : 'Hapus'}
         </Tombol>
+        {error && <p role="alert" className="mt-2 max-w-xs text-sm text-danger">{error}</p>}
+        </div>
     );
 }

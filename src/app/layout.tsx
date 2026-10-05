@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Plus_Jakarta_Sans, Newsreader } from 'next/font/google'
 import './globals.css'
 import { siteUrl } from '@/lib/site-url'
+import { schoolDescription, schoolName, schoolOpenGraph } from '@/lib/seo'
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -18,13 +19,17 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   metadataBase: siteUrl,
   title: {
-    default: 'SMA Ahlul Irfan Bangsalsari',
-    template: '%s | SMA Ahlul Irfan Bangsalsari',
+    default: schoolName,
+    template: `%s | ${schoolName}`,
   },
-  description: 'Situs resmi SMA Ahlul Irfan Bangsalsari',
+  description: schoolDescription,
+  applicationName: schoolName,
+  robots: process.env.VERCEL_ENV === 'preview' ? { index: false, follow: false } : undefined,
+  twitter: { card: 'summary_large_image' },
   openGraph: {
-    title: 'SMA Ahlul Irfan Bangsalsari',
-    description: 'Situs resmi SMA Ahlul Irfan Bangsalsari',
+    ...schoolOpenGraph,
+    title: schoolName,
+    description: schoolDescription,
     locale: 'id_ID',
     type: 'website',
   },

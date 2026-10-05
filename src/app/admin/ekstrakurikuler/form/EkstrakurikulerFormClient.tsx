@@ -63,9 +63,11 @@ export default function EkstrakurikulerFormClient({ ekskul }: { ekskul: EkskulPr
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
-            alert('Ukuran gambar maksimal 5 MB.');
+            setErrors((current) => ({ ...current, gambar: 'Gambar terlalu besar. Pilih gambar maksimal 5 MB.' }));
+            e.target.value = '';
             return;
         }
+        setErrors((current) => ({ ...current, gambar: '' }));
         setGambar(file);
     };
 
