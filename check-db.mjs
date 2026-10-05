@@ -17,6 +17,15 @@ async function check() {
     process.exitCode = 1
   } else {
     console.log("Success! Found tables.")
+    for (const table of ['users', 'tahun_ajaran', 'kelas', 'siswa', 'anggota_kelas', 'presensi', 'kehadiran_siswa', 'riwayat_presensi']) {
+      const { count, error: accessError, status } = await supabase.from(table).select('id', { head: true, count: 'exact' })
+      // HEAD responses have no JSON error body; use HTTP status for denied reads.
+      if ((count ?? 0) > 0 || (accessError && accessError.code !== '42501' && ![401, 403].includes(status))) {
+        console.error(`FAIL: akses anonim ${table}: ${accessError?.message || `${count} baris terbuka`}`)
+        process.exitCode = 1
+      }
+    }
+    if (!process.exitCode) console.log('PASS: data privat tidak dapat dibaca secara anonim.')
   }
 }
 

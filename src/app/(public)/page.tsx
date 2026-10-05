@@ -141,7 +141,7 @@ export default async function Beranda() {
     supabase.from('konten_halaman').select('*').eq('kunci', 'kurikulum').single(),
     supabase.from('ekstrakurikuler').select('*').order('urutan', { ascending: true }).limit(7),
     supabase.from('guru').select('*').eq('aktif', true).eq('kategori', 'pendidik').order('urutan', { ascending: true }),
-    supabase.from('berita').select('*').eq('status', 'terbit').order('diterbitkan_pada', { ascending: false }).limit(3),
+    supabase.from('berita').select('*').eq('status', 'terbit').lte('diterbitkan_pada', new Date().toISOString()).order('diterbitkan_pada', { ascending: false }).limit(3),
     supabase.from('album').select('*').order('urutan', { ascending: true }).limit(4),
     supabase.from('guru').select('*').eq('jabatan', 'Kepala Sekolah').limit(1).single(),
   ])

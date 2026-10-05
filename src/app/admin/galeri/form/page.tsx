@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { redirect, notFound } from 'next/navigation';
 import GaleriFormClient from './GaleriFormClient';
 
 export const metadata = {
@@ -18,7 +18,10 @@ export default async function GaleriFormPage(props: { searchParams: Promise<{ id
     let album = null;
 
     if (searchParams.id) {
-        const { data } = await supabase.from('album').select('*').eq('id', searchParams.id).single();
+        if (!/^\d+$/.test(searchParams.id) || Number(searchParams.id) < 1) notFound();
+        const { data, error } = await supabase.from('album').select('*').eq('id', searchParams.id).single();
+        if (error?.code === 'PGRST116' || (!error && !data)) notFound();
+        if (error) throw new Error('Album gagal dimuat. Silakan coba kembali.');
         if (data) {
             album = {
                 id: data.id,
@@ -27,6 +30,7 @@ export default async function GaleriFormPage(props: { searchParams: Promise<{ id
                 deskripsi: data.deskripsi,
                 urutan: data.urutan ?? 0,
                 image_url: data.image_url,
+                foto_urls: data.foto_urls ?? [],
             };
         }
     }

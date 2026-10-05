@@ -1,6 +1,7 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth';
+import { tanggalSchema } from '@/lib/konten';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { ActionFormState } from '@/types/absensi';
@@ -9,12 +10,9 @@ export async function saveTahunAjaran(
     prevState: ActionFormState,
     formData: FormData
 ): Promise<ActionFormState> {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-        return { error: 'Sesi telah berakhir. Silakan login kembali.' };
-    }
+    let supabase;
+    try { ({ supabase } = await requireAdmin()); }
+    catch (error) { return { error: error instanceof Error ? error.message : 'Tidak memiliki izin.' }; }
 
     const id = formData.get('id') as string | null;
     const nama = (formData.get('nama') as string)?.trim();
@@ -23,7 +21,7 @@ export async function saveTahunAjaran(
     const selesai_pada = (formData.get('selesai_pada') as string)?.trim();
     const aktif = formData.get('aktif') === 'true' || formData.get('aktif') === 'on';
 
-    if (!nama) {
+    if (!nama || nama.length > 20) {
         return { error: 'Nama tahun ajaran wajib diisi (mis. 2025/2026).' };
     }
 
@@ -31,39 +29,24 @@ export async function saveTahunAjaran(
         return { error: 'Semester harus dipilih (Ganjil atau Genap).' };
     }
 
-    if (!mulai_pada || !selesai_pada) {
+    if (!tanggalSchema.safeParse(mulai_pada).success || !tanggalSchema.safeParse(selesai_pada).success) {
         return { error: 'Tanggal mulai dan selesai periode wajib diisi.' };
     }
 
-    if (mulai_pada >= selesai_pada) {
+    if (!mulai_pada || !selesai_pada || mulai_pada >= selesai_pada) {
         return { error: 'Tanggal selesai harus setelah tanggal mulai.' };
     }
 
     try {
-        if (aktif) {
-            // Pastikan hanya satu tahun ajaran yang berstatus aktif
-            if (id) {
-                await supabase.from('tahun_ajaran').update({ aktif: false }).neq('id', id);
-            } else {
-                await supabase.from('tahun_ajaran').update({ aktif: false }).neq('id', 0);
-            }
-        }
-
-        const payload = {
-            nama,
-            semester,
-            mulai_pada,
-            selesai_pada,
-            aktif,
-            updated_at: new Date().toISOString(),
-        };
-
-        let error;
-        if (id) {
-            ({ error } = await supabase.from('tahun_ajaran').update(payload).eq('id', id));
-        } else {
-            ({ error } = await supabase.from('tahun_ajaran').insert([payload]));
-        }
+        if (id && (!/^\d+$/.test(id) || Number(id) < 1)) return { error: 'ID tahun ajaran tidak valid.' };
+        const { error } = await supabase.rpc('simpan_tahun_ajaran', {
+            p_id: id ? Number(id) : null,
+            p_nama: nama,
+            p_semester: semester,
+            p_mulai_pada: mulai_pada,
+            p_selesai_pada: selesai_pada,
+            p_aktif: aktif,
+        });
 
         if (error) {
             if (error.code === '23505' || error.message.toLowerCase().includes('unique')) {
@@ -71,8 +54,8 @@ export async function saveTahunAjaran(
             }
             return { error: error.message };
         }
-    } catch (err: any) {
-        return { error: err.message || 'Terjadi kesalahan saat menyimpan data.' };
+    } catch (err) {
+        return { error: err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan data.' };
     }
 
     revalidatePath('/admin/akademik/tahun-ajaran');
@@ -82,12 +65,8 @@ export async function saveTahunAjaran(
 }
 
 export async function deleteTahunAjaran(id: number) {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-        throw new Error('Unauthorized');
-    }
+    const { supabase } = await requireAdmin();
+    if (!Number.isSafeInteger(id) || id < 1) throw new Error('ID tahun ajaran tidak valid.');
 
     // Periksa apakah ada kelas yang terhubung
     const { count, error: errCount } = await supabase

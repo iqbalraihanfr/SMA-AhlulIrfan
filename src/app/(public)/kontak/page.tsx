@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { PageHero } from '@/components/ui/PageHero'
+import { nomorWhatsApp } from '@/lib/konten'
 
 export const metadata: Metadata = {
   title: 'Kontak',
@@ -25,6 +26,9 @@ export default async function KontakPage() {
     .single()
 
   const namaSekolah = situs?.nama_sekolah || 'SMA Ahlul Irfan Bangsalsari'
+  const whatsapp = situs?.whatsapp ? nomorWhatsApp(situs.whatsapp) : ''
+  const peta = situs?.peta_lat != null && situs?.peta_lng != null
+    ? `${situs.peta_lat},${situs.peta_lng}` : `${namaSekolah}, Bangsalsari`
 
   return (
     <>
@@ -43,7 +47,15 @@ export default async function KontakPage() {
               </dd>
             </div>
 
-                        <div>
+            {situs?.telepon && <div>
+              <dt className="text-sm font-semibold text-ink">Telepon</dt>
+              <dd className="mt-1 text-ink-muted"><a href={`tel:${situs.telepon.replace(/[^+\d]/g, '')}`} className="underline underline-offset-2 hover:text-brand">{situs.telepon}</a></dd>
+            </div>}
+            {whatsapp && <div>
+              <dt className="text-sm font-semibold text-ink">WhatsApp</dt>
+              <dd className="mt-1"><a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className="button-primary">Hubungi sekolah via WhatsApp</a></dd>
+            </div>}
+            <div>
               <dt className="text-sm font-semibold text-ink">Email</dt>
               <dd className="mt-1 text-ink-muted">
                 {situs?.email ? (
@@ -82,7 +94,7 @@ export default async function KontakPage() {
             className="aspect-[4/3] w-full rounded-lg border border-line"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            src="https://maps.google.com/maps?q=SMA+Ahlul+Irfan+Bangsalsari&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(peta)}&z=15&output=embed`}
           />
         </div>
       </div>

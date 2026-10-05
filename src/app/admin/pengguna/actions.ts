@@ -81,6 +81,8 @@ export async function savePengguna(formData: FormData) {
             .single();
 
         if (penggunaError) throw new Error(penggunaError.message);
+        // Check admin credentials before changing the profile that must match Auth.
+        const authAdmin = email !== penggunaLama.email || password ? getSupabaseAdmin() : null;
 
         if (penggunaLama.peran === 'super-admin' && peran !== 'super-admin') {
             const { count, error: countError } = await supabase
@@ -107,15 +109,16 @@ export async function savePengguna(formData: FormData) {
 
         if (updateError) throw new Error(updateError.message);
 
-        if (email !== penggunaLama.email || password) {
-            const { error: authError } = await getSupabaseAdmin().auth.admin.updateUserById(id, {
+        if (authAdmin) {
+            const { error: authError } = await authAdmin.auth.admin.updateUserById(id, {
                 email,
                 email_confirm: true,
                 ...(password ? { password } : {}),
             });
 
             if (authError) {
-                await supabase.from('users').update(penggunaLama).eq('id', id);
+                const { error: rollbackError } = await authAdmin.from('users').update(penggunaLama).eq('id', id);
+                if (rollbackError) throw new Error('Perubahan autentikasi gagal dan profil perlu dipulihkan oleh super-admin.');
                 throw new Error(authError.message);
             }
         }

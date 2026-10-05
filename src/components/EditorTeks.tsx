@@ -159,6 +159,10 @@ export default function EditorTeks({ nilai, onUbah, onUnggahGambar, onStatusUngg
             return;
         }
 
+        if (file.size > 20 * 1024 * 1024) {
+            setGalatGambar('Foto maksimal 20 MB.');
+            return;
+        }
         setGambarTertunda(file);
         setAlt('');
         setCaption('');
@@ -173,6 +177,7 @@ export default function EditorTeks({ nilai, onUbah, onUnggahGambar, onStatusUngg
             Placeholder.configure({ placeholder: placeholder ?? 'Tulis isi di sini…' }),
         ],
         content: nilai,
+        immediatelyRender: false,
         onUpdate: ({ editor }) => onUbah(editor.getHTML()),
         editorProps: {
             attributes: {
@@ -242,7 +247,7 @@ export default function EditorTeks({ nilai, onUbah, onUnggahGambar, onStatusUngg
     const atributGambar = editor.getAttributes('gambarBerita');
 
     async function unggahGambar(): Promise<void> {
-        if (!gambarTertunda || !onUnggahGambar || !alt.trim()) return;
+        if (!editor || !gambarTertunda || !onUnggahGambar || !alt.trim()) return;
 
         setMengunggah(true);
         onStatusUnggahBerubah?.(true);

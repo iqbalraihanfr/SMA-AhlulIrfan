@@ -9,7 +9,8 @@ export const metadata = {
     title: 'Galeri | Admin',
 };
 
-export default async function GaleriIndex() {
+export default async function GaleriIndex({ searchParams }: { searchParams: Promise<{ disimpan?: string }> }) {
+    const params = await searchParams;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -43,6 +44,8 @@ export default async function GaleriIndex() {
                     </Link>
                 }
             />
+
+            {params.disimpan === '1' && <p role="status" className="mb-4 rounded-md bg-brand-soft p-3 text-sm text-brand">Album berhasil disimpan dan sudah tampil di galeri website.</p>}
 
             {daftar.length === 0 ? (
                 <EmptyState judul="Belum ada album" pesan="Buat album baru untuk menampilkan dokumentasi sekolah." />

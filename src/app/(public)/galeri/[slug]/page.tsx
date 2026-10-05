@@ -52,6 +52,8 @@ export default async function GaleriDetailPage({ params }: Props) {
     notFound()
   }
 
+  const fotoUrls: string[] = album.foto_urls?.length ? album.foto_urls : album.image_url ? [album.image_url] : []
+
   return (
     <>
       <PageHero
@@ -70,27 +72,27 @@ export default async function GaleriDetailPage({ params }: Props) {
           </Link>
         </p>
 
-        {!album.image_url ? (
+        {fotoUrls.length === 0 ? (
           <EmptyState className="mt-8" judul="Album ini belum berisi foto" />
         ) : (
           <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            <li>
+            {fotoUrls.map((url, index) => (<li key={url}>
               <a
-                href={album.image_url}
+                href={url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block overflow-hidden rounded-md border border-line"
               >
                 <img
-                  src={album.image_url}
-                  alt={album.judul}
+                  src={url}
+                  alt={`${album.judul} — foto ${index + 1}`}
                   width={600}
                   height={600}
                   loading="lazy"
                   className="aspect-square w-full object-cover transition hover:opacity-90"
                 />
               </a>
-            </li>
+            </li>))}
           </ul>
         )}
       </div>

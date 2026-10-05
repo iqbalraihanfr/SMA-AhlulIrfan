@@ -1,6 +1,7 @@
 import { PageHeader } from '@/components/Ui';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export const metadata = {
     title: 'Dasbor | Admin',
@@ -104,6 +105,15 @@ export default async function Dasbor() {
         <div className="max-w-5xl space-y-8">
             <PageHeader judul="Dasbor" keterangan="Ringkasan isi situs dan kesiapan peluncuran." />
 
+            <section className="rounded-lg border border-line bg-paper p-6 shadow-card">
+                <h2 className="font-heading text-lg font-semibold text-ink">Bagikan kegiatan sekolah</h2>
+                <p className="mt-1 text-sm text-ink-muted">Untuk berita, isi judul dan konten lalu pilih status Terbit. Untuk galeri, pilih foto kegiatan dan simpan album agar tampil di website.</p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                    <Link href="/admin/berita/form" className="inline-flex min-h-11 items-center rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Tulis Berita</Link>
+                    <Link href="/admin/galeri/form" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 py-2 text-sm font-semibold text-ink hover:bg-paper-sunken focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">Upload Foto</Link>
+                </div>
+            </section>
+
             <section>
                 <h2 className="sr-only">Ringkasan isi</h2>
 
@@ -118,11 +128,11 @@ export default async function Dasbor() {
             </section>
 
             <section className="rounded-lg border border-line bg-paper p-6 shadow-card">
-                <h2 className="font-heading text-lg font-semibold text-ink">Kesiapan peluncuran</h2>
+                <h2 className="font-heading text-lg font-semibold text-ink">Kelengkapan konten</h2>
                 <p className="mt-1 text-sm text-ink-muted">
                     {belumSiap === 0
-                        ? 'Semua syarat terpenuhi.'
-                        : `${belumSiap} hal masih menghambat peluncuran. Daftar ini sengaja selalu tampil supaya tidak terlupakan sampai hari H.`}
+                        ? 'Konten utama sudah terisi.'
+                        : `${belumSiap} bagian masih bisa dilengkapi. Anda tetap dapat menerbitkan berita dan foto kegiatan sekarang.`}
                 </p>
 
                 <ul className="mt-5 divide-y divide-line">

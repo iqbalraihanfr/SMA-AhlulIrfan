@@ -6,8 +6,9 @@ import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Select, Textarea, Tom
 import EditorTeks from '@/components/EditorTeks';
 import PemilihJadwal from '@/components/PemilihJadwal';
 import { saveBerita } from '../actions';
-import imageCompression from 'browser-image-compression';
-import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
+import { unggahGambar } from '@/lib/unggah-gambar';
+import { TIPE_GAMBAR_DITERIMA } from '@/lib/optimalkanGambar';
 
 type BeritaProp = {
     id?: number;
@@ -18,7 +19,6 @@ type BeritaProp = {
     status: string;
     diterbitkanPada: string | null;
     sampulUrl: string | null;
-    sampulAlt: string | null;
 } | null;
 
 export default function BeritaFormClient({
@@ -33,41 +33,19 @@ export default function BeritaFormClient({
     const [slug, setSlug] = useState(berita?.slug ?? '');
     const [ringkasan, setRingkasan] = useState(berita?.ringkasan ?? '');
     const [isi, setIsi] = useState(berita?.isi ?? '');
-    const [status, setStatus] = useState(berita?.status ?? 'draf');
+    const [status, setStatus] = useState(berita?.status === 'terbit' ? 'terbit' : 'draft');
     const [diterbitkanPada, setDiterbitkanPada] = useState(berita?.diterbitkanPada ?? '');
-    const [sampulAlt, setSampulAlt] = useState(berita?.sampulAlt ?? '');
     const [sampul, setSampul] = useState<File | null>(null);
-    const [sampulUrl] = useState(berita?.sampulUrl ?? '');
+    const [sampulUrl, setSampulUrl] = useState(berita?.sampulUrl ?? '');
 
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [pesanOptimasi, setPesanOptimasi] = useState('');
 
-    const supabase = createClient();
-
-    const unggahGambar = async (file: File, path: string) => {
-        const options = {
-            maxSizeMB: 5,
-            maxWidthOrHeight: 1600,
-            useWebWorker: true,
-        };
-        try {
-            const compressedFile = await imageCompression(file, options);
-            const fileName = `${Date.now()}-${compressedFile.name}`;
-            const { data, error } = await supabase.storage.from('images').upload(`${path}/${fileName}`, compressedFile);
-            if (error) throw error;
-
-            const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(data.path);
-            return publicUrl;
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            throw error;
-        }
-    };
-
+    const router = useRouter();
+    const [mengunggahKonten, setMengunggahKonten] = useState(false);
     const handleUnggahGambarKonten = async (gambar: File, alt: string) => {
         const url = await unggahGambar(gambar, 'konten');
-        // The editor expects a certain structure, let's mock it
         return {
             id: 0,
             url,
@@ -79,6 +57,7 @@ export default function BeritaFormClient({
 
     const kirim = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (mengunggahKonten) return;
         setProcessing(true);
         setErrors({});
 
@@ -87,6 +66,8 @@ export default function BeritaFormClient({
             if (sampul) {
                 setPesanOptimasi('Mengoptimalkan & mengunggah sampul...');
                 finalImageUrl = await unggahGambar(sampul, 'sampul');
+                setSampulUrl(finalImageUrl);
+                setSampul(null);
                 setPesanOptimasi('');
             }
 
@@ -99,11 +80,13 @@ export default function BeritaFormClient({
             formData.append('status', status);
             formData.append('diterbitkan_pada', diterbitkanPada);
             if (finalImageUrl) formData.append('image_url', finalImageUrl);
-            formData.append('sampul_alt', sampulAlt);
 
             await saveBerita(formData);
-        } catch (err: any) {
-            setErrors({ _general: err.message || 'Gagal menyimpan berita' });
+            router.push('/admin/berita?disimpan=1');
+            router.refresh();
+        } catch (err) {
+            setPesanOptimasi('');
+            setErrors({ _general: err instanceof Error ? err.message : 'Gagal menyimpan berita' });
             setProcessing(false);
         }
     };
@@ -115,7 +98,7 @@ export default function BeritaFormClient({
         <div className="mx-auto max-w-7xl">
             <PageHeader
                 judul={baru ? 'Tulis Berita' : 'Ubah Berita'}
-                keterangan="Susun isi di area utama, lalu atur publikasi dan gambar sampul di panel sebelah kanan."
+                keterangan="Tulis berita, tambahkan foto, lalu pilih Terbit agar tampil di website."
             />
 
             <p className="mb-5 text-sm">
@@ -139,6 +122,7 @@ export default function BeritaFormClient({
                                 value={judul}
                                 onChange={(e) => setJudul(e.target.value)}
                                 required
+                                maxLength={200}
                                 autoFocus
                                 className="text-base font-semibold"
                             />
@@ -169,6 +153,7 @@ export default function BeritaFormClient({
                             nilai={isi}
                             onUbah={setIsi}
                             onUnggahGambar={handleUnggahGambarKonten}
+                            onStatusUnggahBerubah={setMengunggahKonten}
                         />
                         <Galat pesan={errors.isi} />
                     </Kartu>
@@ -199,8 +184,8 @@ export default function BeritaFormClient({
                         </div>
 
                         <div className="border-t border-line pt-5">
-                            {errors._general && <Galat pesan={errors._general} />}
-                            <Tombol disabled={processing} className="w-full justify-center mt-2 min-h-[44px]">
+                            {errors._general && <div role="alert"><Galat pesan={errors._general} /></div>}
+                            <Tombol disabled={processing || mengunggahKonten} className="w-full justify-center mt-2 min-h-[44px]">
                                 {labelSimpan}
                             </Tombol>
                         </div>
@@ -211,7 +196,7 @@ export default function BeritaFormClient({
                         
                         {sampulUrl && !sampul && (
                             <div>
-                                <img src={sampulUrl} alt={sampulAlt} className="aspect-video w-full rounded-md border border-line object-cover" />
+                                <img src={sampulUrl} alt={judul} className="aspect-video w-full rounded-md border border-line object-cover" />
                             </div>
                         )}
 
@@ -220,21 +205,16 @@ export default function BeritaFormClient({
                             <input
                                 id="sampul"
                                 type="file"
-                                accept="image/*"
+                                disabled={processing}
+                                accept={TIPE_GAMBAR_DITERIMA}
                                 onChange={(e) => setSampul(e.target.files?.[0] ?? null)}
                                 className="mt-1 block w-full text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-paper-sunken file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink"
                             />
-                            {pesanOptimasi && <Petunjuk>{pesanOptimasi}</Petunjuk>}
+                            <Petunjuk>JPG, PNG, atau WebP, maksimal 20 MB. Foto dikompres otomatis sebelum diunggah.</Petunjuk>
+                            {sampul && <Petunjuk>Foto dipilih: {sampul.name}</Petunjuk>}
+                            {pesanOptimasi && <p role="status" className="text-sm text-ink-muted">{pesanOptimasi}</p>}
                         </div>
 
-                        <div>
-                            <Label htmlFor="sampul_alt">Teks alternatif</Label>
-                            <Input
-                                id="sampul_alt"
-                                value={sampulAlt}
-                                onChange={(e) => setSampulAlt(e.target.value)}
-                            />
-                        </div>
                     </Kartu>
 
                     <Kartu>

@@ -4,8 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Galat, Input, Kartu, Label, PageHeader, Petunjuk, Textarea, Tombol } from '@/components/Ui';
 import { saveAlbum } from '../actions';
-import imageCompression from 'browser-image-compression';
-import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
+import { unggahGambar } from '@/lib/unggah-gambar';
 import { TIPE_GAMBAR_DITERIMA } from '@/lib/optimalkanGambar';
 
 type AlbumProp = {
@@ -15,6 +15,7 @@ type AlbumProp = {
     deskripsi: string | null;
     urutan: number;
     image_url: string | null;
+    foto_urls?: string[];
 } | null;
 
 export default function GaleriFormClient({ album }: { album: AlbumProp }) {
@@ -24,45 +25,30 @@ export default function GaleriFormClient({ album }: { album: AlbumProp }) {
     const [slug, setSlug] = useState(album?.slug ?? '');
     const [deskripsi, setDeskripsi] = useState(album?.deskripsi ?? '');
     const [urutan, setUrutan] = useState(album?.urutan?.toString() ?? '0');
-    const [foto, setFoto] = useState<File | null>(null);
-    const [imageUrl] = useState(album?.image_url ?? '');
+    const [foto, setFoto] = useState<File[]>([]);
+    const [fotoUrls, setFotoUrls] = useState<string[]>(album?.foto_urls?.length ? album.foto_urls : album?.image_url ? [album.image_url] : []);
+    const router = useRouter();
 
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [pesanOptimasi, setPesanOptimasi] = useState('');
 
-    const supabase = createClient();
-
-    const unggahGambar = async (file: File) => {
-        const options = {
-            maxSizeMB: 5,
-            maxWidthOrHeight: 1600,
-            useWebWorker: true,
-        };
-        try {
-            const compressed = await imageCompression(file, options);
-            const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-            const path = `galeri/${Date.now()}-${safeName}`;
-            const { data, error } = await supabase.storage.from('images').upload(path, compressed);
-            if (error) throw error;
-
-            const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(data.path);
-            return publicUrl;
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            throw error;
-        }
-    };
-
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        if (file.size > 8 * 1024 * 1024) {
-            alert('Ukuran foto maksimal 8 MB.');
+        const files = Array.from(e.target.files ?? []);
+        if (files.length + fotoUrls.length > 50) {
+            setErrors({ foto: 'Maksimal 50 foto per album.' });
+            e.target.value = '';
+            setFoto([]);
             return;
         }
-        setFoto(file);
+        if (files.some((file) => !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 20 * 1024 * 1024)) {
+            setErrors({ foto: 'Pilih foto JPG, PNG, atau WebP, maksimal 20 MB per foto.' });
+            e.target.value = '';
+            setFoto([]);
+            return;
+        }
+        setErrors({});
+        setFoto(files);
     };
 
     const kirim = async (e: React.FormEvent) => {
@@ -71,12 +57,14 @@ export default function GaleriFormClient({ album }: { album: AlbumProp }) {
         setErrors({});
 
         try {
-            let finalImageUrl = imageUrl;
-            if (foto) {
-                setPesanOptimasi('Mengoptimalkan & mengunggah foto...');
-                finalImageUrl = await unggahGambar(foto);
-                setPesanOptimasi('');
+            const urls = [...fotoUrls];
+            for (let i = 0; i < foto.length; i++) {
+                setPesanOptimasi(`Mengunggah foto ${i + 1} dari ${foto.length}…`);
+                urls.push(await unggahGambar(foto[i], 'galeri'));
+                setFotoUrls([...urls]);
+                setFoto(foto.slice(i + 1));
             }
+            setPesanOptimasi('');
 
             const formData = new FormData();
             if (album?.id) formData.append('id', album.id.toString());
@@ -84,11 +72,14 @@ export default function GaleriFormClient({ album }: { album: AlbumProp }) {
             formData.append('slug', slug);
             formData.append('deskripsi', deskripsi);
             formData.append('urutan', urutan);
-            if (finalImageUrl) formData.append('image_url', finalImageUrl);
+            urls.forEach((url) => formData.append('foto_urls', url));
 
             await saveAlbum(formData);
-        } catch (err: any) {
-            setErrors({ _general: err.message || 'Gagal menyimpan album' });
+            router.push('/admin/galeri?disimpan=1');
+            router.refresh();
+        } catch (err) {
+            setPesanOptimasi('');
+            setErrors({ _general: err instanceof Error ? err.message : 'Gagal menyimpan album' });
             setProcessing(false);
         }
     };
@@ -103,7 +94,7 @@ export default function GaleriFormClient({ album }: { album: AlbumProp }) {
                 </Link>
             </p>
 
-            {errors._general && <div className="mb-4 text-sm text-danger">{errors._general}</div>}
+            {errors._general && <div role="alert" className="mb-4 text-sm text-danger">{errors._general}</div>}
 
             <form onSubmit={kirim} className="space-y-6">
                 <Kartu className="space-y-5">
@@ -158,16 +149,18 @@ export default function GaleriFormClient({ album }: { album: AlbumProp }) {
                 </Kartu>
 
                 <Kartu className="space-y-5">
-                    <h2 className="font-heading text-lg font-semibold text-ink">Foto Sampul / Kegiatan</h2>
+                    <h2 className="font-heading text-lg font-semibold text-ink">Foto kegiatan</h2>
 
-                    {imageUrl && (
-                        <img
-                            src={imageUrl}
-                            alt=""
-                            width={320}
-                            height={240}
-                            className="aspect-[4/3] w-full max-w-sm rounded-md border border-line object-cover"
-                        />
+                    {fotoUrls.length > 0 && (
+                        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                            {fotoUrls.map((url, index) => (
+                                <li key={url} className="space-y-2">
+                                    <img src={url} alt={`${judul || 'Album'} — foto ${index + 1}`} width={320} height={240} className="aspect-[4/3] w-full rounded-md border border-line object-cover" />
+                                    <Tombol type="button" variasi="garis" disabled={processing} aria-label={`Lepas foto ${index + 1}`} onClick={() => setFotoUrls(fotoUrls.filter((fotoUrl) => fotoUrl !== url))}>Lepas foto</Tombol>
+                                    {index === 0 && <p className="text-xs text-ink-muted">Sampul album</p>}
+                                </li>
+                            ))}
+                        </ul>
                     )}
 
                     <div>
@@ -175,12 +168,15 @@ export default function GaleriFormClient({ album }: { album: AlbumProp }) {
                         <input
                             id="foto"
                             type="file"
+                            multiple
+                            disabled={processing}
                             accept={TIPE_GAMBAR_DITERIMA}
                             onChange={handleFileChange}
                             className="mt-1 block w-full text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-paper-sunken file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink"
                         />
-                        <Petunjuk>Foto utama untuk album ini. Maksimal 8 MB.</Petunjuk>
-                        {pesanOptimasi && <Petunjuk>{pesanOptimasi}</Petunjuk>}
+                        <Petunjuk>Pilih beberapa foto sekaligus. JPG, PNG, atau WebP, maksimal 20 MB per foto dan 50 foto per album. Foto pertama menjadi sampul.</Petunjuk>
+                        {foto.length > 0 && <Petunjuk>{foto.length} foto baru dipilih.</Petunjuk>}
+                        {pesanOptimasi && <p role="status" className="text-sm text-ink-muted">{pesanOptimasi}</p>}
                         <Galat pesan={errors.foto} />
                     </div>
                 </Kartu>

@@ -16,7 +16,7 @@ const labelHalaman = (label: string): string =>
         .replace('Next', 'Berikutnya')
         .trim();
 
-export default async function BeritaIndex(props: { searchParams: Promise<{ cari?: string; status?: string; page?: string }> }) {
+export default async function BeritaIndex(props: { searchParams: Promise<{ cari?: string; status?: string; page?: string; disimpan?: string }> }) {
     const searchParams = await props.searchParams;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -33,7 +33,7 @@ export default async function BeritaIndex(props: { searchParams: Promise<{ cari?
 
     let query = supabase
         .from('berita')
-        .select('id, judul, slug, status, created_at', { count: 'exact' })
+        .select('id, judul, slug, status, diterbitkan_pada, created_at', { count: 'exact' })
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
 
@@ -53,7 +53,7 @@ export default async function BeritaIndex(props: { searchParams: Promise<{ cari?
         slug: b.slug,
         status: b.status,
         statusLabel: b.status === 'terbit' ? 'Terbit' : 'Draf',
-        diterbitkanPada: b.created_at ? new Date(b.created_at).toLocaleDateString('id-ID') : null,
+        diterbitkanPada: b.diterbitkan_pada ? new Date(b.diterbitkan_pada).toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' }) : null,
         urlUbah: `/admin/berita/form?id=${b.id}`,
         urlHapus: `/api/admin/berita/${b.id}`, // We'll need a client component or server action to delete
     }));
@@ -71,7 +71,7 @@ export default async function BeritaIndex(props: { searchParams: Promise<{ cari?
     }
 
     const pilihanStatus = [
-        { value: 'draf', label: 'Draf' },
+        { value: 'draft', label: 'Draf' },
         { value: 'terbit', label: 'Terbit' },
     ];
 
@@ -89,6 +89,8 @@ export default async function BeritaIndex(props: { searchParams: Promise<{ cari?
                     </Link>
                 }
             />
+
+            {searchParams.disimpan === '1' && <p role="status" className="rounded-md bg-brand-soft p-3 text-sm text-brand">Berita berhasil disimpan. Berita berstatus Terbit akan tampil sesuai tanggal publikasinya.</p>}
 
             <form className="flex flex-wrap items-end gap-3" method="GET">
                     <Input

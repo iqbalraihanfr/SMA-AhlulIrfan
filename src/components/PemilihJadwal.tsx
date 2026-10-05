@@ -42,6 +42,7 @@ export default function PemilihJadwal({ id, nilai, onUbah }: Props) {
                     <Input
                         id={`${id}_tanggal`}
                         type="date"
+                        aria-label="Tanggal terbit"
                         value={tanggal}
                         aria-describedby={idPetunjuk}
                         onChange={(e) => onUbah(e.target.value ? `${e.target.value}T${waktu}` : '')}

@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { redirect, notFound } from 'next/navigation';
 import BeritaFormClient from './BeritaFormClient';
 
 export const metadata = {
@@ -18,7 +18,10 @@ export default async function BeritaFormPage(props: { searchParams: Promise<{ id
     let berita = null;
 
     if (searchParams.id) {
-        const { data } = await supabase.from('berita').select('*').eq('id', searchParams.id).single();
+        if (!/^\d+$/.test(searchParams.id) || Number(searchParams.id) < 1) notFound();
+        const { data, error } = await supabase.from('berita').select('*').eq('id', searchParams.id).single();
+        if (error?.code === 'PGRST116' || (!error && !data)) notFound();
+        if (error) throw new Error('Berita gagal dimuat. Silakan coba kembali.');
         if (data) {
             berita = {
                 id: data.id,
@@ -27,15 +30,14 @@ export default async function BeritaFormPage(props: { searchParams: Promise<{ id
                 ringkasan: data.ringkasan,
                 isi: data.isi,
                 status: data.status,
-                diterbitkanPada: data.created_at ? new Date(data.created_at).toISOString().split('T')[0] : null,
+                diterbitkanPada: data.diterbitkan_pada ? new Date(new Date(data.diterbitkan_pada).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 16) : null,
                 sampulUrl: data.image_url,
-                sampulAlt: data.sampul_alt,
             };
         }
     }
 
     const pilihanStatus = [
-        { value: 'draf', label: 'Draf' },
+        { value: 'draft', label: 'Draf' },
         { value: 'terbit', label: 'Terbit' },
     ];
 

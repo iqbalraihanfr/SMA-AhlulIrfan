@@ -2,13 +2,14 @@
 
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { tanggalSchema } from '@/lib/konten';
 import { revalidatePath } from 'next/cache';
 import type { PresensiState, SimpanPresensiPayload, StatusKehadiran } from '@/types/absensi';
 
 /**
  * Zod Enum validasi untuk status kehadiran siswa
  */
-export const statusKehadiranEnum = z.enum(
+const statusKehadiranEnum = z.enum(
   ['belum_diisi', 'hadir', 'sakit', 'izin', 'alpa', 'terlambat'],
   {
     errorMap: () => ({ message: 'Status kehadiran tidak valid.' }),
@@ -18,7 +19,7 @@ export const statusKehadiranEnum = z.enum(
 /**
  * Zod Schema untuk setiap baris kehadiran siswa
  */
-export const barisKehadiranSchema = z.object({
+const barisKehadiranSchema = z.object({
   siswa_id: z
     .number({ required_error: 'ID Siswa wajib diisi.' })
     .int('ID Siswa harus bilangan bulat.')
@@ -34,15 +35,13 @@ export const barisKehadiranSchema = z.object({
 /**
  * Zod Schema lengkap untuk validasi SimpanPresensiPayload
  */
-export const simpanPresensiSchema = z
+const simpanPresensiSchema = z
   .object({
     kelasId: z
       .number({ required_error: 'ID Kelas wajib diisi.' })
       .int('ID Kelas harus bilangan bulat.')
       .positive('ID Kelas tidak valid.'),
-    tanggal: z
-      .string({ required_error: 'Tanggal wajib diisi.' })
-      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal harus YYYY-MM-DD.'),
+    tanggal: tanggalSchema,
     versi: z
       .number({ required_error: 'Versi dokumen presensi wajib diisi.' })
       .int('Versi harus bilangan bulat.')
@@ -51,7 +50,7 @@ export const simpanPresensiSchema = z
       .array(barisKehadiranSchema, {
         required_error: 'Data baris kehadiran wajib disertakan.',
       })
-      .min(0),
+      .min(1, 'Daftar siswa tidak boleh kosong.'),
     selesaikan: z.boolean({
       required_error: 'Status penyelesaian presensi wajib ditentukan.',
     }),

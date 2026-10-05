@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { nomorWhatsApp } from '@/lib/konten'
 
 export default function Footer({ situs }: { situs: any }) {
   const tahun = new Date().getFullYear()
@@ -38,6 +39,8 @@ export default function Footer({ situs }: { situs: any }) {
               {situs.email}
             </a>
           )}
+          {situs?.telepon && <a className="block text-ink-muted hover:text-brand hover:underline" href={`tel:${situs.telepon.replace(/[^+\d]/g, '')}`}>{situs.telepon}</a>}
+          {situs?.whatsapp && <a className="block text-ink-muted hover:text-brand hover:underline" href={`https://wa.me/${nomorWhatsApp(situs.whatsapp)}`} target="_blank" rel="noopener noreferrer">WhatsApp sekolah</a>}
         </div>
 
         <div className="space-y-3 text-sm">
@@ -81,4 +84,3 @@ export default function Footer({ situs }: { situs: any }) {
     </footer>
   )
 }
-
