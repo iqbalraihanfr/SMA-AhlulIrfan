@@ -10,6 +10,14 @@ type MenuItem = {
   anak?: [string, string][]
 }
 
+function IkonMenu({ buka }: { buka: boolean }) {
+  return <svg className="hamburger-icon size-5" data-open={buka} fill="none" viewBox="0 0 24 24" aria-hidden="true">
+    <g className="hamburger-icon__top"><path d="M8 6h12" /></g>
+    <g className="hamburger-icon__middle"><path d="M5 12h15" /></g>
+    <g className="hamburger-icon__bottom"><path d="M3 18h17" /></g>
+  </svg>
+}
+
 export function Navbar({
   situs,
   halamanTerbit = ['sejarah', 'visi_misi', 'sambutan_kepsek', 'kurikulum'],
@@ -21,6 +29,7 @@ export function Navbar({
   const [menuTerbuka, setMenuTerbuka] = useState<number | null>(null)
   const pathname = usePathname()
   const menuRef = useRef<HTMLUListElement>(null)
+  const mobileRef = useRef<HTMLDialogElement>(null)
 
   const adaNaskah = (kunci: string) => halamanTerbit.includes(kunci)
 
@@ -79,6 +88,22 @@ export function Navbar({
     setBuka(false)
     setMenuTerbuka(null)
   }, [pathname])
+
+  useEffect(() => {
+    const dialog = mobileRef.current
+    if (!buka || !dialog) return
+    dialog.showModal()
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const desktop = window.matchMedia('(min-width: 1024px)')
+    const closeOnDesktop = () => { if (desktop.matches) setBuka(false) }
+    desktop.addEventListener('change', closeOnDesktop)
+    return () => {
+      dialog.close()
+      document.body.style.overflow = overflow
+      desktop.removeEventListener('change', closeOnDesktop)
+    }
+  }, [buka])
 
   return (
     <header className="site-nav sticky top-0 z-40">
@@ -193,72 +218,81 @@ export function Navbar({
           onClick={() => setBuka(!buka)}
           aria-expanded={buka}
           aria-controls="menu-mobile"
-          className="rounded-md p-2 text-ink-muted transition hover:bg-paper-sunken hover:text-ink lg:hidden"
+          aria-haspopup="dialog"
+          className="grid size-12 shrink-0 place-items-center rounded-md text-ink-muted transition hover:bg-paper-sunken hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand lg:hidden"
         >
           <span className="sr-only">{buka ? 'Tutup menu' : 'Buka menu'}</span>
-          <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true">
-            {!buka ? (
-              <path strokeLinecap="round" d="M4 7h16M4 12h16M4 17h16" />
-            ) : (
-              <path strokeLinecap="round" d="M6 6l12 12M18 6 6 18" />
-            )}
-          </svg>
+          <IkonMenu buka={buka} />
         </button>
       </nav>
 
-      {buka && (
-        <div id="menu-mobile" className="border-t border-line bg-paper lg:hidden">
-          <ul className="mx-auto max-w-6xl space-y-1 px-4 py-3 sm:px-6">
-            {menu.map((item, index) => {
-              if (item.href) {
-                const aktif = tautanAktif(item.href)
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setBuka(false)}
-                      aria-current={aktif ? 'page' : undefined}
-                      className={`block rounded-md px-3 py-3 text-sm font-semibold ${
-                        aktif ? 'bg-brand-soft text-brand' : 'text-ink hover:bg-paper-sunken'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                )
-              } else {
-                return (
-                  <li key={index} className="pt-2">
-                    <p className="px-3 pb-1 text-xs font-bold uppercase tracking-widest text-ink-muted">{item.label}</p>
-                    <ul>
-                      {item.anak?.map(([label, tautan]) => {
-                        const subAktif = tautanAktif(tautan)
-                        return (
-                          <li key={tautan}>
-                            <Link
-                              href={tautan}
-                              onClick={() => setBuka(false)}
-                              aria-current={subAktif ? 'page' : undefined}
-                              className={`block rounded-md px-3 py-3 text-sm ${
-                                subAktif
-                                  ? 'bg-brand-soft font-semibold text-brand'
-                                  : 'text-ink-muted hover:bg-paper-sunken hover:text-ink'
-                              }`}
-                            >
-                              {label}
-                            </Link>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </li>
-                )
-              }
-            })}
-          </ul>
+      <dialog ref={mobileRef} id="menu-mobile" className="mobile-menu"
+        aria-labelledby="menu-mobile-title" aria-describedby="menu-mobile-description"
+        onClose={() => setBuka(false)}>
+        <h2 id="menu-mobile-title" className="sr-only">Menu navigasi SMA Ahlul Irfan</h2>
+        <p id="menu-mobile-description" className="sr-only">Pilih halaman yang ingin Anda kunjungi, atau tutup menu untuk kembali.</p>
+        <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-5 sm:px-8 sm:py-7">
+          <Link href="/" aria-label="Beranda SMA Ahlul Irfan" onClick={() => setBuka(false)}
+            className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand">
+            <img src={situs?.logo_url || '/logo-sma.webp'} alt="Logo SMA Ahlul Irfan" width={40} height={40} className="size-10 object-contain" />
+          </Link>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-xs text-ink-muted sm:block">Menu utama</span>
+            <button type="button" autoFocus onClick={() => setBuka(false)} aria-label="Tutup menu"
+              className="grid size-12 place-items-center rounded-full border border-line text-ink transition hover:bg-paper-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand">
+              <IkonMenu buka={buka} />
+            </button>
+          </div>
         </div>
-      )}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8 sm:py-7">
+          <div className="mx-auto flex min-h-full max-w-6xl flex-col">
+            <p className="mb-3 text-sm font-semibold text-brand">Jelajahi SMA Ahlul Irfan</p>
+            <nav aria-label="Navigasi seluler" className="mb-8">
+              {menu.map((item, index) => {
+                const label = <>
+                  <span className="w-8 shrink-0 font-mono text-xs tracking-widest text-ink-muted">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="mobile-menu__heading font-heading">{item.label}</span>
+                </>
+                const row = 'flex min-h-16 w-full items-center gap-3 py-3.5 text-left text-ink transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand sm:py-4'
+                if (item.href) return (
+                  <div key={item.href} className="border-b border-line">
+                    <Link href={item.href} onClick={() => setBuka(false)} aria-current={tautanAktif(item.href) ? 'page' : undefined} className={row}>
+                      {label}
+                      <span className="ml-auto text-xl text-ink-muted" aria-hidden="true">&rarr;</span>
+                    </Link>
+                  </div>
+                )
+                const aktif = item.anak?.some(([, href]) => tautanAktif(href))
+                return (
+                  <details key={item.label} name="menu-mobile-sections" open={aktif || (pathname === '/' && item.label === 'Profil')}
+                    className="group border-b border-line">
+                    <summary className={row + ' cursor-pointer list-none [&::-webkit-details-marker]:hidden'} aria-controls={`menu-mobile-section-${index}`}>
+                      {label}
+                      <span className="ml-auto grid size-9 shrink-0 place-items-center rounded-full border border-line text-ink-muted" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" className="size-4 transition-transform duration-300 group-open:rotate-180 motion-reduce:transition-none" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
+                        </svg>
+                      </span>
+                    </summary>
+                    <div id={`menu-mobile-section-${index}`} className="mb-4 ml-11 grid border-l border-brand/40 pl-5 sm:grid-cols-2 sm:gap-x-8">
+                      {item.anak?.map(([label, href]) => <Link key={href} href={href} onClick={() => setBuka(false)}
+                        aria-current={tautanAktif(href) ? 'page' : undefined}
+                        className={`flex min-h-11 items-center py-2 text-sm transition-colors hover:text-brand focus-visible:outline-none focus-visible:underline ${tautanAktif(href) ? 'font-semibold text-brand' : 'text-ink-muted'}`}>
+                        {label}
+                      </Link>)}
+                    </div>
+                  </details>
+                )
+              })}
+            </nav>
+            <Link href="/kontak" onClick={() => setBuka(false)}
+              className="mt-auto flex min-h-12 items-center justify-between gap-3 rounded-full bg-brand px-5 text-sm font-semibold text-on-brand hover:bg-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
+              Kontak &amp; kunjungan <span aria-hidden="true">&rarr;</span>
+            </Link>
+            <p className="pt-4 text-xs text-ink-muted">Bangsalsari · Jember</p>
+          </div>
+        </div>
+      </dialog>
     </header>
   )
 }
-
