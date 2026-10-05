@@ -28,10 +28,10 @@ const { error: loginError } = await check.auth.signInWithPassword({ email, passw
 const { data: profile, error: verifyError } = loginError ? { data: null, error: loginError }
   : await check.from('users').select('peran').eq('id', data.user.id).single()
 if (verifyError || profile?.peran !== 'admin') {
-  await check.auth.signOut()
+  await check.auth.signOut({ scope: 'local' })
   const { error: rollbackError } = await supabase.auth.admin.deleteUser(data.user.id)
   if (rollbackError) throw new Error(`Verifikasi gagal dan akun Auth perlu dibersihkan: ${data.user.id}`)
   throw new Error('Verifikasi login atau profil gagal; akun baru dibatalkan. Periksa konfigurasi Auth dan RLS.')
 }
-await check.auth.signOut()
+await check.auth.signOut({ scope: 'local' })
 console.log(JSON.stringify({ login: 'https://www.smaahlulirfan.sch.id/login', email, password, role: 'admin' }, null, 2))

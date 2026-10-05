@@ -15,4 +15,6 @@ Panduan sekolah: di dasbor pilih **Tulis Berita**, isi judul dan konten, pilih *
 
 Uji SQL tambahan: jalankan `tests/production.sql` dengan `psql` pada database PostgreSQL lokal kosong bernama `sma_production_test`. Script menolak database lain dan tidak memakai data sekolah.
 
-Status 5 Oktober 2026: kedua migration sudah diterapkan; pemeriksaan akses anonim lulus; akun sekolah dibuat lewat Supabase Auth dan login, upload PNG, serta draf privat sudah diuji. Endpoint bootstrap sementara sudah dinonaktifkan. Password tidak disimpan di repository.
+Status 5 Oktober 2026: kedua migration sudah diterapkan; pemeriksaan akses anonim lulus; akun sekolah dibuat lewat Supabase Auth. Login, upload PNG, draf privat, publikasi berita dengan foto, dan album dua foto sudah diuji melalui production. Konten serta foto uji sudah dibersihkan. Endpoint bootstrap sementara sudah dinonaktifkan. Password tidak disimpan di repository.
+
+Upload berita dan galeri sudah siap digunakan. Pengelolaan akun oleh Super Admin masih memerlukan `SUPABASE_SERVICE_ROLE_KEY` di environment server Vercel; fitur upload sekolah tidak memakai key ini. `CRON_SECRET` sudah terpasang.
